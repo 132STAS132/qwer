@@ -2,12 +2,31 @@ require('ts-node').register({ files: true });
 require('dotenv').config();
 const exec = require('child_process').exec;
 const path = require('path');
+const fs = require('fs');
+const { TestRailHelper } = require('./helpers/testRail');
 const { addEnvironment, addAttachment } = require('@wdio/allure-reporter').default;
+
+
+process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
+
+
+// =========
+// TestRail configuration
+// =========
+
+const testRailClient = module.exports.testRailClient = new TestRailHelper({
+    domain: 'https://rentgrata.testrail.io/',
+    testRailApi: 'index.php?/api/v2/',
+    user: process.env.TESTRAIL_USER,
+    password: process.env.TESTRAIL_PASSWORD,
+    projectId: 1,
+    suiteId: 1,
+    runName: `Automated tests results - ${process.env.BROWSER_NAME}`
+});
 
 // =========
 // Arguments
 // =========
-process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 
 let chromeArgs = [
     '--no-sandbox',
@@ -189,6 +208,45 @@ exports.config = {
      */
     onPrepare: async function (config, capabilities) {
         await exec('rm -rf artifacts/* && mkdir -p downloads && rm -rf downloads/*');
+        if (JSON.parse(process.env.TESTRAIL_RUN || 0)) {
+            /*=== Generate IDs for a new test run in the TestRail ===*/
+            let path = [];
+            let ids = [];
+            let getFiles = function (dir, files_) {
+
+                files_ = files_ || [];
+
+                let files = fs.readdirSync(dir);
+
+                for (let i in files) {
+                    let name = dir + '/' + files[i];
+                    if (fs.statSync(name).isDirectory()) {
+                        getFiles(name, files_);
+                    } else {
+                        path.push(name);
+                    }
+                }
+            };
+
+            switch (process.env.SUITE_TYPE) {
+                case 'file':
+                    path = config.suites[config.suite[0]];
+                    break;
+                case 'folder':
+                    getFiles(config.suites[config.suite[0]][0].split('/*')[0]);
+                    break;
+                case 'all':
+                    getFiles(config.specs[0].split('/**')[0]);
+                    break;
+            }
+
+            path.forEach(path => {
+                let data = fs.readFileSync(path, 'utf-8');
+                data.match(/C\d+/g).map(el => ids.push(+el.slice(1)));
+            });
+
+            process.env.TEST_RAIL_RUN_ID = await testRailClient.createRun(ids);
+        }
     },
     /**
      * Gets executed before a worker process is spawned and can be used to initialise specific service
@@ -255,15 +313,35 @@ exports.config = {
      * Function to be executed after a test (in Mocha/Jasmine).
      */
     afterTest: function(test, context, { error, result, duration, passed, retries }) {
+        let image = null;
+        let caseId = test.title.match(/C\d+/);
+        if (caseId) caseId = +caseId[0].slice(1);
+
         if (!passed) {
-            screenShot = browser.takeScreenshot();
-            let image = null;
-            let caseId = test.title.match(/C\d+/);
-            if (caseId) caseId = +caseId[0].slice(1);
+            let screenShot = browser.takeScreenshot();
             image = new Buffer.from(screenShot, 'base64');
             addAttachment('afterTest screenshot', image, 'image/png')
             console.log('\x1b[31m%s\x1b[0m', `    ${error.stack} \n`);
         }
+
+        if (process.env.TEST_RAIL_RUN_ID && caseId) {
+            let config = {
+                passed,
+                caseId,
+                runId: process.env.TEST_RAIL_RUN_ID
+            };
+
+            if (error) config.errorMessage = error.message;
+
+            browser.call(async () => {
+                await testRailClient.updateRun(config);
+                if (image) {
+                    config.resultId = await testRailClient.getResultsForCase(config);
+                    await testRailClient.addAttachment(config, image);
+                }
+            });
+        }
+
         const windows = browser.getWindowHandles();
         windows.forEach((w, i) => {
             if (i !== 0) {
