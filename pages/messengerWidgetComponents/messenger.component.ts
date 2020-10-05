@@ -148,7 +148,7 @@ export class MessengerComponent extends BasePage {
             if (!element.isDisplayed()) {
                 throw new Error(`${element.getAttribute('src')} is not displayed`);
             }
-        })
+        });
 
         this.expect(
             elements.length,
@@ -164,6 +164,10 @@ export class MessengerComponent extends BasePage {
 
         Object.values(buttons).forEach(button => {
             this.allure.startStep(this.verifyAllureMessage(`${button} button`));
+            // stabilizing for iFrame
+            try {
+                this.wd.waitForDisplayed(this.buttonByText(button), !expected, 5000);
+            } catch (e) {}
             this.expect(
                 this.wd.isElementVisible(this.buttonByText(button)),
                 this.displayedErrorMessage(button, expected)

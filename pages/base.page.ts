@@ -32,7 +32,7 @@ export class BasePage {
 
     clickOnButtonByText(text: string): this {
         this.allure.startStep(`Click on [${text}] button`);
-        this.wd.click(this.buttonByText(text));
+        this.wd.click(this.buttonByText(text), this.wd.isSafari());
         this.allure.endStep();
         return this;
     }

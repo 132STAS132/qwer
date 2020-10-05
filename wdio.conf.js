@@ -12,7 +12,9 @@ const { TestRailStatus } = require('./testData/testRailStatus.data');
 
 
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
-
+process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
+const headlessMode = JSON.parse(process.env.HEADLESS || 0);
+const instances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
 
 // =========
 // TestRail configuration
@@ -41,6 +43,126 @@ let chromeArgs = [
     '--disable-impl-side-painting'
 ];
 
+// ============
+// Capabilities
+// ============
+let capabilities = [];
+
+let chromeCaps = {
+    browserName: 'chrome',
+    maxInstances: instances,
+    'goog:chromeOptions': {
+        args: chromeArgs,
+        prefs: {
+            download: {
+                default_directory: process.env.DEFAULT_DOWNLOAD_DIR
+            }
+        }
+    },
+    acceptInsecureCerts: true
+};
+
+let safari = {
+    browserName: 'safari',
+    /*
+    //      * safaridriver can only handle 1 instance unfortunately
+    //      * https://developer.apple.com/documentation/webkit/about_webdriver_for_safari
+    //      */
+    maxInstances: 1,
+
+    // // port to find safaridriver
+    // port: 4447, // if you want to specify the port. Default is 4444
+    // path: '/',
+    // // ...
+    // capabilities: [{
+    //     /*
+    //      * safaridriver can only handle 1 instance unfortunately
+    //      * https://developer.apple.com/documentation/webkit/about_webdriver_for_safari
+    //      */
+
+    /**
+     * One Session at a Time, to Mimic User Interaction
+     Only one Safari browser instance can be active at any given time,
+     and only one WebDriver session at a time can be attached to the browser instance.
+     These constraints ensure that the simulated behavior (mouse, keyboard, touch, and so forth)
+     accurately reflects what a user can do in a macOS windowing environment and prevents tests
+     from competing with each other for window and keyboard focus.
+     * **/
+
+    //     maxInstances: 1,
+    // }],
+    // services: ['safaridriver'],
+    //
+    // // options
+    // safaridriverArgs: ['-p 4444'], // use the specified port. Default is 4444
+    // safaridriverLogs: './',
+}
+
+let internetExplorerCaps = {
+    // maxInstances can get overwritten per capability. So if you have an in-house Selenium
+    // grid with only 5 IE instances available you can make sure that not more than
+    // 5 instances get started at a time.
+    maxInstances: instances,
+    browserName: 'internet explorer',
+    'se:ieOptions': {
+        acceptUntrustedCertificates: true,
+        ignoreProtectedModeSettings: true,    //only applicable to IE browser
+        ignoreZoomSetting: true,              //only applicable to IE browser
+        'ie.ensureCleanSession': true,
+        initialBrowserUrl: process.env.BASE_URL,
+        introduceInstabilityByIgnoringProtectedModeSettings: true,
+        enablePersistentHover: true,
+        // requireWindowFocus: true
+    },
+    acceptInsecureCerts: true
+};
+
+const services = [];
+// by default Google Chrome browser is used
+process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
+switch (process.env.BROWSER_NAME.toLowerCase()) {
+    case 'chrome':
+        capabilities.push(chromeCaps);
+        services.push('selenium-standalone');
+        break;
+    case 'safari':
+        capabilities.push(safari);
+        services.push('safaridriver', 'selenium-standalone');
+        break;
+    case 'ie':
+        capabilities.push(internetExplorerCaps);
+        services.push(['selenium-standalone', {
+            installArgs: {
+                drivers: {
+                    ie: {
+                        version: '3.9.0',
+                        arch: 'ia32',
+                    }
+                }
+            },
+            args: {
+                drivers: {
+                    ie: {
+                        // check for more recent versions of internet explorer driver here:
+                        // https://selenium-release.storage.googleapis.com/index.html
+                        version: '3.9.0',
+                        arch: 'ia32',
+                    }
+                }
+            },
+        }])
+        break;
+    default:
+        throw new Error(`Incorrect -> ${process.env.BROWSER_NAME} <-  browser name - please check BROWSER_NAME=??? environment variable. Please use one of [Chrome, IE, Safari]`);
+}
+
+if (headlessMode) {
+    chromeArgs.push('--headless');
+    if (process.env.BROWSER_NAME.toLowerCase() === 'safari') {
+        console.warn('HEADLESS mode is used for Google Chrome. https://github.com/SeleniumHQ/selenium/issues/5985');
+    }
+}
+
 
 exports.config = {
     //
@@ -63,6 +185,9 @@ exports.config = {
     specs: [
         './specs/**/*.ts'
     ],
+    suites: {
+        rentgrataMessenger: ['./specs/rentgrataMessenger.spec.ts'],
+    },
     // Patterns to exclude.
     exclude: [
         // 'path/to/excluded/files'
@@ -83,34 +208,17 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
     // https://docs.saucelabs.com/reference/platforms-configurator
     //
-    capabilities: [{
-    
-        // maxInstances can get overwritten per capability. So if you have an in-house Selenium
-        // grid with only 5 firefox instances available you can make sure that not more than
-        // 5 instances get started at a time.
-        maxInstances: 5,
-        //
-        browserName: 'chrome',
-        'goog:chromeOptions': {
-            args: chromeArgs,
-            prefs: {
-                download: {
-                    default_directory: process.env.DEFAULT_DOWNLOAD_DIR
-                }
-            }
-        },
-        acceptInsecureCerts: true
-        // If outputDir is provided WebdriverIO can capture driver session logs
-        // it is possible to configure which logTypes to include/exclude.
-        // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
-        // excludeDriverLogs: ['bugreport', 'server'],
-    }],
+    capabilities,
+    // If outputDir is provided WebdriverIO can capture driver session logs
+    // it is possible to configure which logTypes to include/exclude.
+    // excludeDriverLogs: ['*'], // pass '*' to exclude all driver session logs
+    // excludeDriverLogs: ['bugreport', 'server'],
     //
     // ===================
     // Test Configurations
@@ -142,10 +250,10 @@ exports.config = {
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
-    baseUrl: 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo',
+    baseUrl: process.env.BASE_URL,
     //
     // Default timeout for all waitFor* commands.
-    waitforTimeout: 10000,
+    waitforTimeout: 25000,
     //
     // Default timeout in milliseconds for request
     // if browser driver or grid doesn't send response
@@ -158,8 +266,8 @@ exports.config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['selenium-standalone'],
-    
+    services,
+    // services: ['safaridriver', 'selenium-standalone'],
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks.html
@@ -192,7 +300,7 @@ exports.config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
-        timeout: 99999999,
+        timeout: 9999999,
         retries: 1,
     },
     //
@@ -295,6 +403,11 @@ exports.config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: function (test, context) {
+        const size = { width: 1366, height: 768 };
+        let { height, width } = browser.getWindowSize();
+        if (height !== size.height || width !== size.width) {
+            browser.setWindowSize(size.width, size.height);
+        }
         addEnvironment('Browser', browser.capabilities.browserName);
         addEnvironment('ENV', browser.config.baseUrl);
         browser.url('');
@@ -440,4 +553,9 @@ exports.config = {
     */
     //onReload: function(oldSessionId, newSessionId) {
     //}
+}
+
+if (process.env.BROWSER_NAME.toLowerCase() === 'safari') {
+    this.config.path = '/';
+    this.config.port = 9515;
 }
