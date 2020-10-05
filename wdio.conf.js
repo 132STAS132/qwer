@@ -9,6 +9,7 @@ const { bugs } = require("./existingBugs/bugs");
 const { JiraAPI } = require("./helpers/jira");
 const jiraAPI = new JiraAPI();
 const { TestRailStatus } = require('./testData/testRailStatus.data');
+const os = require('os');
 
 
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
@@ -59,7 +60,6 @@ let chromeCaps = {
             }
         }
     },
-    acceptInsecureCerts: true
 };
 
 let safari = {
@@ -114,7 +114,6 @@ let internetExplorerCaps = {
         enablePersistentHover: true,
         // requireWindowFocus: true
     },
-    acceptInsecureCerts: true
 };
 
 const services = [];
@@ -317,7 +316,21 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      */
     onPrepare: async function (config, capabilities) {
-        await exec('rm -rf artifacts/* && mkdir -p downloads && rm -rf downloads/*');
+        const isWin = await os.platform().toLowerCase().startsWith('win');
+        if (isWin) {
+            try {
+                await exec('rmdir artifacts /s /q');
+            } catch (e) {}
+            // if need to download
+            // try {
+            //     await exec('rmdir downloads');
+            // } catch (e) {}
+            // await exec('mkdir downloads');
+        } else {
+            await exec('rm -rf artifacts/*');
+            // if need to download
+            // await exec('rm -rf artifacts/* && mkdir -p downloads && rm -rf downloads/*');
+        }
         if (JSON.parse(process.env.TESTRAIL_RUN || 0)) {
             /*=== Generate IDs for a new test run in the TestRail ===*/
             let path = [];
@@ -434,6 +447,11 @@ exports.config = {
 
         if (!passed) {
             let screenShot = browser.takeScreenshot();
+            if (typeof screenShot === 'object') {
+                // ie specific behaviour
+                // The first argument must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object. Received an instance of Object
+                screenShot = browser.takeScreenshot();
+            }
             image = new Buffer.from(screenShot, 'base64');
             addAttachment('afterTest screenshot', image, 'image/png')
             console.log('\x1b[31m%s\x1b[0m', `    ${error.stack} \n`);
