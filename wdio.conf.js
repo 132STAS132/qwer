@@ -5,6 +5,10 @@ const path = require('path');
 const fs = require('fs');
 const { TestRailHelper } = require('./helpers/testRail');
 const { addEnvironment, addAttachment } = require('@wdio/allure-reporter').default;
+const { bugs } = require("./existingBugs/bugs");
+const { JiraAPI } = require("./helpers/jira");
+const jiraAPI = new JiraAPI();
+const { TestRailStatus } = require('./testData/testRailStatus.data');
 
 
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
@@ -15,10 +19,8 @@ process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 // =========
 
 const testRailClient = module.exports.testRailClient = new TestRailHelper({
-    domain: 'https://rentgrata.testrail.io/',
+    domain: 'https://rentgrata.testrail.io/index.php?/api/v2/',
     testRailApi: 'index.php?/api/v2/',
-    user: process.env.TESTRAIL_USER,
-    password: process.env.TESTRAIL_PASSWORD,
     projectId: 1,
     suiteId: 1,
     runName: `Automated tests results - ${process.env.BROWSER_NAME}`
@@ -323,6 +325,18 @@ exports.config = {
             addAttachment('afterTest screenshot', image, 'image/png')
             console.log('\x1b[31m%s\x1b[0m', `    ${error.stack} \n`);
         }
+        try {
+            const windows = browser.getWindowHandles();
+            windows.forEach((w, i) => {
+                if (i !== 0) {
+                    browser.switchToWindow(windows[i]);
+                    browser.closeWindow();
+                }
+            });
+            browser.switchToWindow(windows[0]);
+            browser.execute('window.sessionStorage.clear(); window.localStorage.clear();');
+            browser.deleteAllCookies();
+        } catch (e) {}
 
         if (process.env.TEST_RAIL_RUN_ID && caseId) {
             let config = {
@@ -330,6 +344,39 @@ exports.config = {
                 caseId,
                 runId: process.env.TEST_RAIL_RUN_ID
             };
+
+
+            for (const object in bugs) {
+                for (const bugInfo in bugs[object]) {
+                    const currentBug = bugs[object][bugInfo];
+                    let index = currentBug.scenarios.indexOf(test.title);
+
+                    if (index !== -1) {
+                        let scenariosMarkup = currentBug.scenarios && currentBug.scenarios.length ? 'Scenarios related to bug: \n' + currentBug.scenarios.map(scenario => `${scenario}`).join(' \n') : '';
+                        let bug = browser.call(async () => await jiraAPI.getIssueInfo(bugs[object][bugInfo].bugId));
+
+                        let markup = `Bug Info: \nStatus: ${bug.fields.status.name} \nIssue type: ${bug.fields.issuetype.name} \nPriority: ${bug.fields.priority.name} \nSummary: ${bug.fields.summary} \nProject name: ${bug.fields.project.name} \n${bug.fields.resolution ? `Resolution ${bug.fields.resolution.description} \n` : ''}${bug.fields.assignee ? `Assignee: ${bug.fields.assignee.displayName} \n` : ''}Creator: ${bug.fields.creator.displayName} \nLink: ${currentBug.originalLink} \n \n \n${scenariosMarkup}`
+                        if (bug.fields.status.name.toLowerCase().trim() === 'done' && config.passed) {
+                            config.changeStatusTo = TestRailStatus.retest;
+                        }
+
+                        if (bug.fields.status.name.toLowerCase().trim() === 'done' && !config.passed) {
+                            config.changeStatusTo = TestRailStatus.retest;
+                        }
+
+                        if (bug.fields.status.name.toLowerCase().trim() !== 'done' && config.passed) {
+                            config.changeStatusTo = TestRailStatus.retest;
+                        }
+
+                        if (bug.fields.status.name.toLowerCase().trim() !== 'done' && !config.passed) {
+                            config.changeStatusTo = TestRailStatus.dueToABug;
+                        }
+
+                        browser.call(async () => await testRailClient.addCommentToTestCase({ runId: config.runId, caseId: config.caseId }, markup));
+                    }
+                }
+            }
+
 
             if (error) config.errorMessage = error.message;
 
@@ -341,17 +388,6 @@ exports.config = {
                 }
             });
         }
-
-        const windows = browser.getWindowHandles();
-        windows.forEach((w, i) => {
-            if (i !== 0) {
-                browser.switchToWindow(windows[i]);
-                browser.closeWindow();
-            }
-        });
-        browser.switchToWindow(windows[0]);
-        browser.execute('window.sessionStorage.clear(); window.localStorage.clear();');
-        browser.deleteAllCookies();
     },
 
 

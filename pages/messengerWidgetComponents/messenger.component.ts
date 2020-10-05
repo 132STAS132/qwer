@@ -40,6 +40,14 @@ export class MessengerComponent extends BasePage {
         return '[title="More"] #more-icon_svg__flatOnLight-reg'
     }
 
+    private contactPropertyForm(): string {
+        return 'section.contact-property-container';
+    }
+
+    private chatWithResidentFiltersSection(): string {
+        return '#rg-widget-messenger .residents-filter-strap';
+    }
+
 
     /** actions **/
 
@@ -49,6 +57,28 @@ export class MessengerComponent extends BasePage {
         this.wd.switchToFrame(this.widgetIFrame());
 
         this.allure.endStep();
+        return this;
+    }
+
+    clickOnWidgetButton(button: string) {
+        this.clickOnButtonByText(button);
+    }
+
+    clickOnShowMoreButton(): this {
+        this.clickOnButtonByText(messengerData.widgetButtonsCollapsed.showMoreButton);
+        this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsExpanded.showLessButton));
+        this.wd.waitForDisplayed(this.dots3Icon(), true);
+        this.wd.waitForDisplayed(this.envelopeIcon());
+        this.wd.wait(1);
+        return this;
+    }
+
+    clickOnShowLessButton(): this {
+        this.clickOnButtonByText(messengerData.widgetButtonsExpanded.showLessButton);
+        this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsCollapsed.showMoreButton));
+        this.wd.waitForDisplayed(this.dots3Icon());
+        this.wd.waitForDisplayed(this.envelopeIcon(), false);
+        this.wd.wait(1);
         return this;
     }
 
@@ -98,7 +128,7 @@ export class MessengerComponent extends BasePage {
 
         this.verifyEnvelopeIcon(expected)
             .verifyIcon360(expected)
-            .verifyCalendarIcon(expected);
+            // .verifyCalendarIcon(expected); todo check how it works from admin side
 
         this.allure.endStep();
         return this;
@@ -106,8 +136,14 @@ export class MessengerComponent extends BasePage {
 
     verifyCountOfResidentProfilePictures(count = 3): this {
         this.allure.startStep(`Verify count of displayed resident profile pictures.`);
-        const elements = this.wd.elements(this.residentProfilePictures());
-
+        let elements = [];
+        // stabilizing for loading images
+        try {
+            browser.waitUntil(() => {
+                elements = this.wd.elements(this.residentProfilePictures());
+                return elements.length === count;
+            });
+        } catch (e) {}
         elements.forEach(element => {
             if (!element.isDisplayed()) {
                 throw new Error(`${element.getAttribute('src')} is not displayed`);
@@ -139,26 +175,32 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    clickOnWidgetButton(button: string) {
-        this.clickOnButtonByText(button);
+    verifyContactPropertyFormIsDisplayed(expected = true) {
+        const element = 'Contact property form'
+        this.allure.startStep(this.verifyAllureMessage(element));
+        // waiting for animation
+        try {
+            this.wd.waitForDisplayed(this.contactPropertyForm(), false,2000);
+        } catch (e) {}
+        this.expect(
+            this.wd.isElementVisible(this.contactPropertyForm()),
+            this.displayedErrorMessage(element, expected)
+        ).to.be.equal(expected);
+        this.allure.endStep();
     }
 
-    clickOnShowMoreButton(): this {
-        this.clickOnButtonByText(messengerData.widgetButtonsCollapsed.showMoreButton);
-        this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsExpanded.showLessButton));
-        this.wd.waitForDisplayed(this.dots3Icon(), true);
-        this.wd.waitForDisplayed(this.envelopeIcon());
-        this.wd.wait(1);
-        return this;
-    }
-
-    clickOnShowLessButton(): this {
-        this.clickOnButtonByText(messengerData.widgetButtonsExpanded.showLessButton);
-        this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsCollapsed.showMoreButton));
-        this.wd.waitForDisplayed(this.dots3Icon());
-        this.wd.waitForDisplayed(this.envelopeIcon(), false);
-        this.wd.wait(1);
-        return this;
+    verifyChatWithResidentFormIsDisplayed(expected = true) {
+        const element = 'Chat with resident form'
+        this.allure.startStep(this.verifyAllureMessage(element));
+        // waiting for animation
+        try {
+            this.wd.waitForDisplayed(this.chatWithResidentFiltersSection(), false,2000);
+        } catch (e) {}
+        this.expect(
+            this.wd.isElementVisible(this.chatWithResidentFiltersSection()),
+            this.displayedErrorMessage(element, expected)
+        ).to.be.equal(expected);
+        this.allure.endStep();
     }
 }
 

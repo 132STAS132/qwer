@@ -1,12 +1,12 @@
 import btoa = require('btoa');
 import FormData = require('form-data');
 import axios, { AxiosInstance } from 'axios';
+import { TestRailStatus } from "../testData/testRailStatus.data";
 
 interface Options {
-  readonly domain: string;
-  readonly user: string;
-  readonly password: string;
-  readonly testRailApi: string;
+  readonly _user: string;
+  readonly _password: string;
+  readonly _baseUrl: string;
   readonly projectId?: number;
   readonly suiteId?: number;
   readonly runName?: string;
@@ -26,34 +26,47 @@ interface UpdateRequest {
   passed?: boolean;
   errorMessage?: string;
   resultId?: string;
-  retest?: string;
+  changeStatusTo?: string;
 }
 
 export class TestRailHelper {
   constructor(options: Options) {
-    this.domain = options.domain;
-    this.user = options.user;
-    this.password = options.password;
-    this.testRailApi = options.testRailApi;
+    this._user = process.env.TESTRAIL_USER;
+    this._password = process.env.TESTRAIL_PASSWORD;
+    this._baseUrl = process.env.TESTRAIL_BASE_URL;
     this.projectId = options.projectId;
     this.suiteId = options.suiteId;
     this.runName = options.runName;
   }
 
-  readonly domain: string;
-  readonly user: string;
-  readonly password: string;
-  readonly testRailApi: string;
-  readonly projectId: number;
-  readonly suiteId: number;
-  readonly runName: string;
+  private readonly _user: string;
+  private readonly _password: string;
+  private readonly _baseUrl: string;
+  private readonly projectId: number;
+  private readonly suiteId: number;
+  private readonly runName: string;
 
   private apiClient(contentType = 'application/json'): AxiosInstance {
+
+    const errorCode = '\x1b[31m%s\x1b[0m';
+    const message = (property: string) => ` TESTRAIL API - ${property} is not defined. Please check .env`;
+
+    if (!this._user) {
+      throw new Error(errorCode + message('User email'));
+    }
+    if (!this._password) {
+      throw new Error(errorCode + message('API Token'));
+    }
+    if (!this._baseUrl) {
+      throw new Error(errorCode + message('Base url'));
+    }
+
+
     return axios.create({
-      baseURL: `${this.domain}${this.testRailApi}`,
+      baseURL: this._baseUrl,
       headers: {
         'Content-Type': contentType,
-        Authorization: 'Basic ' + btoa(`${this.user}:${this.password}`),
+        Authorization: 'Basic ' + btoa(`${this._user}:${this._password}`),
       },
     });
   }
@@ -102,11 +115,21 @@ export class TestRailHelper {
 
   async updateRun(testInfo: UpdateRequest, image = null): Promise<void> {
     const url = `add_result_for_case/${testInfo.runId}/${testInfo.caseId}`;
+    let statusId = null;
+    if (testInfo.changeStatusTo === TestRailStatus.retest) {
+      statusId = 4;
+    }
+    if (testInfo.changeStatusTo === TestRailStatus.dueToABug) {
+      statusId = 6;
+    }
+    if (!testInfo.changeStatusTo) {
+      statusId = testInfo.passed ? 1 : 5;
+    }
     await this.apiClient().post(url, {
-      status_id: testInfo.retest === 'retest' ? 4 : testInfo.passed ? 1 : 5,
+      status_id: statusId,
       comment: testInfo.passed
           ? 'Status: Passed'
-          : `Case Id: [C${testInfo.caseId}] \n Error message: ${testInfo.errorMessage}`,
+          : `Status: Failed \n Case Id: [C${testInfo.caseId}] \n Error message: ${testInfo.errorMessage}`,
     });
 
     if (image) {
@@ -115,7 +138,7 @@ export class TestRailHelper {
     }
   }
 
-  async addCommentToTestCase(testInfo: { runId, caseId }, comment: string) {
+  async addCommentToTestCase(testInfo: { runId, caseId }, comment: string): Promise<void>  {
     const url = `add_result_for_case/${testInfo.runId}/${testInfo.caseId}`;
     return await this.apiClient().post(url, {
       comment,
