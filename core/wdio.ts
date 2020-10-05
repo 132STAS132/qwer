@@ -12,15 +12,19 @@ export class WDIO {
   }
 
   isIE() {
-    return browser.capabilities.browserName === 'internet explorer';
+    return browser.capabilities.browserName.toLowerCase()  === 'ie';
   }
 
   isFF() {
-    return browser.capabilities.browserName === 'firefox';
+    return browser.capabilities.browserName.toLowerCase()  === 'firefox';
+  }
+
+  isSafari() {
+    return browser.capabilities.browserName.toLowerCase() === 'safari';
   }
 
   isChrome() {
-    return browser.capabilities.browserName === 'chrome';
+    return browser.capabilities.browserName.toLowerCase()  === 'chrome';
   }
 
   refresh(timeout = this.defaultWaitTime) {
@@ -437,7 +441,7 @@ export class WDIO {
       this.waitForVisible(selector, timeout);
       this.waitForEnabled(selector, timeout);
     }
-    if (this.isFF() || this.isIE()) {
+    if (this.isIE() || this.isSafari()) {
       try {
         browser.waitUntil(
           function () {
