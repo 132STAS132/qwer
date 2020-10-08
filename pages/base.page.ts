@@ -30,9 +30,22 @@ export class BasePage {
         return `${element} should${expected ? '' : ' not'} be displayed`
     }
 
+    private widgetIFrame(): string {
+        return '[id*=zoid-rg-widget-feature-icons] .zoid-component-frame.zoid-visible';
+    }
+
     clickOnButtonByText(text: string): this {
         this.allure.startStep(`Click on [${text}] button`);
         this.wd.click(this.buttonByText(text), this.wd.isSafari());
+        this.allure.endStep();
+        return this;
+    }
+
+    goToWidgetIFrame(): this {
+        this.allure.startStep('Switch to widget iFrame');
+
+        this.wd.switchToFrame(this.widgetIFrame());
+
         this.allure.endStep();
         return this;
     }

@@ -10,12 +10,18 @@ const { JiraAPI } = require("./helpers/jira");
 const jiraAPI = new JiraAPI();
 const { TestRailStatus } = require('./testData/testRailStatus.data');
 const os = require('os');
+const dateFormat = require('dateformat');
+const now = new Date();
 
-
+// by default Google Chrome browser is used
+process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
+const isLambdaTest = JSON.parse(process.env.LT_RUN || 0);
 const headlessMode = JSON.parse(process.env.HEADLESS || 0);
 const instances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
+let capabilities = [];
+let services = [];
 
 // =========
 // TestRail configuration
@@ -47,7 +53,6 @@ let chromeArgs = [
 // ============
 // Capabilities
 // ============
-let capabilities = [];
 
 let chromeCaps = {
     browserName: 'chrome',
@@ -116,20 +121,54 @@ let internetExplorerCaps = {
     },
 };
 
-const services = [];
-// by default Google Chrome browser is used
-process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
+// ======= LAMBDA TEST CAPS =======
+
+const commonCapsLambda = {
+    resolution : "1024x768",
+    build :  `MessengerEndToEnd - ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`,
+    console: true,
+}
+
+let chromeCapsLambda =  {
+    ...commonCapsLambda,
+    platform: "Windows 10",
+    browserName: "Chrome",
+    version: "85.0",
+};
+
+let safariCapsLambda = {
+    ...commonCapsLambda,
+    platformName: "MacOS Catalina",
+    browserName: "Safari",
+    browserVersion: "13.0",
+    "safari.popups" : true,
+    "safari.cookies" : true
+};
+
+let ieCapsLambda = {
+    ...commonCapsLambda,
+    platformName: "Windows 10",
+    browserName: "Internet Explorer",
+    browserVersion: "11.0",
+    // "ie.flash" : true,
+    "ie.popups": true,
+    "ie.compatibility": 11001
+};
+
+
+// ======= LAMBDA TEST CAPS END =======
+
 switch (process.env.BROWSER_NAME.toLowerCase()) {
     case 'chrome':
-        capabilities.push(chromeCaps);
+        capabilities.push(isLambdaTest ? chromeCapsLambda : chromeCaps);
         services.push('selenium-standalone');
         break;
     case 'safari':
-        capabilities.push(safari);
+        capabilities.push(isLambdaTest ? safariCapsLambda : safari);
         services.push('safaridriver', 'selenium-standalone');
         break;
     case 'ie':
-        capabilities.push(internetExplorerCaps);
+        capabilities.push(isLambdaTest ? ieCapsLambda : internetExplorerCaps);
         services.push(['selenium-standalone', {
             installArgs: {
                 drivers: {
@@ -162,6 +201,19 @@ if (headlessMode) {
     }
 }
 
+// ======= LAMBDA SERVICE =======
+if (isLambdaTest) {
+    services = [
+        ['lambdatest', {
+            tunnel: true,
+            lambdatestOpts: {
+                logFile: "tunnel.log"
+            },
+        }]
+    ];
+}
+
+// ======= LAMBDA END =======
 
 exports.config = {
     //
@@ -244,6 +296,7 @@ exports.config = {
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
     bail: 0,
+    sync: true,
     //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
@@ -390,6 +443,7 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     // beforeSession: function (config, capabilities, specs) {
+    //     capabilities.name=specs[0].split(/(\\|\/)/g).pop() || undefined;
     // },
     /**
      * Gets executed before test execution begins. At this point you can access to all global
@@ -416,10 +470,12 @@ exports.config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: function (test, context) {
-        const size = { width: 1366, height: 768 };
-        let { height, width } = browser.getWindowSize();
-        if (height !== size.height || width !== size.width) {
-            browser.setWindowSize(size.width, size.height);
+        if (!isLambdaTest) {
+            const size = { width: 1024, height: 768 };
+            let { height, width } = browser.getWindowSize();
+            if (height !== size.height || width !== size.width) {
+                browser.setWindowSize(size.width, size.height);
+            }
         }
         addEnvironment('Browser', browser.capabilities.browserName);
         addEnvironment('ENV', browser.config.baseUrl);
@@ -544,8 +600,11 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result, capabilities, specs) {
+        if (isLambdaTest) {
+            driver.execute("lambda-status=".concat(result==0?"passed":"failed"),undefined);
+        }
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
@@ -562,8 +621,12 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+    onComplete: async function(exitCode, config, capabilities, results) {
+        if (isLambdaTest) {
+            // wait for "Tunnel successfully stopped"
+            return new Promise(resolve => setTimeout(resolve, 10000));
+        }
+    },
     /**
     * Gets executed when a refresh happens.
     * @param {String} oldSessionId session ID of the old session
@@ -577,3 +640,21 @@ if (process.env.BROWSER_NAME.toLowerCase() === 'safari') {
     this.config.path = '/';
     this.config.port = 9515;
 }
+
+// ======= LAMBDA SERVICE =======
+if (isLambdaTest) {
+    delete this.config.bail;
+    delete this.config.runner;
+
+    this.config.user = process.env.LT_USERNAME;
+    this.config.key = process.env.LT_ACCESS_KEY;
+    this.config.logFile = './logDir/api.log';
+    this.config.exclude = [];
+    this.config.path = "/wd/hub";
+    this.config.hostname = "hub.lambdatest.com";
+    this.config.port = 80;
+    this.config.updateJob = false;
+    this.config.maxInstances = 10;
+}
+
+// ======= LAMBDA END =======
