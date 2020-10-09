@@ -17,10 +17,6 @@ export class MessengerComponent extends BasePage {
 
     /** locators **/
 
-    private chatWithResidentIFrame(): string {
-        return '[id*="zoid-rg-widget-messenger"] iframe';
-    }
-
     private icon360(): string {
         return '[title="Virtual Tour"] svg path[d*="M138.664"] ~ path[d*="M371.605"] ~  path[d*="M466.848"]';
     }
@@ -56,8 +52,7 @@ export class MessengerComponent extends BasePage {
         // due to animation
         this.wd.wait(2);
         this.wd.click(this.residentProfilePictureByIndex(number), this.wd.isSafari());
-        this.wd.closeFrame();
-        this.wd.switchToFrame(this.chatWithResidentIFrame());
+        this.gotoChatOrContactIFrame();
         this.allure.endStep();
         return this;
     }
@@ -88,8 +83,8 @@ export class MessengerComponent extends BasePage {
         this.clickOnButtonByText(messengerData.widgetButtonsCollapsed.showMoreButton);
         this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsExpanded.showLessButton));
         this.wd.waitForDisplayed(this.dots3Icon(), true);
-        this.wd.waitForDisplayed(this.envelopeIcon());
-        this.wd.wait(1);
+        // wait for animation
+        this.wd.wait(2);
         return this;
     }
 
@@ -97,8 +92,8 @@ export class MessengerComponent extends BasePage {
         this.clickOnButtonByText(messengerData.widgetButtonsExpanded.showLessButton);
         this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsCollapsed.showMoreButton));
         this.wd.waitForDisplayed(this.dots3Icon());
-        this.wd.waitForDisplayed(this.envelopeIcon(), false);
-        this.wd.wait(1);
+        // wait for animation
+        this.wd.wait(2);
         return this;
     }
 
@@ -197,6 +192,16 @@ export class MessengerComponent extends BasePage {
 
         this.allure.endStep();
         return this;
+    }
+
+    clickOnResidentIconsAndVerifyChatWithResidentForm(picturesCount = 3) {
+        for (let i = 0; i < picturesCount; i++) {
+            this.allure.startStep(`Click on ${i + 1} icon and verify that chat with resident form is displayed`);
+            this.clickOnResidentPicture(i + 1)
+                .chatWithResident.verifyChatWithResidentFormIsDisplayed()
+                .closeChatWithResidentForm();
+            this.allure.endStep();
+        }
     }
 }
 

@@ -22,6 +22,8 @@ End to end tests for Rentgrata Messenger application. (RentgrataWidget)
 - HEADLESS (boolean), e.g. ``HEADLESS=false`` - for running Google Chrome browser in the headless mode. ``false`` by default.
 - BROWSER_NAME (string), e.g. ``BROWSER_NAME=Safari`` - for running particular browser. `Chrome` by default. Options: ``Chrome``,``Safari``,``IE`` 
 - TESTRAIL_RUN (boolean), e.g. ``TESTRAIL_RUN=true`` -  for creating test run in the testRail. ``false`` by default.
+- LAMBDA_TEST_RUN (boolean), e.g. ``LAMBDA_TEST_RUN=true`` -  for running tests using lambdaTest service. ``false`` by default.
+- ENABLE_SLACK (boolean), e.g. ``ENABLE_SLACK=true`` -  for sending information to proper Slack channel. Required TESTRAIL_RUN=true and LAMBDA_TEST_RUN=true. ``false`` by default.
 
 6.Execute the following command ``npm run tests`` for run all test scenarios.
 

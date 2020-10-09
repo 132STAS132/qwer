@@ -12,16 +12,20 @@ const { TestRailStatus } = require('./testData/testRailStatus.data');
 const os = require('os');
 const dateFormat = require('dateformat');
 const now = new Date();
+const { IncomingWebhook } = require('@slack/webhook');
+const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK);
 
 // by default Google Chrome browser is used
 process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
-const isLambdaTest = JSON.parse(process.env.LT_RUN || 0);
+const isLambdaTest = JSON.parse(process.env.LAMBDA_TEST_RUN || 0);
+const isSlackEnabled = JSON.parse(process.env.ENABLE_SLACK || 0);
+const isTestRailRun = JSON.parse(process.env.TESTRAIL_RUN || 0);
 const headlessMode = JSON.parse(process.env.HEADLESS || 0);
 const instances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
-let capabilities = [];
-let services = [];
+const testRunName = `MessengerEndToEnd - ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`;
+let testRailRunUrl = null, capabilities = [], services = [];
 
 // =========
 // TestRail configuration
@@ -32,7 +36,7 @@ const testRailClient = module.exports.testRailClient = new TestRailHelper({
     testRailApi: 'index.php?/api/v2/',
     projectId: 1,
     suiteId: 1,
-    runName: `Automated tests results - ${process.env.BROWSER_NAME}`
+    runName: testRunName
 });
 
 // =========
@@ -125,7 +129,7 @@ let internetExplorerCaps = {
 
 const commonCapsLambda = {
     resolution : "1024x768",
-    build :  `MessengerEndToEnd - ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`,
+    build: testRunName,
     console: true,
 }
 
@@ -203,6 +207,8 @@ if (headlessMode) {
 
 // ======= LAMBDA SERVICE =======
 if (isLambdaTest) {
+    if (!process.env.LT_USERNAME) throw new Error(`LT_USERNAME is not provided. Please disable lambda test run or provide LT_USERNAME`);
+    if (!process.env.LT_ACCESS_KEY) throw new Error(`LT_ACCESS_KEY is not provided. Please disable lambda test run or provide LT_ACCESS_KEY`);
     services = [
         ['lambdatest', {
             tunnel: true,
@@ -213,7 +219,9 @@ if (isLambdaTest) {
     ];
 }
 
-// ======= LAMBDA END =======
+if (isSlackEnabled) {
+    if (!process.env.SLACK_WEBHOOK) throw new Error(`SLACK_WEBHOOK is not provided. Please disable Slack integration or provide SLACK_WEBHOOK`);
+}
 
 exports.config = {
     //
@@ -384,7 +392,7 @@ exports.config = {
             // if need to download
             // await exec('rm -rf artifacts/* && mkdir -p downloads && rm -rf downloads/*');
         }
-        if (JSON.parse(process.env.TESTRAIL_RUN || 0)) {
+        if (isTestRailRun) {
             /*=== Generate IDs for a new test run in the TestRail ===*/
             let path = [];
             let ids = [];
@@ -420,8 +428,9 @@ exports.config = {
                 let data = fs.readFileSync(path, 'utf-8');
                 data.match(/C\d+/g).map(el => ids.push(+el.slice(1)));
             });
-
-            process.env.TEST_RAIL_RUN_ID = await testRailClient.createRun(ids);
+            const response = await testRailClient.createRun(ids);
+            process.env.TEST_RAIL_RUN_ID = response.id;
+            testRailRunUrl = response.url;
         }
     },
     /**
@@ -602,6 +611,7 @@ exports.config = {
      */
     after: function (result, capabilities, specs) {
         if (isLambdaTest) {
+            // example from documentation
             driver.execute("lambda-status=".concat(result==0?"passed":"failed"),undefined);
         }
     },
@@ -622,6 +632,17 @@ exports.config = {
      * @param {<Object>} results object containing test results
      */
     onComplete: async function(exitCode, config, capabilities, results) {
+        if (isSlackEnabled && isTestRailRun && isLambdaTest) {
+            await webhook.send({
+                attachments: [
+                    {
+                        pretext: `*Test results for ${testRunName} *`,
+                        title: `TestRail: ${testRailRunUrl} \n LambdaTest: https://automation.lambdatest.com/timeline`,
+                    }
+                ]
+            })
+        }
+
         if (isLambdaTest) {
             // wait for "Tunnel successfully stopped"
             return new Promise(resolve => setTimeout(resolve, 10000));

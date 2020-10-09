@@ -24,6 +24,7 @@
     "wdio-lambdatest-service": "1.0.0"
   },
   "dependencies": {
+    "@slack/webhook": "^5.0.3",
     "@types/chai": "^4.2.12",
     "@types/faker": "^5.1.2",
     "@types/mocha": "^8.0.3",
