@@ -10,12 +10,22 @@ const { JiraAPI } = require("./helpers/jira");
 const jiraAPI = new JiraAPI();
 const { TestRailStatus } = require('./testData/testRailStatus.data');
 const os = require('os');
+const dateFormat = require('dateformat');
+const now = new Date();
+const { IncomingWebhook } = require('@slack/webhook');
+const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK);
 
-
+// by default Google Chrome browser is used
+process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
+const isLambdaTest = JSON.parse(process.env.LAMBDA_TEST_RUN || 0);
+const isSlackEnabled = JSON.parse(process.env.ENABLE_SLACK || 0);
+const isTestRailRun = JSON.parse(process.env.TESTRAIL_RUN || 0);
 const headlessMode = JSON.parse(process.env.HEADLESS || 0);
 const instances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
+const testRunName = `MessengerEndToEnd - ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`;
+let testRailRunUrl = null, capabilities = [], services = [];
 
 // =========
 // TestRail configuration
@@ -26,7 +36,7 @@ const testRailClient = module.exports.testRailClient = new TestRailHelper({
     testRailApi: 'index.php?/api/v2/',
     projectId: 1,
     suiteId: 1,
-    runName: `Automated tests results - ${process.env.BROWSER_NAME}`
+    runName: testRunName
 });
 
 // =========
@@ -47,7 +57,6 @@ let chromeArgs = [
 // ============
 // Capabilities
 // ============
-let capabilities = [];
 
 let chromeCaps = {
     browserName: 'chrome',
@@ -116,20 +125,54 @@ let internetExplorerCaps = {
     },
 };
 
-const services = [];
-// by default Google Chrome browser is used
-process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
+// ======= LAMBDA TEST CAPS =======
+
+const commonCapsLambda = {
+    resolution : "1024x768",
+    build: testRunName,
+    console: true,
+}
+
+let chromeCapsLambda =  {
+    ...commonCapsLambda,
+    platform: "Windows 10",
+    browserName: "Chrome",
+    version: "85.0",
+};
+
+let safariCapsLambda = {
+    ...commonCapsLambda,
+    platformName: "MacOS Catalina",
+    browserName: "Safari",
+    browserVersion: "13.0",
+    "safari.popups" : true,
+    "safari.cookies" : true
+};
+
+let ieCapsLambda = {
+    ...commonCapsLambda,
+    platformName: "Windows 10",
+    browserName: "Internet Explorer",
+    browserVersion: "11.0",
+    // "ie.flash" : true,
+    "ie.popups": true,
+    "ie.compatibility": 11001
+};
+
+
+// ======= LAMBDA TEST CAPS END =======
+
 switch (process.env.BROWSER_NAME.toLowerCase()) {
     case 'chrome':
-        capabilities.push(chromeCaps);
+        capabilities.push(isLambdaTest ? chromeCapsLambda : chromeCaps);
         services.push('selenium-standalone');
         break;
     case 'safari':
-        capabilities.push(safari);
+        capabilities.push(isLambdaTest ? safariCapsLambda : safari);
         services.push('safaridriver', 'selenium-standalone');
         break;
     case 'ie':
-        capabilities.push(internetExplorerCaps);
+        capabilities.push(isLambdaTest ? ieCapsLambda : internetExplorerCaps);
         services.push(['selenium-standalone', {
             installArgs: {
                 drivers: {
@@ -162,6 +205,23 @@ if (headlessMode) {
     }
 }
 
+// ======= LAMBDA SERVICE =======
+if (isLambdaTest) {
+    if (!process.env.LT_USERNAME) throw new Error(`LT_USERNAME is not provided. Please disable lambda test run or provide LT_USERNAME`);
+    if (!process.env.LT_ACCESS_KEY) throw new Error(`LT_ACCESS_KEY is not provided. Please disable lambda test run or provide LT_ACCESS_KEY`);
+    services = [
+        ['lambdatest', {
+            tunnel: true,
+            lambdatestOpts: {
+                logFile: "tunnel.log"
+            },
+        }]
+    ];
+}
+
+if (isSlackEnabled) {
+    if (!process.env.SLACK_WEBHOOK) throw new Error(`SLACK_WEBHOOK is not provided. Please disable Slack integration or provide SLACK_WEBHOOK`);
+}
 
 exports.config = {
     //
@@ -244,6 +304,7 @@ exports.config = {
     // If you only want to run your tests until a specific amount of tests have failed use
     // bail (default is 0 - don't bail, run all tests).
     bail: 0,
+    sync: true,
     //
     // Set a base URL in order to shorten url command calls. If your `url` parameter starts
     // with `/`, the base url gets prepended, not including the path portion of your baseUrl.
@@ -331,7 +392,7 @@ exports.config = {
             // if need to download
             // await exec('rm -rf artifacts/* && mkdir -p downloads && rm -rf downloads/*');
         }
-        if (JSON.parse(process.env.TESTRAIL_RUN || 0)) {
+        if (isTestRailRun) {
             /*=== Generate IDs for a new test run in the TestRail ===*/
             let path = [];
             let ids = [];
@@ -367,8 +428,9 @@ exports.config = {
                 let data = fs.readFileSync(path, 'utf-8');
                 data.match(/C\d+/g).map(el => ids.push(+el.slice(1)));
             });
-
-            process.env.TEST_RAIL_RUN_ID = await testRailClient.createRun(ids);
+            const response = await testRailClient.createRun(ids);
+            process.env.TEST_RAIL_RUN_ID = response.id;
+            testRailRunUrl = response.url;
         }
     },
     /**
@@ -390,6 +452,7 @@ exports.config = {
      * @param {Array.<String>} specs List of spec file paths that are to be run
      */
     // beforeSession: function (config, capabilities, specs) {
+    //     capabilities.name=specs[0].split(/(\\|\/)/g).pop() || undefined;
     // },
     /**
      * Gets executed before test execution begins. At this point you can access to all global
@@ -416,10 +479,12 @@ exports.config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: function (test, context) {
-        const size = { width: 1366, height: 768 };
-        let { height, width } = browser.getWindowSize();
-        if (height !== size.height || width !== size.width) {
-            browser.setWindowSize(size.width, size.height);
+        if (!isLambdaTest) {
+            const size = { width: 1024, height: 768 };
+            let { height, width } = browser.getWindowSize();
+            if (height !== size.height || width !== size.width) {
+                browser.setWindowSize(size.width, size.height);
+            }
         }
         addEnvironment('Browser', browser.capabilities.browserName);
         addEnvironment('ENV', browser.config.baseUrl);
@@ -544,8 +609,12 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {Array.<String>} specs List of spec file paths that ran
      */
-    // after: function (result, capabilities, specs) {
-    // },
+    after: function (result, capabilities, specs) {
+        if (isLambdaTest) {
+            // example from documentation
+            driver.execute("lambda-status=".concat(result==0?"passed":"failed"),undefined);
+        }
+    },
     /**
      * Gets executed right after terminating the webdriver session.
      * @param {Object} config wdio configuration object
@@ -562,8 +631,23 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    // onComplete: function(exitCode, config, capabilities, results) {
-    // },
+    onComplete: async function(exitCode, config, capabilities, results) {
+        if (isSlackEnabled && isTestRailRun && isLambdaTest) {
+            await webhook.send({
+                attachments: [
+                    {
+                        pretext: `*Test results for ${testRunName} *`,
+                        title: `TestRail: ${testRailRunUrl} \n LambdaTest: https://automation.lambdatest.com/timeline`,
+                    }
+                ]
+            })
+        }
+
+        if (isLambdaTest) {
+            // wait for "Tunnel successfully stopped"
+            return new Promise(resolve => setTimeout(resolve, 10000));
+        }
+    },
     /**
     * Gets executed when a refresh happens.
     * @param {String} oldSessionId session ID of the old session
@@ -577,3 +661,21 @@ if (process.env.BROWSER_NAME.toLowerCase() === 'safari') {
     this.config.path = '/';
     this.config.port = 9515;
 }
+
+// ======= LAMBDA SERVICE =======
+if (isLambdaTest) {
+    delete this.config.bail;
+    delete this.config.runner;
+
+    this.config.user = process.env.LT_USERNAME;
+    this.config.key = process.env.LT_ACCESS_KEY;
+    this.config.logFile = './logDir/api.log';
+    this.config.exclude = [];
+    this.config.path = "/wd/hub";
+    this.config.hostname = "hub.lambdatest.com";
+    this.config.port = 80;
+    this.config.updateJob = false;
+    this.config.maxInstances = 10;
+}
+
+// ======= LAMBDA END =======

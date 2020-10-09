@@ -91,26 +91,17 @@ export class TestRailHelper {
   async createRun(ids: [number] | []): Promise<string> {
     const url = `add_run/${this.projectId}`;
 
-    const today = new Date();
-    let dd: string | number = today.getDate();
-    let mm: string | number = today.getMonth() + 1;
-    const yyyy: number = today.getFullYear();
-
-    if (dd < 10) dd = '0' + dd;
-    if (mm < 10) mm = '0' + mm;
-
-    const date = ` - ${dd}.${mm}.${yyyy}`;
-
     const data: CreateRunRequestData = {
       suite_id: this.suiteId,
-      name: this.runName + date,
+      name: this.runName,
       assignedto_id: '',
       include_all: false,
       case_ids: ids,
     };
 
     const response = await this.apiClient().post(url, data);
-    return response.data.id as string;
+
+    return response.data;
   }
 
   async updateRun(testInfo: UpdateRequest, image = null): Promise<void> {

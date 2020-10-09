@@ -1,24 +1,21 @@
-import { AskQuestionComponent } from "./askQuestion.component";
+import { ChatWithResidentComponent } from "./chatWithResident.component";
 import { ContactComponent } from "./contact.component";
 import { BasePage } from "../base.page";
 import { widgetButtonsExpandedInterface, widgetButtonsCollapsedInterface } from "../../interfaces/widget.interface";
 import { messengerData } from "../../testData/messenger.data";
+import { widgetIconsType } from "../../interfaces/widget.interface";
 
 export class MessengerComponent extends BasePage {
-    readonly askQuestion: AskQuestionComponent;
+    readonly chatWithResident: ChatWithResidentComponent;
     readonly contactForm: ContactComponent;
 
     constructor() {
         super();
-        this.askQuestion = new AskQuestionComponent();
+        this.chatWithResident = new ChatWithResidentComponent();
         this.contactForm = new ContactComponent();
     }
 
     /** locators **/
-
-    private widgetIFrame(): string {
-        return '[id*=zoid-rg-widget-feature-icons] .zoid-component-frame.zoid-visible';
-    }
 
     private icon360(): string {
         return '[title="Virtual Tour"] svg path[d*="M138.664"] ~ path[d*="M371.605"] ~  path[d*="M466.848"]';
@@ -36,40 +33,58 @@ export class MessengerComponent extends BasePage {
         return '.trigger-cirlces-layout  [alt="Resident profile picture."]';
     }
 
+    private residentProfilePictureByIndex(index: number): string {
+        return `.faceslayout.expanded span:nth-of-type(${index})`;
+    }
+
     private dots3Icon(): string {
         return '[title="More"] #more-icon_svg__flatOnLight-reg'
     }
 
-    private contactPropertyForm(): string {
-        return 'section.contact-property-container';
-    }
-
-    private chatWithResidentFiltersSection(): string {
-        return '#rg-widget-messenger .residents-filter-strap';
-    }
-
-
     /** actions **/
 
-    goToWidgetIFrame(): this {
-        this.allure.startStep('Switch to widget iFrame');
+    clickOnWidgetButton(button: string) {
+        this.clickOnButtonByText(button);
+    }
 
-        this.wd.switchToFrame(this.widgetIFrame());
-
+    clickOnResidentPicture(number = 1): this {
+        this.allure.startStep('Click on resident picture and switch to chat form iFrame');
+        // due to animation
+        this.wd.wait(2);
+        this.wd.click(this.residentProfilePictureByIndex(number), this.wd.isSafari());
+        this.gotoChatOrContactIFrame();
         this.allure.endStep();
         return this;
     }
 
-    clickOnWidgetButton(button: string) {
-        this.clickOnButtonByText(button);
+    private getIconLocator(icon: widgetIconsType) {
+        const icons = new Map([
+            ['360', this.icon360()],
+            ['envelope', this.envelopeIcon()],
+            ['calendar', this.calendarIcon()],
+        ]);
+        return icons.get(icon.toLowerCase().trim());
+    }
+
+    clickOnIcon(icon: widgetIconsType, waitExpectedForm = true): this {
+        this.allure.startStep(`Click on [${icon}] icon`);
+        this.wd.click(this.getIconLocator(icon));
+        if (waitExpectedForm) {
+            try {
+                this.wd.waitForDisplayed(this.contactForm.contactPropertyForm())
+            } catch (e) {}
+        }
+
+        this.allure.endStep();
+        return this;
     }
 
     clickOnShowMoreButton(): this {
         this.clickOnButtonByText(messengerData.widgetButtonsCollapsed.showMoreButton);
         this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsExpanded.showLessButton));
         this.wd.waitForDisplayed(this.dots3Icon(), true);
-        this.wd.waitForDisplayed(this.envelopeIcon());
-        this.wd.wait(1);
+        // wait for animation
+        this.wd.wait(2);
         return this;
     }
 
@@ -77,14 +92,14 @@ export class MessengerComponent extends BasePage {
         this.clickOnButtonByText(messengerData.widgetButtonsExpanded.showLessButton);
         this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsCollapsed.showMoreButton));
         this.wd.waitForDisplayed(this.dots3Icon());
-        this.wd.waitForDisplayed(this.envelopeIcon(), false);
-        this.wd.wait(1);
+        // wait for animation
+        this.wd.wait(2);
         return this;
     }
 
     /** verifications **/
 
-    private verifyEnvelopeIcon(expected: boolean): this {
+    verifyEnvelopeIcon(expected: boolean): this {
         const elementTitle = 'Envelope icon';
         this.allure.startStep(this.verifyAllureMessage(elementTitle));
 
@@ -97,7 +112,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    private verifyIcon360(expected: boolean): this {
+    verifyIcon360(expected: boolean): this {
         const elementTitle = '360 icon';
         this.allure.startStep(this.verifyAllureMessage(elementTitle));
 
@@ -110,7 +125,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    private verifyCalendarIcon(expected: boolean): this {
+    verifyCalendarIcon(expected: boolean): this {
         const elementTitle = 'Calendar icon';
         this.allure.startStep(this.verifyAllureMessage(elementTitle));
 
@@ -128,7 +143,7 @@ export class MessengerComponent extends BasePage {
 
         this.verifyEnvelopeIcon(expected)
             .verifyIcon360(expected)
-            // .verifyCalendarIcon(expected); todo check how it works from admin side
+            .verifyCalendarIcon(expected);
 
         this.allure.endStep();
         return this;
@@ -179,32 +194,14 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    verifyContactPropertyFormIsDisplayed(expected = true) {
-        const element = 'Contact property form'
-        this.allure.startStep(this.verifyAllureMessage(element));
-        // waiting for animation
-        try {
-            this.wd.waitForDisplayed(this.contactPropertyForm(), false,2000);
-        } catch (e) {}
-        this.expect(
-            this.wd.isElementVisible(this.contactPropertyForm()),
-            this.displayedErrorMessage(element, expected)
-        ).to.be.equal(expected);
-        this.allure.endStep();
-    }
-
-    verifyChatWithResidentFormIsDisplayed(expected = true) {
-        const element = 'Chat with resident form'
-        this.allure.startStep(this.verifyAllureMessage(element));
-        // waiting for animation
-        try {
-            this.wd.waitForDisplayed(this.chatWithResidentFiltersSection(), false,2000);
-        } catch (e) {}
-        this.expect(
-            this.wd.isElementVisible(this.chatWithResidentFiltersSection()),
-            this.displayedErrorMessage(element, expected)
-        ).to.be.equal(expected);
-        this.allure.endStep();
+    clickOnResidentIconsAndVerifyChatWithResidentForm(picturesCount = 3) {
+        for (let i = 0; i < picturesCount; i++) {
+            this.allure.startStep(`Click on ${i + 1} icon and verify that chat with resident form is displayed`);
+            this.clickOnResidentPicture(i + 1)
+                .chatWithResident.verifyChatWithResidentFormIsDisplayed()
+                .closeChatWithResidentForm();
+            this.allure.endStep();
+        }
     }
 }
 

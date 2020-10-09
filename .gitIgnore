@@ -3,3 +3,6 @@ artifacts
 .env
 .idea
 downloads
+.lambdatest
+lambda_api.log
+tunnel.log

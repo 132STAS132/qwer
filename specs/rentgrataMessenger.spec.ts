@@ -1,18 +1,29 @@
 import { messenger } from '../pages/messengerWidgetComponents/messenger.component';
 import { messengerData } from '../testData/messenger.data';
-import { allureHelper } from '../helpers/allure';
-import { bugs } from "../existingBugs/bugs";
 
 const { widgetButtonsCollapsed, widgetButtonsExpanded } = messengerData;
 
 describe('Rentgrata Messenger', () => {
     it('[C437] Check content', () => {
-        // todo update verifyWidgetIcons method. 1 method skipped. Waiting for answer.
        messenger
            .goToWidgetIFrame()
            .verifyWidgetIcons()
            .verifyCountOfResidentProfilePictures()
            .verifyWidgetButtons(widgetButtonsExpanded);
+    });
+
+    it('[C438] Click on resident icons', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentIconsAndVerifyChatWithResidentForm();
+    });
+
+    it('[C441] Collapse form', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.closeChatWithResidentForm()
+            .verifyChatWithResidentFormIsDisplayed(false)
     });
 
     it('[C527] Click on Show Less/More', () => {
@@ -32,18 +43,20 @@ describe('Rentgrata Messenger', () => {
     });
 
     it('[C524] Click on Contact Property', () => {
-        allureHelper.addIssueToAllure(bugs.messenger.clickOnButtons);
         messenger
             .goToWidgetIFrame()
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
-            .verifyContactPropertyFormIsDisplayed();
+            .gotoChatOrContactIFrame()
+            .contactForm.verifyContactPropertyFormIsDisplayed();
+        messenger.chatWithResident.verifyChatWithResidentFormIsDisplayed(false);
     });
 
     it('[C702] Click on Chat with a Resident', () => {
-        allureHelper.addIssueToAllure(bugs.messenger.clickOnButtons);
         messenger
             .goToWidgetIFrame()
             .clickOnButtonByText(widgetButtonsCollapsed.chatButton)
-            .verifyChatWithResidentFormIsDisplayed();
+            .gotoChatOrContactIFrame()
+            .chatWithResident.verifyChatWithResidentFormIsDisplayed();
+        messenger.contactForm.verifyContactPropertyFormIsDisplayed(false);
     });
 });
