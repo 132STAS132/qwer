@@ -246,6 +246,7 @@ exports.config = {
     ],
     suites: {
         rentgrataMessenger: ['./specs/rentgrataMessenger.spec.ts'],
+        sendMessage: ['./specs/RentgrataMessenger/sendMessage.spec.ts'],
     },
     // Patterns to exclude.
     exclude: [
