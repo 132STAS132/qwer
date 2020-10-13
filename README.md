@@ -41,6 +41,8 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``sendMessage``
 
+- ``sendMessageViaSingIn``
+
 ### Installing allure commandline:
 
 Allure requires Java 8 or higher

@@ -108,7 +108,7 @@ export class WDIO {
     return $$(selector);
   }
 
-  isElementVisible(selector: string, timeout = 1000): boolean {
+  isElementVisible(selector: string): boolean {
     return $(selector).isDisplayed();
   }
 
@@ -169,9 +169,12 @@ export class WDIO {
     browser.switchWindow(windowTitle);
   }
 
-  switchToNewLastWindow() {
-    const windows = browser.getWindowHandles();
-    browser.switchToWindow(windows[windows.length - 1]);
+  switchToSecondWindow() {
+    const actualWindow = browser.getWindowHandle();
+    let allWindows = browser.getWindowHandles();
+    const index = allWindows.indexOf(actualWindow);
+    allWindows.splice(index, 1)
+    browser.switchToWindow(allWindows[0]);
   }
 
   waitForVisible(selector: string, timeout = this.defaultWaitTime) {
@@ -183,7 +186,7 @@ export class WDIO {
           return false;
         }
       },
-      { timeout, timeoutMsg: `${selector} still not displayed` },
+      { timeout, timeoutMsg: `${selector} still not displayed after ${timeout}ms` },
     );
   }
 

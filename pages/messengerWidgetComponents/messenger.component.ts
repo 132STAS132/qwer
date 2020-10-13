@@ -48,9 +48,15 @@ export class MessengerComponent extends BasePage {
     }
 
     /** actions **/
-
-    clickOnWidgetButton(button: string) {
-        this.clickOnButtonByText(button);
+    private getIconLocator(icon: string) {
+        const icons = new Map([
+            [messengerData.iconsUnderResidents.virtualTour, this.icon360()],
+            [messengerData.iconsUnderResidents.contactProperty, this.envelopeIcon()],
+            [messengerData.iconsUnderResidents.scheduleATour, this.calendarIcon()],
+        ]);
+        const locator = icons.get(icon);
+        if (!locator) throw new Error(`${icon} icon is not supported. Please provide one of [${Array.from(icons.keys()).join(', ')}]`);
+        return locator;
     }
 
     clickOnResidentPicture(number = 1): this {
@@ -63,16 +69,6 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    private getIconLocator(icon: string) {
-        const icons = new Map([
-            [messengerData.iconsUnderResidents.virtualTour, this.icon360()],
-            [messengerData.iconsUnderResidents.contactProperty, this.envelopeIcon()],
-            [messengerData.iconsUnderResidents.scheduleATour, this.calendarIcon()],
-        ]);
-        const locator = icons.get(icon);
-        if (!locator) throw new Error(`${icon} icon is not supported. Please provide one of [${Array.from(icons.keys()).join(', ')}]`);
-        return locator;
-    }
 
     clickOnIcon(icon: string): this {
         this.allure.startStep(`Click on [${icon}] icon`);

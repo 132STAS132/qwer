@@ -23,7 +23,7 @@ const isLambdaTest = JSON.parse(process.env.LAMBDA_TEST_RUN || 0);
 const isSlackEnabled = JSON.parse(process.env.ENABLE_SLACK || 0);
 const isTestRailRun = JSON.parse(process.env.TESTRAIL_RUN || 0);
 const headlessMode = JSON.parse(process.env.HEADLESS || 0);
-const instances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
+const maxInstances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
 const testRunName = `MessengerEndToEnd - ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`;
 let testRailRunUrl = null, capabilities = [], services = [];
 
@@ -60,7 +60,6 @@ let chromeArgs = [
 
 let chromeCaps = {
     browserName: 'chrome',
-    maxInstances: instances,
     'goog:chromeOptions': {
         args: chromeArgs,
         prefs: {
@@ -77,7 +76,7 @@ let safari = {
     //      * safaridriver can only handle 1 instance unfortunately
     //      * https://developer.apple.com/documentation/webkit/about_webdriver_for_safari
     //      */
-    maxInstances: 1,
+    // maxInstances: 1,
 
     // // port to find safaridriver
     // port: 4447, // if you want to specify the port. Default is 4444
@@ -111,7 +110,7 @@ let internetExplorerCaps = {
     // maxInstances can get overwritten per capability. So if you have an in-house Selenium
     // grid with only 5 IE instances available you can make sure that not more than
     // 5 instances get started at a time.
-    maxInstances: instances,
+    // maxInstances: instances,
     browserName: 'internet explorer',
     'se:ieOptions': {
         acceptUntrustedCertificates: true,
@@ -247,6 +246,7 @@ exports.config = {
     suites: {
         rentgrataMessenger: ['./specs/rentgrataMessenger.spec.ts'],
         sendMessage: ['./specs/RentgrataMessenger/sendMessage.spec.ts'],
+        sendMessageViaSingIn: ['./specs/RentgrataMessenger/sendMessageViaSingIn.spec.ts'],
     },
     // Patterns to exclude.
     exclude: [
@@ -268,7 +268,7 @@ exports.config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 1,
+    maxInstances,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -676,6 +676,7 @@ if (isLambdaTest) {
     this.config.hostname = "hub.lambdatest.com";
     this.config.port = 80;
     this.config.updateJob = false;
+    // could be updated after getting stable cycle
     this.config.maxInstances = 10;
 }
 

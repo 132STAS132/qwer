@@ -12,8 +12,6 @@ export interface widgetButtonsExpandedInterface extends widgetButtonsInterface {
     showLessButton?: string
 }
 
-export type sendMessageFieldsType = "Email" | "Last name" | "First name";
-
 export interface sendMessageFormInterface {
     // Send Message
     title: string,
@@ -23,7 +21,16 @@ export interface sendMessageFormInterface {
     errorEmptyMessage: string,
     // You must enter your first name.
     errorMustEnterFirstName: string,
-    firstNameField: sendMessageFieldsType
+    errorMustEnterLastName: string,
+    errorLasNameCanNotBeBlank: string,
+    errorFirstNameCanNotBeBlank: string,
+    errorMustEnterEmail: string,
+    errorEmailInvalid: string,
+    errorEmailExists: string,
+
+    firstNameField: "First name"
+    lastNameField: "Last name"
+    emailField: "Email"
 }
 
 export interface widgetIconsInterface {

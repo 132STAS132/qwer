@@ -1,5 +1,5 @@
 import { BasePage } from "../base.page";
-import { sendMessageFieldsType } from "../../interfaces/widget.interface";
+import { SignInPage } from "../signIn.page";
 
 export class SendMessageComponent extends BasePage {
     /** locators **/
@@ -37,38 +37,69 @@ export class SendMessageComponent extends BasePage {
     }
 
     private errorMessageByLabel(label: string): string {
-        return `//p[text()="${label}"]//ancestor::div[contains(@class, "has-error")]//*[contains(@id,"-error-msg")]`;
+        return `//p[text()="${label}"]//ancestor::div[contains(@class, "has-")]//*[contains(@id,"-error-msg")]`;
     }
 
+    private loadSpinner(): string {
+        return '.ant-spin-spinning';
+    }
+
+    private subInfoVerifyEmailForm(): string {
+        return 'span.verification-code-subInfo';
+    }
+
+    private signInLink(): string {
+        return '.log-in-link';
+    }
 
     /** methods **/
 
     clickOnContinueButton(button = 'Continue'): this {
-        this.allure.startStep(`Click on [Continue] button`);
         this.clickOnButtonByText(button);
-        this.allure.endStep();
         return this;
     }
 
     fillFirstNameInput(value: string): this {
         this.allure.startStep(`Fill first name input with "${value}" value`);
-        this.wd.setValue(this.firstNameInput(), value);
+        this.wd.clearAndFill(this.firstNameInput(), value);
         this.allure.endStep();
         return this;
     }
 
     fillLastNameInput(value: string): this {
         this.allure.startStep(`Fill last name input with "${value}" value`);
-        this.wd.setValue(this.lastNameInput(), value);
+        this.wd.clearAndFill(this.lastNameInput(), value);
         this.allure.endStep();
         return this;
     }
 
     fillEmailInput(value: string): this {
         this.allure.startStep(`Fill email input with "${value}" value`);
-        this.wd.setValue(this.emailInput(), value);
+        this.wd.clearAndFill(this.emailInput(), value);
         this.allure.endStep();
         return this;
+    }
+
+    waitForLoadSpinnerToDisappear(): this {
+        this.allure.startStep(`Wait for load spinner to disappear`);
+        // due to animation
+        this.wd.wait(1);
+        try {
+            this.wd.waitForDisplayed(this.loadSpinner(), true, 10000);
+        } catch (e) {}
+        // due to animation
+        this.wd.wait(1);
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnSignInLink(): SignInPage {
+        this.allure.startStep('Click on SignIn link');
+        this.wd.click(this.signInLink());
+        this.wd.wait(1);
+        this.wd.switchToSecondWindow();
+        this.allure.endStep();
+        return new SignInPage();
     }
 
     /** verifications **/
@@ -81,12 +112,12 @@ export class SendMessageComponent extends BasePage {
         ).to.be.equal(text);
     }
 
-    verifyErrorMessageUnderField(field: sendMessageFieldsType, expectedError: string, shouldDisplayed = true): this {
-        this.allure.startStep(`Verify [${expectedError}] error message is ${shouldDisplayed ? 'displayed' : 'not displayed'} under ${field}`);
-        if (!shouldDisplayed) {
+    verifyErrorMessageUnderField(field: "Email" | "Last name" | "First name", expectedError: string, shouldBeDisplayed = true): this {
+        this.allure.startStep(`Verify [${expectedError}] error message is ${shouldBeDisplayed ? 'displayed' : 'not displayed'} under ${field}`);
+        if (!shouldBeDisplayed) {
             this.expect(
                 this.wd.isElementVisible(this.errorMessageByLabel(field)),
-                `${expectedError} error should not be displayed`
+                `Element with error message should not be displayed`
             ).to.be.false;
         } else {
             this.expect(
@@ -104,6 +135,23 @@ export class SendMessageComponent extends BasePage {
             this.wd.getText(this.sendMessageFormTitle()),
             'Incorrect title of send message form is displayed'
         ).to.be.equal(title);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyMessageSentToAndSubInfo(expectedText: string): this {
+        this.allure.startStep(`Verify message should be ${expectedText}`);
+        const text = this.wd.elements(this.subInfoVerifyEmailForm())
+            .map(el => {
+                if (el.isDisplayed()) {
+                    return el.getText()
+                }
+            })
+            .join(' ').trim();
+        this.expect(
+            text,
+            'Incorrect text is displayed'
+        ).to.be.equal(expectedText);
         this.allure.endStep();
         return this;
     }
