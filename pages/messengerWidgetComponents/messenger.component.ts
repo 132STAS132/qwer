@@ -1,9 +1,11 @@
 import { ChatWithResidentComponent } from "./chatWithResident.component";
 import { ContactComponent } from "./contact.component";
 import { BasePage } from "../base.page";
-import { widgetButtonsExpandedInterface, widgetButtonsCollapsedInterface } from "../../interfaces/widget.interface";
+import {
+    widgetButtonsExpandedInterface,
+    widgetButtonsCollapsedInterface
+} from "../../interfaces/widget.interface";
 import { messengerData } from "../../testData/messenger.data";
-import { widgetIconsType } from "../../interfaces/widget.interface";
 
 export class MessengerComponent extends BasePage {
     readonly chatWithResident: ChatWithResidentComponent;
@@ -18,7 +20,7 @@ export class MessengerComponent extends BasePage {
     /** locators **/
 
     private icon360(): string {
-        return '[title="Virtual Tour"] svg path[d*="M138.664"] ~ path[d*="M371.605"] ~  path[d*="M466.848"]';
+        return '[title="Virtual Tour"]';
     }
 
     private calendarIcon(): string {
@@ -26,7 +28,7 @@ export class MessengerComponent extends BasePage {
     }
 
     private envelopeIcon(): string {
-        return '[title="Contact Property"] #contact-property_svg__flatOnLight-reg';
+        return '[title="Contact Property"]:not(button)';
     }
 
     private residentProfilePictures(): string {
@@ -41,10 +43,20 @@ export class MessengerComponent extends BasePage {
         return '[title="More"] #more-icon_svg__flatOnLight-reg'
     }
 
-    /** actions **/
+    private tooltip(): string {
+        return '#rg-widget-feature-icon-title';
+    }
 
-    clickOnWidgetButton(button: string) {
-        this.clickOnButtonByText(button);
+    /** actions **/
+    private getIconLocator(icon: string) {
+        const icons = new Map([
+            [messengerData.iconsUnderResidents.virtualTour, this.icon360()],
+            [messengerData.iconsUnderResidents.contactProperty, this.envelopeIcon()],
+            [messengerData.iconsUnderResidents.scheduleATour, this.calendarIcon()],
+        ]);
+        const locator = icons.get(icon);
+        if (!locator) throw new Error(`${icon} icon is not supported. Please provide one of [${Array.from(icons.keys()).join(', ')}]`);
+        return locator;
     }
 
     clickOnResidentPicture(number = 1): this {
@@ -57,24 +69,29 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    private getIconLocator(icon: widgetIconsType) {
-        const icons = new Map([
-            ['360', this.icon360()],
-            ['envelope', this.envelopeIcon()],
-            ['calendar', this.calendarIcon()],
-        ]);
-        return icons.get(icon.toLowerCase().trim());
+
+    clickOnIcon(icon: string): this {
+        this.allure.startStep(`Click on [${icon}] icon`);
+        this.wd.click(this.getIconLocator(icon), this.wd.isSafari());
+        this.gotoChatOrContactIFrame();
+        this.allure.endStep();
+        return this;
     }
 
-    clickOnIcon(icon: widgetIconsType, waitExpectedForm = true): this {
+    moveToIcon(icon: string, closeIframe = true): this {
         this.allure.startStep(`Click on [${icon}] icon`);
-        this.wd.click(this.getIconLocator(icon));
-        if (waitExpectedForm) {
-            try {
-                this.wd.waitForDisplayed(this.contactForm.contactPropertyForm())
-            } catch (e) {}
-        }
-
+        // due to animation
+        this.wd.wait(2);
+        let tooltipIsExisting = false;
+        browser.waitUntil(() => {
+            this.wd.moveToElement(this.getIconLocator(icon));
+            this.wd.closeFrame();
+            tooltipIsExisting = this.wd.isElementExisting(this.tooltip(), 300);
+            this.wd.pause(500);
+            this.goToWidgetIFrame();
+            return tooltipIsExisting;
+        }, { timeoutMsg: 'Tooltip element still not existing' });
+        if (closeIframe) this.wd.closeFrame();
         this.allure.endStep();
         return this;
     }
@@ -95,6 +112,17 @@ export class MessengerComponent extends BasePage {
         // wait for animation
         this.wd.wait(2);
         return this;
+    }
+
+    clickOnResidentIconsAndVerifyChatWithResidentForm(picturesCount = 3) {
+        for (let i = 0; i < picturesCount; i++) {
+            this.allure.startStep(`Click on ${i + 1} icon and verify that chat with resident form is displayed`);
+            this.clickOnResidentPicture(i + 1)
+                .chatWithResident.verifyChatWithResidentFormIsDisplayed()
+                .clickOnCloseIcon()
+                .goToWidgetIFrame();
+            this.allure.endStep();
+        }
     }
 
     /** verifications **/
@@ -194,14 +222,14 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    clickOnResidentIconsAndVerifyChatWithResidentForm(picturesCount = 3) {
-        for (let i = 0; i < picturesCount; i++) {
-            this.allure.startStep(`Click on ${i + 1} icon and verify that chat with resident form is displayed`);
-            this.clickOnResidentPicture(i + 1)
-                .chatWithResident.verifyChatWithResidentFormIsDisplayed()
-                .closeChatWithResidentForm();
-            this.allure.endStep();
-        }
+    verifyToolTipText(text: string) {
+        // Safari browser does not support moveTo action. was added workaround for getting text after hovering to element
+        this.allure.startStep(`Verify tooltip text is [${text}]`);
+        this.expect(
+            this.wd.getText(this.tooltip(), !this.wd.isSafari()),
+            `Tooltip with [${text}] text should be displayed`
+        ).to.be.equal(text);
+        this.allure.endStep();
     }
 }
 

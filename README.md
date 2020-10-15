@@ -39,6 +39,10 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``rentgrataMessenger``
 
+- ``sendMessage``
+
+- ``sendMessageViaSingIn``
+
 ### Installing allure commandline:
 
 Allure requires Java 8 or higher

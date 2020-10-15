@@ -14,7 +14,7 @@ export class ContactComponent extends BasePage {
         this.allure.startStep(this.verifyAllureMessage(element));
         // waiting for animation
         try {
-            this.wd.waitForDisplayed(this.contactPropertyForm(), false,2000);
+            this.wd.waitForDisplayed(this.contactPropertyForm(), !expected,2000);
         } catch (e) {}
         this.expect(
             this.wd.isElementVisible(this.contactPropertyForm()),

@@ -108,7 +108,7 @@ export class WDIO {
     return $$(selector);
   }
 
-  isElementVisible(selector: string, timeout = 1000): boolean {
+  isElementVisible(selector: string): boolean {
     return $(selector).isDisplayed();
   }
 
@@ -141,6 +141,10 @@ export class WDIO {
     browser.execute(`arguments[0].click()`, $(selector));
   }
 
+  focusElement(selector: string) {
+    browser.execute(`arguments[0].focus()`, $(selector));
+  }
+
   getElementAttributeViaQuerySelector(selector: string, attribute: string): string {
     return browser.execute(function (selector, attribute) {
       const element = selector.match(/\/|\(/g)
@@ -165,9 +169,12 @@ export class WDIO {
     browser.switchWindow(windowTitle);
   }
 
-  switchToNewLastWindow() {
-    const windows = browser.getWindowHandles();
-    browser.switchToWindow(windows[windows.length - 1]);
+  switchToSecondWindow() {
+    const actualWindow = browser.getWindowHandle();
+    let allWindows = browser.getWindowHandles();
+    const index = allWindows.indexOf(actualWindow);
+    allWindows.splice(index, 1)
+    browser.switchToWindow(allWindows[0]);
   }
 
   waitForVisible(selector: string, timeout = this.defaultWaitTime) {
@@ -179,7 +186,7 @@ export class WDIO {
           return false;
         }
       },
-      { timeout, timeoutMsg: `${selector} still not displayed` },
+      { timeout, timeoutMsg: `${selector} still not displayed after ${timeout}ms` },
     );
   }
 
@@ -200,7 +207,7 @@ export class WDIO {
       }
       return;
     } else {
-      return browser.waitUntil(() => $(selector).isClickable(), { timeout });
+      return browser.waitUntil(() => $(selector).isClickable(), { timeout, timeoutMsg: `element with ${selector} selector still not displayed after ${timeout}` });
     }
   }
 
@@ -351,13 +358,15 @@ export class WDIO {
     return browser.execute(`arguments[0].value`, $(selector));
   }
 
-  setValue(selector: string, value: string, timeout = this.defaultWaitTime, ieCheck = true) {
-    if (this.isIE() && ieCheck) {
+  setValue(selector: string, value: string, clickBeforeSetValue = true, timeout = this.defaultWaitTime) {
+    if (this.isIE()) {
       this.clearAndFill(selector, value);
       return;
     }
     this.waitForEnabled(selector, timeout);
-    $(selector).click();
+    if (clickBeforeSetValue) {
+      $(selector).click();
+    }
     $(selector).setValue(value);
   }
 
@@ -382,8 +391,11 @@ export class WDIO {
     return $(selector).getLocation();
   }
 
-  getText(selector: string, timeout = this.defaultWaitTime) {
-    this.waitForVisible(selector, timeout);
+  getText(selector: string, waitForDisplayed = true, timeout = this.defaultWaitTime) {
+    // safari moveTo issue https://github.com/webdriverio/webdriverio/issues/4322
+    if (waitForDisplayed) {
+      this.waitForVisible(selector, timeout);
+    }
     // IE specific behaviour
     let text = $(selector).getText();
 
@@ -436,6 +448,8 @@ export class WDIO {
   }
 
   click(selector: string, customClick = false, timeout = this.defaultWaitTime) {
+    // safari click issue https://stackoverflow.com/questions/59401824/safari13-webdriverio-click-issue
+    if (this.isSafari()) customClick = true;
     this.waitForClickable(selector, timeout);
     if (!customClick) {
       this.waitForVisible(selector, timeout);
@@ -624,6 +638,7 @@ export class WDIO {
   }
 
   moveToElement(selector: string, timeout = this.defaultWaitTime) {
+    // safari moveTo issue https://github.com/webdriverio/webdriverio/issues/4322
     this.waitForVisible(selector, timeout);
     this.waitForEnabled(selector, timeout);
     return $(selector).moveTo();
