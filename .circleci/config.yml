@@ -9,7 +9,7 @@ workflows:
 jobs:
   run-chrome-tests:
     docker:
-      - image: markhobson/node-chrome
+      - image: atlassianlabs/docker-node-jdk-chrome-firefox
     resource_class: xlarge
     steps:
       - checkout
