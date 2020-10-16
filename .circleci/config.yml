@@ -21,8 +21,8 @@ jobs:
           path: ~/project/artifacts
 version: 2.0
 workflows:
+  context: messenger-end-to-end
   run-all-tests:
-    context: messenger-end-to-end
     jobs:
       - run-chrome-tests
   version: 2
