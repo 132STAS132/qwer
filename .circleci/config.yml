@@ -14,11 +14,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: "Check context env"
-          command: |
-            echo $TEST_VAR1
-            echo $TEST_VAR2
-      - run:
           command: |
             npm install
             npm i cross-env -g
@@ -28,8 +23,7 @@ jobs:
             BROWSER_NAME: Chrome
             TESTRAIL_RUN: true
             ENABLE_SLACK: false
-            TEST_VAR1: $TEST_VAR1
-            ## LAMBDA_TEST_RUN: true
+            LAMBDA_TEST_RUN: true
             ## JIRA_BASE_URL: $JIRA_BASE_URL
             ## JIRA_TOKEN: $JIRA_TOKEN
             ## JIRA_USER: $JIRA_USER
