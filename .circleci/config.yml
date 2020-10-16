@@ -9,7 +9,7 @@ workflows:
 jobs:
   run-chrome-tests:
     docker:
-      - image: atlassianlabs/docker-node-jdk-chrome-firefox
+      - image: markhobson/node-chrome
     resource_class: xlarge
     steps:
       - checkout
@@ -21,18 +21,6 @@ jobs:
             npm run tests
           environment:
             BROWSER_NAME: Chrome
-            TESTRAIL_RUN: true
-            ENABLE_SLACK: false
-            LAMBDA_TEST_RUN: true
-            ## JIRA_BASE_URL: $JIRA_BASE_URL
-            ## JIRA_TOKEN: $JIRA_TOKEN
-            ## JIRA_USER: $JIRA_USER
-            ## LT_ACCESS_KEY: $LT_ACCESS_KEY
-            ## LT_USERNAME: $LT_USERNAME
-            ## SLACK_WEBHOOK: $SLACK_WEBHOOK
-            ## TESTRAIL_BASE_URL: $TESTRAIL_BASE_URL
-            ## TESTRAIL_PASSWORD: $TESTRAIL_PASSWORD
-            ## TESTRAIL_USER: $TESTRAIL_USER
           name: "Run chrome tests"
       - store_artifacts:
           path: ~/project/artifacts
