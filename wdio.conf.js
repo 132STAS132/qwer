@@ -379,8 +379,6 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      */
     onPrepare: async function (config, capabilities) {
-        console.log('DEFINED in config.yml and context',process.env.TEST_VAR1)
-        console.log('DEFINED in context',process.env.TEST_VAR2)
         const isWin = await os.platform().toLowerCase().startsWith('win');
         if (isWin) {
             try {

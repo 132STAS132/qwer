@@ -10,7 +10,8 @@ const {
 
 
 describe("Main page", () => {
-    it('[C437] Check content', () => {
+    // todo delete only for 2 scenarios
+    it.only('[C437] Check content', () => {
         messenger
             .goToWidgetIFrame()
             .verifyWidgetIcons()
@@ -92,7 +93,7 @@ describe("Main page", () => {
             .verifyWidgetButtons(widgetButtonsExpanded);
     });
 
-    it('[C702] Click on Chat with a Resident', () => {
+    it.only('[C702] Click on Chat with a Resident', () => {
         messenger
             .goToWidgetIFrame()
             .clickOnButtonByText(widgetButtonsCollapsed.chatButton)

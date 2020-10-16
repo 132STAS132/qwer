@@ -18,7 +18,7 @@ jobs:
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
-            npm run tests
+            npm run mainPage
           environment:
             BROWSER_NAME: Chrome
           name: "Run chrome tests"
