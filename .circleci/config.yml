@@ -1,13 +1,19 @@
+version: 2.1
+
+workflows:
+  run-all-tests:
+    jobs:
+      - run-chrome-tests:
+          context: messenger-end-to-end
+
 jobs:
   run-chrome-tests:
     docker:
-      -
-        image: atlassianlabs/docker-node-jdk-chrome-firefox
+      - image: atlassianlabs/docker-node-jdk-chrome-firefox
     resource_class: xlarge
     steps:
       - checkout
-      -
-        run:
+      - run:
           command: |
             npm install
             npm i cross-env -g
@@ -15,14 +21,18 @@ jobs:
             npm run tests
           environment:
             BROWSER_NAME: Chrome
+            ENABLE_SLACK: false
+            JIRA_BASE_URL: $JIRA_BASE_URL
+            JIRA_TOKEN: $JIRA_TOKEN
+            JIRA_USER: $JIRA_USER
+            LAMBDA_TEST_RUN: true
+            LT_ACCESS_KEY: $LT_ACCESS_KEY
+            LT_USERNAME: $LT_USERNAME
+            SLACK_WEBHOOK: $SLACK_WEBHOOK
+            TESTRAIL_BASE_URL: $TESTRAIL_BASE_URL
+            TESTRAIL_PASSWORD: $TESTRAIL_PASSWORD
+            TESTRAIL_RUN: true
+            TESTRAIL_USER: $TESTRAIL_USER
           name: "Run chrome tests"
-      -
-        store_artifacts:
+      - store_artifacts:
           path: ~/project/artifacts
-version: 2.0
-workflows:
-  context: messenger-end-to-end
-  run-all-tests:
-    jobs:
-      - run-chrome-tests
-  version: 2
