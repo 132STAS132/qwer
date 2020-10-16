@@ -1,7 +1,14 @@
 version: 2.1
 
+parameters:
+  run_all_browsers:
+    type: boolean
+    default: true
+
 workflows:
+  version: 2
   run-all-tests:
+    when: << pipeline.parameters.run_all_browsers >>
     jobs:
       - run-chrome-tests:
           context: messenger-end-to-end
