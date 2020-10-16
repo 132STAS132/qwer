@@ -71,6 +71,11 @@ class MessengerData {
             contactProperty: "Contact Property"
         }
     }
+
+    get existingEmail(): string {
+        // could be any existing email
+        return 'rost@devico.io';
+    }
 }
 
 export const messengerData = new MessengerData();

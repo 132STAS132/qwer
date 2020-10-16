@@ -244,9 +244,10 @@ exports.config = {
         './specs/**/*.ts'
     ],
     suites: {
-        rentgrataMessenger: ['./specs/rentgrataMessenger.spec.ts'],
-        sendMessage: ['./specs/RentgrataMessenger/sendMessage.spec.ts'],
-        sendMessageViaSingIn: ['./specs/RentgrataMessenger/sendMessageViaSingIn.spec.ts'],
+        chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
+        mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
+        sendMessage: ['./specs/RentgrataMessenger/SendMessage/sendMessage.spec.ts'],
+        sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
     },
     // Patterns to exclude.
     exclude: [
@@ -679,7 +680,7 @@ if (isLambdaTest) {
     this.config.port = 80;
     this.config.updateJob = false;
     // could be updated after getting stable cycle
-    this.config.maxInstances = 10;
+    this.config.maxInstances = maxInstances;
 }
 
 // ======= LAMBDA END =======
