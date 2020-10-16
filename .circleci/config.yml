@@ -30,6 +30,6 @@ workflows:
   version: 2
 # need to add commands for other browsers
   run-all-tests:
+    context: messengerEndToEnd
     jobs:
       - run_chrome_tests
-          context: messengerEndToEnd
