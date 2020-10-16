@@ -12,12 +12,13 @@ workflows:
     jobs:
       - run-chrome-tests:
           context: messenger-end-to-end
+      - run-safari-tests:
+          context: messenger-end-to-end
 
 jobs:
   run-chrome-tests:
     docker:
       - image: atlassianlabs/docker-node-jdk-chrome-firefox
-    resource_class: xlarge
     steps:
       - checkout
       - run:
@@ -29,5 +30,22 @@ jobs:
           environment:
             BROWSER_NAME: Chrome
           name: "Run chrome tests"
+      - store_artifacts:
+          path: ~/project/artifacts
+
+  run-safari-tests:
+    docker:
+      - image: atlassianlabs/docker-node-jdk-chrome-firefox
+    steps:
+      - checkout
+      - run:
+          command: |
+            npm install
+            npm i cross-env -g
+            npm install -g allure-commandline
+            npm run mainPage
+          environment:
+            BROWSER_NAME: Safari
+          name: "Run Safari tests"
       - store_artifacts:
           path: ~/project/artifacts
