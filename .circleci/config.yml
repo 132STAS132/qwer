@@ -1,35 +1,96 @@
-version: 2.0
+version: 2.1
+
+parameters:
+  browser:
+    type: string
+    default: all
+
+workflows:
+  version: 2
+  run-all-tests:
+    when:
+      and:
+        - equal: [ all, << pipeline.parameters.browser >> ]
+    jobs:
+      - run-chrome-tests:
+          context: messenger-end-to-end
+      - run-safari-tests:
+          context: messenger-end-to-end
+      - run-ie-tests:
+          context: messenger-end-to-end
+
+  run-only-chrome:
+    when:
+      and:
+        - equal: [ chrome, << pipeline.parameters.browser >> ]
+    jobs:
+      - run-chrome-tests:
+          context: messenger-end-to-end
+
+  run-only-safari:
+    when:
+      and:
+        - equal: [ safari, << pipeline.parameters.browser >> ]
+    jobs:
+      - run-safari-tests:
+          context: messenger-end-to-end
+
+  run-only-ie:
+    when:
+      and:
+        - equal: [ ie, << pipeline.parameters.browser >> ]
+    jobs:
+      - run-ie-tests:
+          context: messenger-end-to-end
 
 jobs:
-  run_chrome_tests:
+  run-chrome-tests:
     docker:
       - image: atlassianlabs/docker-node-jdk-chrome-firefox
-    # need to check current resource_class
-    # resource_class: xlarge
     steps:
       - checkout
       - run:
-          name: Run chrome tests
           command: |
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
-            npm run tests
+            npm run mainPage
           environment:
-            # additional settings
-            TESTRAIL_RUN: true
-            LAMBDA_TEST_RUN: true
-            ENABLE_SLACK: false
-
-            # Chrome, IE, Safari
             BROWSER_NAME: Chrome
-
+          name: "Run chrome tests"
       - store_artifacts:
           path: ~/project/artifacts
 
-workflows:
-  version: 2
-# need to add commands for other browsers
-  run-all-tests:
-    jobs:
-      - run_chrome_tests
+  run-safari-tests:
+    docker:
+      - image: atlassianlabs/docker-node-jdk-chrome-firefox
+    steps:
+      - checkout
+      - run:
+          command: |
+            npm install
+            npm i cross-env -g
+            npm install -g allure-commandline
+            npm run mainPage
+          environment:
+            BROWSER_NAME: Safari
+          name: "Run Safari tests"
+      - store_artifacts:
+          path: ~/project/artifacts
+
+  run-ie-tests:
+    docker:
+      - image: atlassianlabs/docker-node-jdk-chrome-firefox
+    steps:
+      - checkout
+      - run:
+          command: |
+            npm install
+            npm i cross-env -g
+            npm install -g allure-commandline
+            npm run mainPage
+          environment:
+            BROWSER_NAME: IE
+          name: "Run IE tests"
+      - store_artifacts:
+          path: ~/project/artifacts

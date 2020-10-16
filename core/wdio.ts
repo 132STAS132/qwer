@@ -290,6 +290,23 @@ export class WDIO {
   }
 
   clearAndFill(selector: string, value: string, timeout = this.defaultWaitTime) {
+    // after unblocking ie - need to check
+    // browser.execute(
+    //           `let input = arguments[0];
+    //           let lastValue = input.value;
+    //           input.value = \'${value}\';
+    //           let event = document.createEvent('Event');
+    //           let params = { bubbles: true, cancelable: false, detail: undefined };
+    //           event.initEvent('input', params.bubbles, params.cancelable, params.detail);
+    //           event.simulated = true;
+    //           let tracker = input._valueTracker;
+    //           if (tracker) { tracker.setValue(lastValue); };
+    //           input.dispatchEvent(event);`,
+    //           selector,
+    //           value,
+    //         );
+    //       }
+
     try {
       this.waitForEnabled(selector, timeout);
       if (this.isIE()) {

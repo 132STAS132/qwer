@@ -14,6 +14,8 @@ const dateFormat = require('dateformat');
 const now = new Date();
 const { IncomingWebhook } = require('@slack/webhook');
 const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK);
+const pWaitFor = require('p-wait-for');
+const pathExists = require('path-exists');
 
 // by default Google Chrome browser is used
 process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
@@ -244,9 +246,10 @@ exports.config = {
         './specs/**/*.ts'
     ],
     suites: {
-        rentgrataMessenger: ['./specs/rentgrataMessenger.spec.ts'],
-        sendMessage: ['./specs/RentgrataMessenger/sendMessage.spec.ts'],
-        sendMessageViaSingIn: ['./specs/RentgrataMessenger/sendMessageViaSingIn.spec.ts'],
+        chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
+        mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
+        sendMessage: ['./specs/RentgrataMessenger/SendMessage/sendMessage.spec.ts'],
+        sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
     },
     // Patterns to exclude.
     exclude: [
@@ -644,6 +647,14 @@ exports.config = {
             })
         }
 
+        exec('allure generate --clean ./artifacts/allure-results -o ./artifacts/allure-report');
+
+        try {
+            await pWaitFor(() => pathExists(path.join(__dirname, 'artifacts' ,'allure-report', 'data', 'attachments')), {
+                timeout: 150000
+            });
+        } catch (e) {}
+
         if (isLambdaTest) {
             // wait for "Tunnel successfully stopped"
             return new Promise(resolve => setTimeout(resolve, 10000));
@@ -677,7 +688,7 @@ if (isLambdaTest) {
     this.config.port = 80;
     this.config.updateJob = false;
     // could be updated after getting stable cycle
-    this.config.maxInstances = 10;
+    this.config.maxInstances = maxInstances;
 }
 
 // ======= LAMBDA END =======

@@ -29,7 +29,7 @@ End to end tests for Rentgrata Messenger application. (RentgrataWidget)
 
 7.For run specific test suite execute ``npm run {suite name}`` command, e.g:
 
-``npm run rentgrataMessenger``
+``npm run mainPage``
 
 8.Test results will be displayed in html format in ``artifacts/allure-report`` folder.
 
@@ -37,7 +37,9 @@ Execute ``npm run openReport`` command to generate and open a report.
    
 ### Existing suites
 
-- ``rentgrataMessenger``
+- ``chatWithAResident``
+
+- ``mainPage``
 
 - ``sendMessage``
 
