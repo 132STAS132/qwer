@@ -1,35 +1,28 @@
-version: 2.0
-
 jobs:
-  run_chrome_tests:
+  run-chrome-tests:
     docker:
-      - image: atlassianlabs/docker-node-jdk-chrome-firefox
+      -
+        image: atlassianlabs/docker-node-jdk-chrome-firefox
     resource_class: xlarge
     steps:
       - checkout
-      - run:
-          name: Run chrome tests
+      -
+        run:
           command: |
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
             npm run tests
           environment:
-            # additional settings
-            TESTRAIL_RUN: true
-            LAMBDA_TEST_RUN: true
-            ENABLE_SLACK: false
-
-            # Chrome, IE, Safari
             BROWSER_NAME: Chrome
-
-      - store_artifacts:
+          name: "Run chrome tests"
+      -
+        store_artifacts:
           path: ~/project/artifacts
-
+version: 2.0
 workflows:
-  version: 2
-# need to add commands for other browsers
   run-all-tests:
-    context: messengerEndToEnd
+    context: messenger-end-to-end
     jobs:
-      - run_chrome_tests
+      - run-chrome-tests
+  version: 2
