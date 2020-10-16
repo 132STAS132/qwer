@@ -10,7 +10,7 @@ workflows:
   run-all-tests:
     when:
       and:
-        - equal: [ all, << pipeline.parameters.run_all_browsers >> ]
+        - equal: [ all, << pipeline.parameters.browser >> ]
     jobs:
       - run-chrome-tests:
           context: messenger-end-to-end
@@ -22,7 +22,7 @@ workflows:
   run-only-chrome:
     when:
       and:
-        - equal: [ chrome, << pipeline.parameters.run_all_browsers >> ]
+        - equal: [ chrome, << pipeline.parameters.browser >> ]
     jobs:
       - run-chrome-tests:
           context: messenger-end-to-end
@@ -30,7 +30,7 @@ workflows:
   run-only-safari:
     when:
       and:
-        - equal: [ safari, << pipeline.parameters.run_all_browsers >> ]
+        - equal: [ safari, << pipeline.parameters.browser >> ]
     jobs:
       - run-safari-tests:
           context: messenger-end-to-end
@@ -38,7 +38,7 @@ workflows:
   run-only-ie:
     when:
       and:
-        - equal: [ ie, << pipeline.parameters.run_all_browsers >> ]
+        - equal: [ ie, << pipeline.parameters.browser >> ]
     jobs:
       - run-ie-tests:
           context: messenger-end-to-end
