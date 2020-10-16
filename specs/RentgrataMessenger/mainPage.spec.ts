@@ -93,7 +93,7 @@ describe("Main page", () => {
             .verifyWidgetButtons(widgetButtonsExpanded);
     });
 
-    it.only('[C702] Click on Chat with a Resident', () => {
+    it('[C702] Click on Chat with a Resident', () => {
         messenger
             .goToWidgetIFrame()
             .clickOnButtonByText(widgetButtonsCollapsed.chatButton)

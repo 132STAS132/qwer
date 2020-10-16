@@ -14,6 +14,8 @@ const dateFormat = require('dateformat');
 const now = new Date();
 const { IncomingWebhook } = require('@slack/webhook');
 const webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK);
+const pWaitFor = require('p-wait-for');
+const pathExists = require('path-exists');
 
 // by default Google Chrome browser is used
 process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
@@ -644,6 +646,14 @@ exports.config = {
                 ]
             })
         }
+
+        exec('allure generate --clean ./artifacts/allure-results -o ./artifacts/allure-report');
+
+        try {
+            await pWaitFor(() => pathExists(path.join(__dirname, 'artifacts' ,'allure-report', 'data', 'attachments')), {
+                timeout: 150000
+            });
+        } catch (e) {}
 
         if (isLambdaTest) {
             // wait for "Tunnel successfully stopped"
