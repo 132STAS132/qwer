@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   browser:
     type: string
-    default: safari
+    default: all
 
 workflows:
   version: 2
