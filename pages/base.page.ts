@@ -47,18 +47,22 @@ export class BasePage {
         return '[id*=zoid-rg-widget-feature-icons] .zoid-component-frame.zoid-visible';
     }
 
+    private loadingIFrame(): string {
+        return '.zoid-tag-rg-widget-messenger .zoid-component-frame.zoid-visible';
+    }
+
     private chatWithResidentIFrame(): string {
         return '[id*="zoid-rg-widget-messenger"] iframe';
     }
 
-    clickOnButtonByText(text: string): this {
+    clickOnButtonByText(text: string) {
         this.allure.startStep(`Click on [${text}] button`);
         this.wd.click(this.buttonByText(text), this.wd.isSafari());
         this.allure.endStep();
         return this;
     }
 
-    goToWidgetIFrame(): this {
+    goToWidgetIFrame() {
         this.allure.startStep('Switch to widget iFrame');
         this.wd.closeFrame();
         this.wd.switchToFrame(this.widgetIFrame());
@@ -66,7 +70,15 @@ export class BasePage {
         return this;
     }
 
-    gotoChatOrContactIFrame(): this {
+    goToLoadingIframe() {
+        this.allure.startStep('Switch to loading iFrame');
+        this.wd.closeFrame();
+        this.wd.switchToFrame(this.loadingIFrame());
+        this.allure.endStep();
+        return this;
+    }
+
+    gotoChatOrContactIFrame() {
         this.allure.startStep('Switch to chat with resident iFrame');
         this.wd.closeFrame();
         this.wd.switchToFrame(this.chatWithResidentIFrame());
@@ -86,7 +98,7 @@ export class BasePage {
         }
     }
 
-    clickOnCloseIcon(): this {
+    clickOnCloseIcon() {
         this.allure.startStep('Close form');
         // could by flaky due to animation
         this.wd.wait(2);
@@ -98,7 +110,7 @@ export class BasePage {
         return this;
     }
 
-    clickOnBackIcon(): this {
+    clickOnBackIcon() {
         this.allure.startStep('Click on back icon');
         this.wd.click(this.backIcon());
         this.allure.endStep();

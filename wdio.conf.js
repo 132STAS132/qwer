@@ -249,6 +249,7 @@ exports.config = {
         chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
         sendMessage: ['./specs/RentgrataMessenger/SendMessage/sendMessage.spec.ts'],
+        verifyEmailForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/verifyEmailForm.spec.ts'],
         sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
     },
     // Patterns to exclude.

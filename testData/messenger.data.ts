@@ -41,8 +41,9 @@ class MessengerData {
             errorMustEnterFirstName: "You must enter your first name.",
             errorMustEnterLastName: "You must enter your last name.",
 
-            errorLasNameCanNotBeBlank: "Last name can not be blank",
+            errorLastNameCanNotBeBlank: "Last name can not be blank",
             errorFirstNameCanNotBeBlank: "First name can not be blank",
+            errorEmailCanNotBeBlank: "Email can not be blank",
 
             errorMustEnterEmail: "You must enter your email.",
             errorEmailInvalid: "Email invalid. Please try again!",
@@ -51,12 +52,12 @@ class MessengerData {
         }
     }
 
-    get verifyEmailForm(): { title: string, sentCodeTo: (to: string) => string } {
+    get verifyEmailForm(): { title: string, sentCodeTo: (to: string) => string, invalidCodeError: string,  resentText: (to: string) => string } {
         return {
             title: "Verify Email",
-            sentCodeTo: (to: string): string => {
-                return `We sent an email with a code to ${to}. Please enter the code below.`
-            }
+            sentCodeTo: (to: string): string => `We sent an email with a code to ${to}. Please enter the code below.`,
+            invalidCodeError: "The code you entered is incorrect.",
+            resentText: (to: string): string => `The code has been resent to ${to}.`
         }
     }
 

@@ -1,6 +1,8 @@
 import { messenger } from "../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
 import { messengerData } from "../../../testData/messenger.data";
+import { allureHelper } from "../../../helpers/allure";
+import { bugs } from "../../../existingBugs/bugs";
 
 const {
     sendMessageForm,
@@ -74,12 +76,13 @@ describe('Send Message', () => {
                 .fillLastNameInput(' ')
                 .clickOnContinueButton()
                 .waitForLoadSpinnerToDisappear()
-                .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorLasNameCanNotBeBlank)
+                .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorLastNameCanNotBeBlank)
                 .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName, false)
                 .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorMustEnterEmail, false)
     });
 
     it('[C451] Continue with Empty Email', () => {
+        allureHelper.addIssueToAllure(bugs.sendMessageForm.emailCanNotBeBlank);
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
@@ -94,8 +97,7 @@ describe('Send Message', () => {
                 .fillEmailInput(' ')
                 .clickOnContinueButton()
                 .waitForLoadSpinnerToDisappear()
-            // todo update to email can not be a blank . link a bug
-            //     .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm)
+                .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorEmailCanNotBeBlank)
                 .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorMustEnterLastName, false)
                 .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName, false)
     });
@@ -137,7 +139,7 @@ describe('Send Message', () => {
                 .fillEmailInput(faker.internet.email())
                 .clickOnContinueButton()
                 .waitForLoadSpinnerToDisappear()
-                .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorLasNameCanNotBeBlank)
+                .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorLastNameCanNotBeBlank)
                 .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName, false)
                 .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorEmailInvalid, false)
     });
@@ -179,7 +181,7 @@ describe('Send Message', () => {
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
             .sendMessageComponent
-                .clickOnSignInLink()
+                .clickOnSignInLinkAndSwitchToNewWindow()
                 .verifySignInPageTitleDisplayed();
     });
 })

@@ -1,5 +1,7 @@
-import messenger from './messenger';
+import sendMessageForm from './sendMessageForm';
+import signInForm from "./signInForm";
 
 export const bugs = {
-    messenger,
+    sendMessageForm,
+    signInForm
 };

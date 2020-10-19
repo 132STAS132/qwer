@@ -1,8 +1,9 @@
 
 class SignInFormData {
-    get validationErrors(): { passwordError: string }  {
+    get validationErrors(): { emailOrPasswordIncorrect: string, phoneNumberOrPasswordIncorrect: string }  {
         return {
-            passwordError: "The password you entered was incorrect. Please try again."
+            emailOrPasswordIncorrect: "Email or password incorrect. Please try again.",
+            phoneNumberOrPasswordIncorrect: "Phone number or password incorrect."
         }
     }
 

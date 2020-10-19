@@ -36,7 +36,7 @@ export class MessengerComponent extends BasePage {
     }
 
     private residentProfilePictureByIndex(index: number): string {
-        return `.faceslayout.expanded span:nth-of-type(${index})`;
+        return `.faceslayout span:nth-of-type(${index})`;
     }
 
     private dots3Icon(): string {
@@ -59,7 +59,7 @@ export class MessengerComponent extends BasePage {
         return locator;
     }
 
-    clickOnResidentPicture(number = 1): this {
+    clickOnResidentPicture(number = 1) {
         this.allure.startStep('Click on resident picture and switch to chat form iFrame');
         // due to animation
         this.wd.wait(2);
@@ -70,7 +70,7 @@ export class MessengerComponent extends BasePage {
     }
 
 
-    clickOnIcon(icon: string): this {
+    clickOnIcon(icon: string) {
         this.allure.startStep(`Click on [${icon}] icon`);
         this.wd.click(this.getIconLocator(icon), this.wd.isSafari());
         this.gotoChatOrContactIFrame();
@@ -78,7 +78,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    moveToIcon(icon: string, closeIframe = true): this {
+    moveToIcon(icon: string, closeIframe = true) {
         this.allure.startStep(`Click on [${icon}] icon`);
         // due to animation
         this.wd.wait(2);
@@ -96,7 +96,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    clickOnShowMoreButton(): this {
+    clickOnShowMoreButton() {
         this.clickOnButtonByText(messengerData.widgetButtonsCollapsed.showMoreButton);
         this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsExpanded.showLessButton));
         this.wd.waitForDisplayed(this.dots3Icon(), true);
@@ -105,7 +105,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    clickOnShowLessButton(): this {
+    clickOnShowLessButton() {
         this.clickOnButtonByText(messengerData.widgetButtonsExpanded.showLessButton);
         this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsCollapsed.showMoreButton));
         this.wd.waitForDisplayed(this.dots3Icon());
@@ -127,7 +127,7 @@ export class MessengerComponent extends BasePage {
 
     /** verifications **/
 
-    verifyEnvelopeIcon(expected: boolean): this {
+    verifyEnvelopeIcon(expected: boolean) {
         const elementTitle = 'Envelope icon';
         this.allure.startStep(this.verifyAllureMessage(elementTitle));
 
@@ -140,7 +140,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    verifyIcon360(expected: boolean): this {
+    verifyIcon360(expected: boolean) {
         const elementTitle = '360 icon';
         this.allure.startStep(this.verifyAllureMessage(elementTitle));
 
@@ -153,7 +153,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    verifyCalendarIcon(expected: boolean): this {
+    verifyCalendarIcon(expected: boolean) {
         const elementTitle = 'Calendar icon';
         this.allure.startStep(this.verifyAllureMessage(elementTitle));
 
@@ -166,7 +166,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    verifyWidgetIcons(expected = true): this {
+    verifyWidgetIcons(expected = true) {
         this.allure.startStep('Verify widget icons');
 
         this.verifyEnvelopeIcon(expected)
@@ -177,7 +177,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    verifyCountOfResidentProfilePictures(count = 3): this {
+    verifyCountOfResidentProfilePictures(count = 3) {
         this.allure.startStep(`Verify count of displayed resident profile pictures.`);
         let elements = [];
         // stabilizing for loading images
@@ -202,7 +202,7 @@ export class MessengerComponent extends BasePage {
         return this;
     }
 
-    verifyWidgetButtons(buttons: widgetButtonsExpandedInterface | widgetButtonsCollapsedInterface, expected = true): this {
+    verifyWidgetButtons(buttons: widgetButtonsExpandedInterface | widgetButtonsCollapsedInterface, expected = true) {
         this.allure.startStep('Verify messenger widget buttons');
 
         Object.values(buttons).forEach(button => {

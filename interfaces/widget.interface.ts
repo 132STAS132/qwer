@@ -22,9 +22,12 @@ export interface sendMessageFormInterface {
     // You must enter your first name.
     errorMustEnterFirstName: string,
     errorMustEnterLastName: string,
-    errorLasNameCanNotBeBlank: string,
-    errorFirstNameCanNotBeBlank: string,
     errorMustEnterEmail: string,
+
+    errorLastNameCanNotBeBlank: string,
+    errorFirstNameCanNotBeBlank: string,
+    errorEmailCanNotBeBlank: string,
+
     errorEmailInvalid: string,
     errorEmailExists: string,
 

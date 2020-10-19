@@ -9,6 +9,7 @@
     "mainPage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite mainPage",
     "sendMessage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessage",
     "sendMessageViaSingIn": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingIn",
+    "verifyEmailForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite verifyEmailForm",
     "openReport": "allure generate --clean ./artifacts/allure-results -o ./artifacts/allure-report && allure open ./artifacts/allure-report",
     "findMissingIds": "node helpers/scenariosHelper.js findMissingIds",
     "getCountOfScenarios": "node helpers/scenariosHelper.js getCountOfScenarios"

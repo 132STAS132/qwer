@@ -10,8 +10,7 @@ const {
 
 
 describe("Main page", () => {
-    // todo delete only for 2 scenarios
-    it.only('[C437] Check content', () => {
+    it('[C437] Check content', () => {
         messenger
             .goToWidgetIFrame()
             .verifyWidgetIcons()
