@@ -1,33 +1,41 @@
 import { messenger } from "../../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
 import { signInFormData } from "../../../../testData/signInForm.data";
+import { forgotPasswordData } from "../../../../testData/forgotPassword.data";
 import { messengerData } from "../../../../testData/messenger.data";
 
 const { existingEmail } = messengerData;
 const { authMethods, randomCountry } = signInFormData;
-const { passwordError } = signInFormData.validationErrors;
+const {
+    emailOrPasswordIncorrect,
+    phoneNumberOrPasswordIncorrect
+} = signInFormData.validationErrors;
+const { form } = forgotPasswordData;
+
+import { allureHelper } from "../../../../helpers/allure";
+import { bugs } from "../../../../existingBugs/bugs";
 
 describe('Send Message via Sing in', () => {
-    xit('[C456] Continue with Incorrect email', () => {
-        // todo wait for answer - verifyErrorMessage should be updated and moved to fixtures. Mark as automated
-        // link a bug
+    it('[C456] Continue with Incorrect email', () => {
+        allureHelper.addIssueToAllure(bugs.signInForm.emailOrPasswordIsIncorrect);
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
-            .sendMessageComponent.clickOnSignInLink()
+            .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
             .submitForm('ksd@dscom', '1234')
-            // .verifyErrorMessage('The password you entered was incorrect. Please try again.')
+            .verifyErrorMessage(emailOrPasswordIncorrect)
     });
 
     it('[C457] Continue with incorrect password', () => {
+        allureHelper.addIssueToAllure(bugs.signInForm.emailOrPasswordIsIncorrect);
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
-            .sendMessageComponent.clickOnSignInLink()
+            .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
             .submitForm(existingEmail, 'password')
-            .verifyErrorMessage(passwordError);
+            .verifyErrorMessage(emailOrPasswordIncorrect);
     });
 
     it('[C764] Click on "Sign in with phone number"', () => {
@@ -35,7 +43,7 @@ describe('Send Message via Sing in', () => {
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
-            .sendMessageComponent.clickOnSignInLink()
+            .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
             .verifyIsEmailFieldDisplayed()
             .verifyIsAuthMethodDisplayed(authMethods.email, false)
             .verifyIsPhoneFieldDisplayed(false)
@@ -58,30 +66,46 @@ describe('Send Message via Sing in', () => {
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
-            .sendMessageComponent.clickOnSignInLink()
+            .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
             .switchAuthMethodTo(authMethods.phone)
             .selectCountry(countryCode, countryName)
             .verifySelectedDialCode(`+${dialCode}`, countryName)
             .verifySelectedFlag(countryCode, countryName)
     });
 
-    xit('[C458] Continue with Empty data', () => {
-        // todo link a bug .
-    })
+    it('[C460] Continue with incorrect Phone Number', () => {
+        allureHelper.addIssueToAllure(bugs.signInForm.incorrectPhoneNumberError);
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
+            .switchAuthMethodTo(authMethods.phone)
+            .fillPasswordField(faker.random.word())
+            .fillPhoneField(faker.random.word())
+            .clickOnSubmitButton()
+            .verifyErrorMessage(phoneNumberOrPasswordIncorrect)
+    });
 
-    xit('[C460] Continue with incorrect Phone Number', () => {
-       // todo link a bug .
+    it('[C461] Click on "Forgot Password?" link', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
+            .clickOnForgotPasswordLink()
+            .verifyFormTitle(form.title);
+    });
+
+    it('[C765] Close the form', () => {
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
             .sendMessageComponent.clickOnSignInLink()
-            .switchAuthMethodTo(authMethods.phone)
-        // fill phone form
-        // .verifyErrorMessage('The password you entered was incorrect. Please try again.')
-    });
-
-    it('[C461] Click on "Forgot Password?" link', () => {
-
+            .goToLoadingIframe()
+            .verifyLoadingSpinnerIsDisplayed()
+            .switchToNewWindowAndCloseCurrent()
+            .verifyLoadingSpinnerIsDisplayed(false);
     });
 });

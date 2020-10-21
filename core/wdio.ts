@@ -437,7 +437,7 @@ export class WDIO {
     return text;
   }
 
-  getHTML(selector: string, include = true) {
+  getHTML(selector = 'html', include = true) {
     return $(selector).getHTML(include);
   }
 
@@ -601,10 +601,6 @@ export class WDIO {
 
   getAllCookies() {
     return browser.getAllCookies();
-  }
-
-  closeWindow() {
-    browser.closeWindow();
   }
 
   getWindowHandles() {

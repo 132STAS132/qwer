@@ -2,7 +2,9 @@ import {
     widgetButtonsCollapsedInterface,
     widgetButtonsExpandedInterface,
     sendMessageFormInterface,
-    widgetIconsInterface
+    widgetIconsInterface,
+    termsConditionsFormInterface,
+    verifyEmailFormInterface
 } from "../interfaces/widget.interface";
 import * as faker from "faker";
 
@@ -41,8 +43,9 @@ class MessengerData {
             errorMustEnterFirstName: "You must enter your first name.",
             errorMustEnterLastName: "You must enter your last name.",
 
-            errorLasNameCanNotBeBlank: "Last name can not be blank",
+            errorLastNameCanNotBeBlank: "Last name can not be blank",
             errorFirstNameCanNotBeBlank: "First name can not be blank",
+            errorEmailCanNotBeBlank: "Email can not be blank",
 
             errorMustEnterEmail: "You must enter your email.",
             errorEmailInvalid: "Email invalid. Please try again!",
@@ -51,16 +54,37 @@ class MessengerData {
         }
     }
 
-    get verifyEmailForm(): { title: string, sentCodeTo: (to: string) => string } {
+    get verifyEmailForm(): verifyEmailFormInterface {
         return {
             title: "Verify Email",
-            sentCodeTo: (to: string): string => {
-                return `We sent an email with a code to ${to}. Please enter the code below.`
-            }
+            sentCodeTo: (to: string): string => `We sent an email with a code to ${to}. Please enter the code below.`,
+            invalidCodeError: "The code you entered is incorrect.",
+            resentText: (to: string): string => `The code has been resent to ${to}.`
         }
     }
 
-    get randomMailTrapEmail(): string {
+    get termsConditionsFormData(): termsConditionsFormInterface {
+        return {
+            title: "Terms & Conditions",
+            headerInfoText: "Please read and click the 'Agree and Continue' button below.",
+            termsText: "Please keep in mind that the person you are messaging is an actual apartment renter... " +
+                "Another real live human person trying to be helpful. This is not a chat bot. " +
+                "Please be aware that they may not respond to your initial message immediately." +
+                "We'll send you an email when they respond. " +
+                "You can chat with this resident via rentgrata.com or the Rentgrata iOS app. " +
+                "We'll send you an email when they respond.If this property offers a move-in bonus, " +
+                "please be aware that if you use an apartment broker during your apartment search process, you may not be eligible for the move-in bonus offered." +
+                "The views and opinions expressed by a user of Rentgrata are those only of the individual user and do not reflect the views, opinions, " +
+                "or position of the property management company or its representatives, or Rentgrata. " +
+                "Please read our complete Terms of Use which contain important provisions, including the following: " +
+                "YOU HEREBY RELEASE RENTGRATA, ALL OTHER USERS, AND ALL PROPERTY MANAGERS, FROM ALL CLAIMS ARISING FROM OR RELATING TO ANY INFORMATION PROVIDED BY ANOTHER USER, " +
+                "A PROPERTY MANAGER, OR ANY OTHER THIRD PARTY.Rentgrata is not available to minors (persons under the age of 18). " +
+                "By continuing, you represent and warrant that you are at least 18 years old.Thank you for joining our community!",
+            agreementText: "By pressing 'Agree and Continue' below, you agree to Rentgrata's Terms of Use and Privacy Policy."
+        }
+    }
+
+    randomMailTrapEmail(): string {
         return `e659345dfe-cf3bb0+${faker.random.uuid()}@inbox.mailtrap.io`;
     }
 
@@ -74,7 +98,7 @@ class MessengerData {
 
     get existingEmail(): string {
         // could be any existing email
-        return 'rost@devico.io';
+        return 'e659345dfe-cf3bb0@inbox.mailtrap.io';
     }
 }
 

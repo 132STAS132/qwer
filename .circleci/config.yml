@@ -3,7 +3,7 @@ version: 2.1
 parameters:
   browser:
     type: string
-    default: all
+    default: none # prevent running after pushing or merging. For running need to use api request with necessary parameters
 
 workflows:
   version: 2
@@ -54,7 +54,7 @@ jobs:
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
-            npm run mainPage
+            npm run tests
           environment:
             BROWSER_NAME: Chrome
           name: "Run chrome tests"
@@ -71,7 +71,7 @@ jobs:
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
-            npm run mainPage
+            npm run tests
           environment:
             BROWSER_NAME: Safari
           name: "Run Safari tests"
@@ -88,7 +88,7 @@ jobs:
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
-            npm run mainPage
+            npm run tests
           environment:
             BROWSER_NAME: IE
           name: "Run IE tests"

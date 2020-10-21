@@ -22,9 +22,12 @@ export interface sendMessageFormInterface {
     // You must enter your first name.
     errorMustEnterFirstName: string,
     errorMustEnterLastName: string,
-    errorLasNameCanNotBeBlank: string,
-    errorFirstNameCanNotBeBlank: string,
     errorMustEnterEmail: string,
+
+    errorLastNameCanNotBeBlank: string,
+    errorFirstNameCanNotBeBlank: string,
+    errorEmailCanNotBeBlank: string,
+
     errorEmailInvalid: string,
     errorEmailExists: string,
 
@@ -37,4 +40,17 @@ export interface widgetIconsInterface {
     scheduleATour: string,
     virtualTour: string,
     contactProperty: string
+}
+
+export interface verifyEmailFormInterface {
+    title: string,
+    sentCodeTo: (to: string) => string,
+    invalidCodeError: string,
+    resentText: (to: string) => string
+}
+export interface termsConditionsFormInterface {
+    title: string,
+    headerInfoText: string,
+    termsText: string,
+    agreementText: string
 }

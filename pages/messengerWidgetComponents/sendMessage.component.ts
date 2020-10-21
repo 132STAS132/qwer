@@ -52,35 +52,55 @@ export class SendMessageComponent extends BasePage {
         return '.log-in-link';
     }
 
+    private loadingSpinner(): string {
+        return '.phoneAuthentication-wrapper  [aria-label="Loading"]';
+    }
+
+    private verificationCodeInput(): string {
+        return '.verification-code-input';
+    }
+
+    private invalidCodeErrorText(): string {
+        return '.verification-code-container div[style*="rgb(224"]';
+    }
+
+    private resentInformationText(): string {
+        return '.verification-code-resend ~ .verification-code-subInfo';
+    }
+
+    private didNotReceiveLink(): string {
+        return '.verification-code-resend span';
+    }
+
     /** methods **/
 
-    clickOnContinueButton(button = 'Continue'): this {
+    clickOnContinueButton(button = 'Continue') {
         this.clickOnButtonByText(button);
         return this;
     }
 
-    fillFirstNameInput(value: string): this {
+    fillFirstNameInput(value: string) {
         this.allure.startStep(`Fill first name input with "${value}" value`);
         this.wd.clearAndFill(this.firstNameInput(), value);
         this.allure.endStep();
         return this;
     }
 
-    fillLastNameInput(value: string): this {
+    fillLastNameInput(value: string) {
         this.allure.startStep(`Fill last name input with "${value}" value`);
         this.wd.clearAndFill(this.lastNameInput(), value);
         this.allure.endStep();
         return this;
     }
 
-    fillEmailInput(value: string): this {
+    fillEmailInput(value: string) {
         this.allure.startStep(`Fill email input with "${value}" value`);
         this.wd.clearAndFill(this.emailInput(), value);
         this.allure.endStep();
         return this;
     }
 
-    waitForLoadSpinnerToDisappear(): this {
+    waitForLoadSpinnerToDisappear() {
         this.allure.startStep(`Wait for load spinner to disappear`);
         // due to animation
         this.wd.wait(1);
@@ -93,13 +113,39 @@ export class SendMessageComponent extends BasePage {
         return this;
     }
 
-    clickOnSignInLink(): SignInPage {
+    clickOnSignInLink() {
         this.allure.startStep('Click on SignIn link');
         this.wd.click(this.signInLink());
         this.wd.wait(1);
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnSignInLinkAndSwitchToNewWindow(): SignInPage {
+        this.allure.startStep('Click on SignIn link and switch to new window');
+        this.clickOnSignInLink();
         this.wd.switchToSecondWindow();
         this.allure.endStep();
         return new SignInPage();
+    }
+
+    submitVerificationCodeInput(value: string) {
+        this.allure.startStep(`Submit [verification code input] with ${value}`);
+        this.wd.clearAndFill(this.verificationCodeInput(), value);
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnVerifyEmailButton(button = 'Verify Email') {
+        this.clickOnButtonByText(button);
+        return this;
+    }
+
+    clickOnIDidNotReceive() {
+        this.allure.startStep('Click on "I did not receive a code." link');
+        this.wd.click(this.didNotReceiveLink());
+        this.allure.endStep();
+        return this;
     }
 
     /** verifications **/
@@ -110,9 +156,10 @@ export class SendMessageComponent extends BasePage {
             `${sendMessageTo} ${userName}`,
             'Incorrect text is displayed'
         ).to.be.equal(text);
+        return this;
     }
 
-    verifyErrorMessageUnderField(field: "Email" | "Last name" | "First name", expectedError: string, shouldBeDisplayed = true): this {
+    verifyErrorMessageUnderField(field: "Email" | "Last name" | "First name", expectedError: string, shouldBeDisplayed = true) {
         this.allure.startStep(`Verify [${expectedError}] error message is ${shouldBeDisplayed ? 'displayed' : 'not displayed'} under ${field}`);
         if (!shouldBeDisplayed) {
             this.expect(
@@ -129,7 +176,7 @@ export class SendMessageComponent extends BasePage {
         return this;
     }
 
-    verifyTitleOfSendMessageForm(title: string): this {
+    verifyTitleOfSendMessageForm(title: string) {
         this.allure.startStep(`Verify title of send message form is [${title}]`);
         this.expect(
             this.wd.getText(this.sendMessageFormTitle()),
@@ -139,7 +186,7 @@ export class SendMessageComponent extends BasePage {
         return this;
     }
 
-    verifyMessageSentToAndSubInfo(expectedText: string): this {
+    verifyMessageSentToAndSubInfo(expectedText: string) {
         this.allure.startStep(`Verify message should be ${expectedText}`);
         const text = this.wd.elements(this.subInfoVerifyEmailForm())
             .map(el => {
@@ -156,7 +203,7 @@ export class SendMessageComponent extends BasePage {
         return this;
     }
 
-    verifyAuthInfoOfSendMessageForm(info: string): this {
+    verifyAuthInfoOfSendMessageForm(info: string) {
         this.allure.startStep(`Verify authentication info of send message form is [${info}]`);
         this.expect(
             this.wd.getText(this.sendMessageFormInfo()),
@@ -173,5 +220,36 @@ export class SendMessageComponent extends BasePage {
             'Incorrect message text is displayed'
         ).to.be.equal(message);
         this.allure.endStep();
+    }
+
+    verifyLoadingSpinnerIsDisplayed(expected = true) {
+        this.allure.startStep(this.verifyAllureMessage('Load spinner'));
+        this.wd.waitForDisplayed(this.loadingSpinner(), !expected);
+        this.expect(
+            this.wd.isElementVisible(this.loadingSpinner()),
+            this.displayedErrorMessage('Load spinner', expected)
+        ).to.be.equal(expected);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyInvalidCodeError(expectedText: string) {
+        this.allure.startStep(`Verify error text should be ${expectedText}`);
+        this.expect(
+            this.wd.getText(this.invalidCodeErrorText()),
+            'Incorrect text is displayed'
+        )
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyResentText(expectedText: string) {
+        this.allure.startStep(`Verify resent text is ${expectedText}`);
+        this.expect(
+            this.wd.getText(this.resentInformationText()),
+            'Incorrect resent text is displayed'
+        ).to.be.equal(expectedText);
+        this.allure.endStep();
+        return this;
     }
 }

@@ -68,21 +68,21 @@ export class ChatWithResidentComponent extends BasePage {
     }
 
     /** actions **/
-    fillFirstMessageInput(value: string): this {
+    fillFirstMessageInput(value: string) {
         this.allure.startStep(`Fill first message input with ${value}`);
         this.wd.setValue(this.messageTextAreaFields(), value);
         this.allure.endStep();
         return this;
     }
 
-    clickOnActiveSendButton(): this {
+    clickOnActiveSendButton() {
         this.allure.startStep('Click on active [Send] button');
         this.wd.click(this.sendButtonEnabled(), this.wd.isSafari());
         this.allure.endStep();
         return this;
     }
 
-    sendMessage(value: string, to?: string): this {
+    sendMessage(value: string, to?: string) {
         this.allure.startStep('Send message');
         if (to) {
             // update if needed, is used only for filling first message field
@@ -94,7 +94,7 @@ export class ChatWithResidentComponent extends BasePage {
         return this;
     }
 
-    selectExpectedMoveInDate(date: { day: string, month: string, year: string }, to?: string): this {
+    selectExpectedMoveInDate(date: { day: string, month: string, year: string }, to?: string) {
         this.allure.startStep(`Select expected move in date - ${date.day}/${date.month}/${date.year}`);
         if (to) {
             // update if needed, is used only for filling first day input
@@ -119,7 +119,7 @@ export class ChatWithResidentComponent extends BasePage {
         return this;
     }
 
-    clickOnContactPropertyOrScheduleTourButton(): this {
+    clickOnContactPropertyOrScheduleTourButton() {
         this.allure.startStep('Click on "Contact Property or Schedule Tour" button');
         this.wd.click(this.contactFormButton(), this.wd.isSafari());
         this.allure.endStep();
@@ -131,7 +131,7 @@ export class ChatWithResidentComponent extends BasePage {
     }
 
     /** verifications **/
-    verifyChatWithResidentFormIsDisplayed(expected = true): this {
+    verifyChatWithResidentFormIsDisplayed(expected = true) {
         const element = 'Chat with resident form';
         this.allure.startStep(this.verifyAllureMessage(element));
         // waiting for animation
@@ -146,7 +146,7 @@ export class ChatWithResidentComponent extends BasePage {
         return this;
     }
 
-    verifyErrorMessageForEmptyFiled(errorMessage: string): this {
+    verifyErrorMessageForEmptyFiled(errorMessage: string) {
         this.allure.startStep(`Verify error message for empty field is ${errorMessage}`);
         this.expect(
             this.wd.getText(this.errorMessageForActiveSendButton()),
@@ -156,7 +156,7 @@ export class ChatWithResidentComponent extends BasePage {
         return this;
     }
 
-    verifyExpectedMoveInDate(month: string, day: string, year: string): this {
+    verifyExpectedMoveInDate(month: string, day: string, year: string) {
         const expectedDate = `${month}/${day}/${year}`;
         // verification for the first opened field
         this.allure.startStep(`Verify expected move in date is ${expectedDate}`);

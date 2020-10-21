@@ -45,6 +45,10 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``sendMessageViaSingIn``
 
+- ``termsConditionsForm``
+
+- ``verifyEmailForm``
+
 ### Installing allure commandline:
 
 Allure requires Java 8 or higher
@@ -62,6 +66,21 @@ Mac OS X:
 - ``brew install allure``
 
 For getting more information please visit https://docs.qameta.io/allure/
+
+### CIRCLE CI:
+
+For triggering CIRCLE CI you can use the following link:
+
+``curl -u "<CIRCLE_CI_TOKEN>": -X POST --header "Content-Type: application/json" -d '{"parameters": {"browser":"chrome"}}' https://circleci.com/api/v2/project/github/Rentgrata/MessengerEndToEnd/pipeline``
+
+- ``<CIRCLE_CI_TOKEN>`` need to replace with valid data
+
+- ``parameters.browser`` === one of ['all', 'chrome', 'safari', 'ie']
+
+
+By default, CircleCI automatically builds a project whenever you push changes to a version control system (VCS). 
+
+You can override this behavior by adding a [ci skip] or [skip ci] tag in the first line of the body of the commit or the commit’s title.
 
 -------
 Structure:
@@ -116,3 +135,4 @@ Fundamentals are:
 - [Webdriver i/o](https://webdriver.io/) - as browser control framework
 - [MochaJS](https://mochajs.org/) - as test runner
 - [Chai](https://www.chaijs.com/) - as assertion library
+- [Circle CI](https://circleci.com/) - Continuous Integration and Delivery

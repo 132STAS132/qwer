@@ -1,4 +1,5 @@
 import { BasePage } from "./base.page";
+import { ForgotPasswordPage } from "./forgotPassword.page";
 
 export class SignInPage extends BasePage {
     /** locators **/
@@ -46,44 +47,63 @@ export class SignInPage extends BasePage {
         return `.selected-flag .iti-flag.${countryCode}`;
     }
 
+    private forgotPasswordLink(): string {
+        return '.forgot_password_link';
+    }
+
     /** actions **/
 
-    fillEmailField(value: string): this {
+    fillEmailField(value: string) {
         this.allure.startStep(`Fill email field with ${value}`);
         this.wd.clearAndFill(this.emailField(), value);
         this.allure.endStep();
         return this;
     }
 
-    fillPasswordField(value: string): this {
+    fillPhoneField(value: string) {
+        this.allure.startStep(`Fill phone field with ${value}`);
+        this.wd.clearAndFill(this.phoneField(), value);
+        this.allure.endStep();
+        return this;
+    }
+
+    fillPasswordField(value: string) {
         this.allure.startStep(`Fill password field with ${value}`);
         this.wd.clearAndFill(this.passwordField(), value);
         this.allure.endStep();
         return this;
     }
 
-    clickOnSubmitButton(): this {
+    clickOnSubmitButton() {
         this.allure.startStep('Click on [Submit] button');
         this.wd.click(this.submitButton());
         this.allure.endStep();
         return this;
     }
 
-    submitForm(email, password): this {
+    clickOnForgotPasswordLink(passwordPageTitle = 'Password Reset | Resident Referrals | Rentgrata'): ForgotPasswordPage {
+        this.allure.startStep('Click on [forgot password ?] link');
+        this.wd.click(this.forgotPasswordLink());
+        this.wd.switchToWindowByName(passwordPageTitle);
+        this.allure.endStep();
+        return new ForgotPasswordPage();
+    }
+
+    submitForm(email, password) {
         this.fillEmailField(email);
         this.fillPasswordField(password);
         this.clickOnSubmitButton();
         return this;
     }
 
-    switchAuthMethodTo(method: string): this {
+    switchAuthMethodTo(method: string) {
         this.allure.startStep(`Switch auth method to ${method}`);
         this.wd.click(this.switchAuthMethodLink(method));
         this.allure.endStep();
         return this;
     }
 
-    selectCountry(countryCode: string, countryName: string): this {
+    selectCountry(countryCode: string, countryName: string) {
         this.allure.startStep(`Select ${countryName} country from phone dropdown`);
         this.wd.selectFromDropDown(this.phoneDropDown(), this.phoneDropDownItemByCountryCode(countryCode));
         this.allure.endStep();
@@ -92,7 +112,7 @@ export class SignInPage extends BasePage {
 
     /** verifications **/
 
-    verifyIsEmailFieldDisplayed(expected = true): this {
+    verifyIsEmailFieldDisplayed(expected = true) {
         this.allure.startStep(this.verifyAllureMessage('email field'));
         try {
             this.wd.waitForDisplayed(this.emailField(), !expected, 7000);
@@ -105,7 +125,7 @@ export class SignInPage extends BasePage {
         return this;
     }
 
-    verifyIsPhoneFieldDisplayed(expected = true): this {
+    verifyIsPhoneFieldDisplayed(expected = true) {
         this.allure.startStep(this.verifyAllureMessage('phone field'));
         try {
             this.wd.waitForDisplayed(this.phoneField(), !expected, 7000);
@@ -118,7 +138,7 @@ export class SignInPage extends BasePage {
         return this;
     }
 
-    verifyIsAuthMethodDisplayed(method: string, expected = true): this {
+    verifyIsAuthMethodDisplayed(method: string, expected = true) {
         this.allure.startStep(this.verifyAllureMessage(`${method} link`));
         try {
             this.wd.waitForDisplayed(this.switchAuthMethodLink(method), !expected, 7000);
@@ -131,7 +151,7 @@ export class SignInPage extends BasePage {
         return this;
     }
 
-    verifySignInPageTitleDisplayed(expected = true): this {
+    verifySignInPageTitleDisplayed(expected = true) {
         this.allure.startStep(this.verifyAllureMessage('sign in page title'));
         this.wd.waitForDisplayed(this.signInPageTitle(), !expected);
         this.expect(
@@ -142,7 +162,7 @@ export class SignInPage extends BasePage {
         return this;
     }
 
-    verifyErrorMessage(message: string): this {
+    verifyErrorMessage(message: string) {
         this.allure.startStep(`Verify error message is ${message}`);
         this.expect(
             this.wd.getText(this.errorMessage()).trim(),
@@ -152,7 +172,7 @@ export class SignInPage extends BasePage {
         return this;
     }
 
-    verifySelectedDialCode(dialCode: string, countryName: string): this {
+    verifySelectedDialCode(dialCode: string, countryName: string) {
         this.allure.startStep(`Verify selected dial code is ${dialCode} for ${countryName} country`);
         this.expect(
             this.wd.getText(this.selectedDialCode()),
@@ -162,7 +182,7 @@ export class SignInPage extends BasePage {
         return this;
     }
 
-    verifySelectedFlag(dialCode: string, countryName: string): this {
+    verifySelectedFlag(dialCode: string, countryName: string) {
         this.allure.startStep(`Verify is flag for ${countryName} country displayed`);
         this.expect(
             this.wd.isElementVisible(this.selectedFlagByCountryCode(dialCode)),
