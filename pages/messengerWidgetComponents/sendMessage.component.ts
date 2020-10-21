@@ -129,16 +129,6 @@ export class SendMessageComponent extends BasePage {
         return new SignInPage();
     }
 
-    switchToNewWindowAndClose() {
-        this.allure.startStep('Switch to new windows and close');
-        const url = this.wd.getUrl()
-        this.wd.switchToSecondWindow();
-        this.wd.closeCurrentWindow();
-        this.wd.switchWindow(url);
-        this.allure.endStep();
-        return this;
-    }
-
     submitVerificationCodeInput(value: string) {
         this.allure.startStep(`Submit [verification code input] with ${value}`);
         this.wd.clearAndFill(this.verificationCodeInput(), value);
@@ -166,6 +156,7 @@ export class SendMessageComponent extends BasePage {
             `${sendMessageTo} ${userName}`,
             'Incorrect text is displayed'
         ).to.be.equal(text);
+        return this;
     }
 
     verifyErrorMessageUnderField(field: "Email" | "Last name" | "First name", expectedError: string, shouldBeDisplayed = true) {

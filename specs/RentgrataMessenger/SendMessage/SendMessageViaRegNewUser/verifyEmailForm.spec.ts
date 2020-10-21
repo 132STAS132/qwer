@@ -1,10 +1,12 @@
-import {messenger} from "../../../../pages/messengerWidgetComponents/messenger.component";
+import { messenger } from "../../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
-import {messengerData} from "../../../../testData/messenger.data";
+import { messengerData } from "../../../../testData/messenger.data";
+import { termsConditionsForm } from "../../../../pages/messengerWidgetComponents/termsConditionsForm.component";
 
 const {
     randomMailTrapEmail,
     verifyEmailForm,
+    termsConditionsFormData
 } = messengerData;
 
 describe('Verify Email form', () => {
@@ -16,14 +18,14 @@ describe('Verify Email form', () => {
             .sendMessageComponent
             .fillLastNameInput(faker.random.words())
             .fillFirstNameInput(faker.random.words())
-            .fillEmailInput(randomMailTrapEmail)
+            .fillEmailInput(randomMailTrapEmail())
             .clickOnContinueButton()
             .waitForLoadSpinnerToDisappear()
             .verifyTitleOfSendMessageForm(verifyEmailForm.title)
     });
 
     it('[C467] Check Email', () => {
-        const email = randomMailTrapEmail;
+        const email = randomMailTrapEmail();
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
@@ -37,6 +39,26 @@ describe('Verify Email form', () => {
             .verifyMessageSentToAndSubInfo(verifyEmailForm.sentCodeTo(email));
     });
 
+    it("[C468] Continue with valid code", () => {
+        const email = randomMailTrapEmail();
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent
+            .fillLastNameInput(faker.random.words())
+            .fillFirstNameInput(faker.random.words())
+            .fillEmailInput(email)
+            .clickOnContinueButton()
+            .waitForLoadSpinnerToDisappear()
+        const code = messenger.getFromMailTrapEmailVerificationCode(email)
+        messenger
+            .chatWithResident.sendMessageComponent
+            .submitVerificationCodeInput(code)
+            .clickOnVerifyEmailButton();
+        termsConditionsForm.verifyTermsConditionsFormTitle(termsConditionsFormData.title);
+    });
+
     it('[C469] Continue with invalid code', () => {
         messenger
             .goToWidgetIFrame()
@@ -45,7 +67,7 @@ describe('Verify Email form', () => {
             .sendMessageComponent
             .fillLastNameInput(faker.random.words())
             .fillFirstNameInput(faker.random.words())
-            .fillEmailInput(randomMailTrapEmail)
+            .fillEmailInput(randomMailTrapEmail())
             .clickOnContinueButton()
             .waitForLoadSpinnerToDisappear()
             .submitVerificationCodeInput(faker.random.uuid())
@@ -61,7 +83,7 @@ describe('Verify Email form', () => {
             .sendMessageComponent
             .fillLastNameInput(faker.random.words())
             .fillFirstNameInput(faker.random.words())
-            .fillEmailInput(randomMailTrapEmail)
+            .fillEmailInput(randomMailTrapEmail())
             .clickOnContinueButton()
             .waitForLoadSpinnerToDisappear()
             .submitVerificationCodeInput(' ')
@@ -70,7 +92,7 @@ describe('Verify Email form', () => {
     });
 
     it('[C471] Click on "I did not receive a code."', () => {
-        const email = randomMailTrapEmail;
+        const email = randomMailTrapEmail();
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
@@ -83,5 +105,26 @@ describe('Verify Email form', () => {
             .waitForLoadSpinnerToDisappear()
             .clickOnIDidNotReceive()
             .verifyResentText(verifyEmailForm.resentText(email));
+    });
+
+    it('[C472] Click on "<" button', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture();
+        const name = messenger.chatWithResident.getFirstProfileName();
+        const messageText = faker.random.words();
+        messenger
+            .chatWithResident.sendMessage(messageText)
+            .sendMessageComponent
+            .fillLastNameInput(faker.random.words())
+            .fillFirstNameInput(faker.random.words())
+            .fillEmailInput(randomMailTrapEmail())
+            .clickOnContinueButton()
+            .waitForLoadSpinnerToDisappear()
+            .clickOnLeftArrowButton()
+        messenger
+            .chatWithResident.sendMessageComponent
+            .verifySendMessageToText(`Sending message to: ${name}`)
+            .verifyMessageInMessageForm(messageText);
     });
 });

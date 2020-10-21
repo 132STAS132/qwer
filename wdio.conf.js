@@ -21,6 +21,7 @@ const pathExists = require('path-exists');
 process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
+process.env.PATH_TO_TXT_TEST_DATA = path.resolve(__dirname, 'testData', 'txt');
 const isLambdaTest = JSON.parse(process.env.LAMBDA_TEST_RUN || 0);
 const isSlackEnabled = JSON.parse(process.env.ENABLE_SLACK || 0);
 const isTestRailRun = JSON.parse(process.env.TESTRAIL_RUN || 0);
@@ -250,6 +251,7 @@ exports.config = {
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
         sendMessage: ['./specs/RentgrataMessenger/SendMessage/sendMessage.spec.ts'],
         verifyEmailForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/verifyEmailForm.spec.ts'],
+        termsConditionsForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/termsConditionsForm.spec.ts'],
         sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
     },
     // Patterns to exclude.

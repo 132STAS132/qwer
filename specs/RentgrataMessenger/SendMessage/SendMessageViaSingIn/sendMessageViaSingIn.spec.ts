@@ -105,7 +105,7 @@ describe('Send Message via Sing in', () => {
             .sendMessageComponent.clickOnSignInLink()
             .goToLoadingIframe()
             .verifyLoadingSpinnerIsDisplayed()
-            .switchToNewWindowAndClose()
+            .switchToNewWindowAndCloseCurrent()
             .verifyLoadingSpinnerIsDisplayed(false);
     });
 });

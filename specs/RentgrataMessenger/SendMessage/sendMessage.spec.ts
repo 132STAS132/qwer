@@ -160,7 +160,7 @@ describe('Send Message', () => {
     });
 
     it('[C448] Continue with valid data', () => {
-        const email = randomMailTrapEmail;
+        const email = randomMailTrapEmail();
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()

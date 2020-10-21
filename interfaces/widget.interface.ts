@@ -41,3 +41,16 @@ export interface widgetIconsInterface {
     virtualTour: string,
     contactProperty: string
 }
+
+export interface verifyEmailFormInterface {
+    title: string,
+    sentCodeTo: (to: string) => string,
+    invalidCodeError: string,
+    resentText: (to: string) => string
+}
+export interface termsConditionsFormInterface {
+    title: string,
+    headerInfoText: string,
+    termsText: string,
+    agreementText: string
+}
