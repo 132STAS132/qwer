@@ -329,7 +329,8 @@ export class WDIO {
         }
       } else {
         $(selector).click();
-        $(selector).clearValue();
+        this.selectText(selector);
+        this.pressBackspace();
         $(selector).setValue(value);
       }
     } catch (e) {

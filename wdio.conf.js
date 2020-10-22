@@ -249,6 +249,7 @@ exports.config = {
     suites: {
         chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
+        contactProperty: ['./specs/RentgrataMessenger/contactProperty.spec.ts'],
         sendMessage: ['./specs/RentgrataMessenger/SendMessage/sendMessage.spec.ts'],
         verifyEmailForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/verifyEmailForm.spec.ts'],
         termsConditionsForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/termsConditionsForm.spec.ts'],

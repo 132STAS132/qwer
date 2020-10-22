@@ -39,6 +39,8 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``chatWithAResident``
 
+- ``contactProperty``
+
 - ``mainPage``
 
 - ``sendMessage``

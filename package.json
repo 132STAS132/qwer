@@ -7,6 +7,7 @@
     "tests": "cross-env SUITE_TYPE=all wdio wdio.conf.js",
     "chatWithAResident": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite chatWithAResident",
     "mainPage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite mainPage",
+    "contactProperty": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite contactProperty",
     "sendMessage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessage",
     "sendMessageViaSingIn": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingIn",
     "verifyEmailForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite verifyEmailForm",

@@ -66,8 +66,42 @@ export class BasePage {
         return '.container';
     }
 
-    clickOnButtonByText(text: string) {
+    private errorMessageByLabel(label: string): string {
+        return `//p[text()="${label}"]//ancestor::div[contains(@class, "has-")]//*[contains(@id,"-error-msg")]`;
+    }
+
+    // date picker start
+    private get datePickerElement(): string {
+        return `.flatpickr-calendar.open`;
+    }
+
+    private yearInput(): string {
+        return `${this.datePickerElement} .numInput.cur-year`;
+    }
+
+    private monthSelect(): string {
+        return `${this.datePickerElement} .flatpickr-monthDropdown-months`;
+    }
+
+    private day(month: string, day: string, year: string): string {
+        // e.g. October 9, 2020
+        return `${this.datePickerElement} [aria-label="${month} ${day}, ${year}"]`;
+    }
+
+    // date picker end
+
+    selectDataInDatePicker(date: { day: string, month: string, year: string }) {
+        if (this.wd.isSafari()) {
+            this.wd.click(this.yearInput(), true);
+        }
+        this.wd.setValue(this.yearInput(), date.year, !this.wd.isSafari());
+        this.wd.setDropDownValueByText(this.monthSelect(), date.month);
+        this.wd.click(this.day(date.month, date.day, date.year), this.wd.isSafari());
+    }
+
+    clickOnButtonByText(text: string, waitForAnimationSec = 0) {
         this.allure.startStep(`Click on [${text}] button`);
+        this.wd.wait(waitForAnimationSec)
         this.wd.click(this.buttonByText(text), this.wd.isSafari());
         this.allure.endStep();
         return this;
@@ -80,6 +114,18 @@ export class BasePage {
         this.wd.closeCurrentWindow();
         this.wd.switchWindow(url);
         this.allure.endStep();
+        return this;
+    }
+
+    switchToFirstOpenedWindow() {
+        this.allure.startStep('Switch to first opened window');
+        this.wd.switchToWindowHandle(0);
+        this.allure.endStep();
+        return this;
+    }
+
+    waitForWindowsCount(count: number) {
+        browser.waitUntil(() => browser.getWindowHandles().length === count);
         return this;
     }
 
@@ -188,6 +234,15 @@ export class BasePage {
         return text.match(/\d+/)[0];
     }
 
+    refreshPage() {
+        this.allure.startStep('Refresh the page');
+        this.wd.refresh();
+        this.allure.endStep();
+        return this;
+    }
+
+    /** verifications **/
+
     verifyTxtFile(fileName: string, selector = this.txtContainer()) {
         this.wd.waitForPageToLoad();
         this.allure.startStep(`Verify ${fileName} html`);
@@ -203,5 +258,20 @@ export class BasePage {
         return this;
     }
 
-    /** verifications **/
+    verifyErrorMessageUnderField(field: string, expectedError: string, shouldBeDisplayed = true) {
+        this.allure.startStep(`Verify [${expectedError}] error message is ${shouldBeDisplayed ? 'displayed' : 'not displayed'} under ${field}`);
+        if (!shouldBeDisplayed) {
+            this.expect(
+                this.wd.isElementVisible(this.errorMessageByLabel(field)),
+                `Element with error message should not be displayed`
+            ).to.be.false;
+        } else {
+            this.expect(
+                this.wd.getText(this.errorMessageByLabel(field)),
+                `Incorrect error message is displayed under ${field} field`
+            ).to.be.equal(expectedError)
+        }
+        this.allure.endStep();
+        return this;
+    }
 }

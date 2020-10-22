@@ -36,10 +36,6 @@ export class SendMessageComponent extends BasePage {
         return  '.email-input input';
     }
 
-    private errorMessageByLabel(label: string): string {
-        return `//p[text()="${label}"]//ancestor::div[contains(@class, "has-")]//*[contains(@id,"-error-msg")]`;
-    }
-
     private loadSpinner(): string {
         return '.ant-spin-spinning';
     }
@@ -156,23 +152,6 @@ export class SendMessageComponent extends BasePage {
             `${sendMessageTo} ${userName}`,
             'Incorrect text is displayed'
         ).to.be.equal(text);
-        return this;
-    }
-
-    verifyErrorMessageUnderField(field: "Email" | "Last name" | "First name", expectedError: string, shouldBeDisplayed = true) {
-        this.allure.startStep(`Verify [${expectedError}] error message is ${shouldBeDisplayed ? 'displayed' : 'not displayed'} under ${field}`);
-        if (!shouldBeDisplayed) {
-            this.expect(
-                this.wd.isElementVisible(this.errorMessageByLabel(field)),
-                `Element with error message should not be displayed`
-            ).to.be.false;
-        } else {
-            this.expect(
-                this.wd.getText(this.errorMessageByLabel(field)),
-                `Incorrect error message is displayed under ${field} field`
-            ).to.be.equal(expectedError)
-        }
-        this.allure.endStep();
         return this;
     }
 

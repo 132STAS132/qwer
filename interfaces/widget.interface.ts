@@ -48,9 +48,43 @@ export interface verifyEmailFormInterface {
     invalidCodeError: string,
     resentText: (to: string) => string
 }
+
 export interface termsConditionsFormInterface {
     title: string,
     headerInfoText: string,
     termsText: string,
     agreementText: string
+}
+
+export interface userInterface {
+    email: string,
+    password: string,
+    firstName: string,
+    lastName: string
+}
+
+export interface contactPropertyFormInterface {
+    firstName?: string,
+    lastName?: string,
+    email?: string,
+    expectedMoveInDate?: {
+        day: string,
+        month: string,
+        year: string,
+    },
+    scheduleATour?: string,
+    phone?: string,
+    message?: string
+}
+
+export interface contactPropertyFormFields {
+    firstNameField: "First Name",
+    lastNameField: "Last Name",
+    emailField: "Email",
+    expectedMoveInDate: "Expected Move In Date",
+    errorMustEnterFirstName: string
+    errorMustEnterLastName: string
+    errorMustEnterEmail: string
+    errorInvalidEmail: string
+    errorMustSelectDate: string
 }
