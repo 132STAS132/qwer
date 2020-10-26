@@ -81,10 +81,15 @@ export interface contactPropertyFormFields {
     firstNameField: "First Name",
     lastNameField: "Last Name",
     emailField: "Email",
+    messageField: "Message",
+    phoneField: "Phone",
     expectedMoveInDate: "Expected Move In Date",
     errorMustEnterFirstName: string
     errorMustEnterLastName: string
     errorMustEnterEmail: string
+    errorMustEnterMessage: string
+    errorMessageAtLeast5: string
+    errorInvalidPhone: string
     errorInvalidEmail: string
     errorMustSelectDate: string
 }

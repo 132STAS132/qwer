@@ -1,7 +1,17 @@
 import { BasePage } from "../base.page";
 import { contactPropertyFormInterface } from "../../interfaces/widget.interface";
+import { ContactPropertySuccessComponent } from "./contactPropertySuccess.component";
 
 export class ContactComponent extends BasePage {
+
+    successForm: ContactPropertySuccessComponent;
+
+    constructor() {
+        super();
+        this.successForm = new ContactPropertySuccessComponent();
+    }
+
+
     /** locators **/
     private contactPropertyForm(): string {
         return 'section.contact-property-container';
@@ -37,6 +47,10 @@ export class ContactComponent extends BasePage {
 
     private messageTextArea(): string {
         return '#message';
+    }
+
+    private phoneErrorMessage(): string {
+        return '#contact-phone-error-msg'
     }
 
     /** actions **/
@@ -78,9 +92,16 @@ export class ContactComponent extends BasePage {
         return this;
     }
 
-    submitForm(info: contactPropertyFormInterface) {
-        this.fillFormFields(info);
+    clickOnContactProperty() {
         this.clickOnButtonByText('Contact Property');
+        return this;
+    }
+
+
+    submitForm(info: contactPropertyFormInterface, wait = 0) {
+        this.wd.wait(wait);
+        this.fillFormFields(info);
+        this.clickOnContactProperty();
         return this;
     }
 
@@ -96,10 +117,20 @@ export class ContactComponent extends BasePage {
         return this;
     }
 
+    verifyPhoneInputValue(value: string) {
+        this.allure.startStep('Verify phone input value');
+        this.expect(
+            this.wd.getValue(this.getFormFieldLocator('phone')),
+            'Incorrect value is displayed for phone input field'
+        ).to.be.equal(value);
+        this.allure.endStep();
+        return this;
+    }
+
     verifyFirstNameInputValue(value: string) {
         this.allure.startStep('Verify first name input value');
         this.expect(
-            this.wd.getValue(this.firstNameInput()),
+            this.wd.getValue(this.getFormFieldLocator('firstName')),
             'Incorrect value is displayed for first name input field'
         ).to.be.equal(value);
         this.allure.endStep();
@@ -109,7 +140,7 @@ export class ContactComponent extends BasePage {
     verifyLastNameInputValue(value: string) {
         this.allure.startStep('Verify last name input value');
         this.expect(
-            this.wd.getValue(this.lastNameInput()),
+            this.wd.getValue(this.getFormFieldLocator('lastName')),
             'Incorrect value is displayed for last name input field'
         ).to.be.equal(value);
         this.allure.endStep();
@@ -142,6 +173,35 @@ export class ContactComponent extends BasePage {
             this.wd.isElementVisible(this.contactPropertyForm()),
             this.displayedErrorMessage(element, expected)
         ).to.be.equal(expected);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyExpectedMoveInDateValue(month: string, day: string, year: string) {
+        const expectedDate = `${month}/${day}/${year}`;
+        this.allure.startStep(`Verify expected move in date is ${expectedDate}`);
+        this.expect(
+            this.wd.getValue(this.getFormFieldLocator('expectedMoveInDate')),
+            'Incorrect expected move in date value is displayed'
+        ).to.be.equal(expectedDate);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyPhoneErrorMessage(expectedError: string, shouldBeDisplayed = true) {
+        this.allure.startStep(`Verify [${expectedError}] error message is ${shouldBeDisplayed ? 'displayed' : 'not displayed'} under Phone`);
+        if (!shouldBeDisplayed) {
+            this.wd.pause(500);
+            this.expect(
+                this.wd.isElementVisible(this.phoneErrorMessage()),
+                `Phone error message should not be displayed`
+            ).to.be.false;
+        } else {
+            this.expect(
+                this.wd.getText(this.phoneErrorMessage()),
+                `Incorrect error message is displayed under Phone field`
+            ).to.be.equal(expectedError)
+        }
         this.allure.endStep();
         return this;
     }

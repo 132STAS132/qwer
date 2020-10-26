@@ -38,10 +38,15 @@ class MessengerData {
             firstNameField: "First Name",
             lastNameField: "Last Name",
             emailField: "Email",
+            messageField: "Message",
+            phoneField: "Phone",
             errorMustEnterFirstName: "You must enter your first name.",
             errorMustEnterLastName: "You must enter your last name.",
             errorMustEnterEmail: "You must enter your email.",
+            errorMustEnterMessage: "You must enter your message.",
+            errorMessageAtLeast5: "Message must be at least 5 characters long.",
             errorInvalidEmail: "You must enter a valid email.",
+            errorInvalidPhone: "You must enter a valid phone number",
             errorMustSelectDate: "You must select a date.",
             expectedMoveInDate: "Expected Move In Date"
         }
@@ -118,6 +123,14 @@ class MessengerData {
             password: process.env.DEFAULT_USER_PASSWORD,
             firstName: 'James',
             lastName: 'Smt',
+        }
+    }
+
+    get warningMessageCloseForm(): { cancelWarning: string, yesButton: string, noButton: string } {
+        return {
+            cancelWarning: "Are you sure you'd like to cancel?",
+            yesButton: "Yes",
+            noButton: "No"
         }
     }
 }

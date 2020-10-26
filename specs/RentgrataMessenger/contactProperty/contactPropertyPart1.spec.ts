@@ -1,6 +1,9 @@
-import { messenger } from "../../pages/messengerWidgetComponents/messenger.component";
+import { messenger } from "../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
-import { messengerData } from "../../testData/messenger.data";
+import { messengerData } from "../../../testData/messenger.data";
+import { bugs } from "../../../existingBugs/bugs";
+import { allureHelper } from "../../../helpers/allure";
+import { signInFormData } from "../../../testData/signInForm.data";
 
 const {
     existingTestUser,
@@ -8,7 +11,11 @@ const {
     contactPropertyForm
 } = messengerData;
 
-describe('Contact Property', () => {
+const date = messenger.getDateFromToday(2);
+const { randomCountry } = signInFormData;
+const phoneNumber = '+380501234567';
+
+describe('Contact Property part 1', () => {
     it('[C737] Open Contact Property as logged in user', () => {
         messenger
             .goToWidgetIFrame()
@@ -29,23 +36,22 @@ describe('Contact Property', () => {
     });
 
     it('[C738] Open Contact Property w/o login', () => {
-        messenger.refreshPage()
+        messenger
             .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton, 3)
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton )
             .gotoChatOrContactIFrame()
             .contactForm.verifyAllFieldsAreEmpty()
     });
 
     it('[C740] Contact Property with empty First Name', () => {
-        const date = messenger.getDateFromToday(2);
-        messenger.refreshPage()
+        messenger
             .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton, 3)
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
                 lastName: faker.random.word(),
                 email: faker.internet.email(),
-                message: faker.random.word(),
+                message: faker.random.words(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -62,15 +68,14 @@ describe('Contact Property', () => {
     });
 
     it('[C741] Contact Property with empty Last Name', () => {
-        const date = messenger.getDateFromToday(2);
-        messenger.refreshPage()
+        messenger
             .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton, 3)
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 email: faker.internet.email(),
-                message: faker.random.word(),
+                message: faker.random.words(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -87,15 +92,14 @@ describe('Contact Property', () => {
     });
 
     it('[C742] Contact Property with empty Email', function () {
-        const date = messenger.getDateFromToday(2);
-        messenger.refreshPage()
+        messenger
             .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton, 3)
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton )
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 lastName: faker.random.word(),
-                message: faker.random.word(),
+                message: faker.random.words(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -112,15 +116,14 @@ describe('Contact Property', () => {
     });
 
     it('[C743] Contact Property with invalid Email',() => {
-        const date = messenger.getDateFromToday(2);
-        messenger.refreshPage()
+        messenger
             .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton, 3)
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 lastName: faker.random.word(),
-                message: faker.random.word(),
+                message: faker.random.words(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -129,22 +132,22 @@ describe('Contact Property', () => {
             })
             .submitForm({
                 email: faker.random.word(),
+                lastName: faker.random.word(),
             })
             .verifyErrorMessageUnderField(contactPropertyForm.emailField, contactPropertyForm.errorInvalidEmail)
     });
 
     it('[C753] Leave "Expected Move In Date" empty', () => {
-        // todo link a bug
-        const date = messenger.getDateFromToday(2);
-        messenger.refreshPage()
+        allureHelper.addIssueToAllure(bugs.contactPropertyForm.expectedMoveInDateWarningDoesNotDisappear);
+        messenger
             .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton, 3)
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 email: faker.internet.email(),
                 lastName: faker.random.word(),
-                message: faker.random.word(),
+                message: faker.random.words(),
             })
             .verifyErrorMessageUnderField(contactPropertyForm.expectedMoveInDate, contactPropertyForm.errorMustSelectDate)
             .submitForm({
@@ -154,8 +157,70 @@ describe('Contact Property', () => {
                     month: date.monthFullName,
                     year: date.year
                 }
-            })
+            }, 3)
             .verifyErrorMessageUnderField(contactPropertyForm.lastNameField, contactPropertyForm.errorMustEnterLastName)
             .verifyErrorMessageUnderField(contactPropertyForm.expectedMoveInDate, contactPropertyForm.errorMustSelectDate, false)
+    });
+
+    it('[C757] Leave "Message" field empty', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
+            .gotoChatOrContactIFrame()
+            .contactForm.submitForm({
+                firstName: faker.random.word(),
+                lastName: faker.random.word(),
+                email: faker.internet.email(),
+                expectedMoveInDate: {
+                    day: date.day,
+                    month: date.monthFullName,
+                    year: date.year
+                }
+            })
+            .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMustEnterMessage)
+            .submitForm({
+                message: faker.random.words(),
+                firstName: ' ',
+            })
+            .verifyErrorMessageUnderField(contactPropertyForm.firstNameField, contactPropertyForm.errorMustEnterFirstName)
+            .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMustEnterMessage, false)
+    });
+
+    it('[C744] Select Expected Move In Date', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
+            .gotoChatOrContactIFrame()
+            .contactForm.submitForm({
+                expectedMoveInDate: {
+                    day: date.day,
+                    month: date.monthFullName,
+                    year: date.year
+                }
+            }, 2)
+            .verifyExpectedMoveInDateValue(date.monthDigits, date.dayLeadingZero, date.year)
+    });
+
+    it('[C745] Select country (Phone Number)', () => {
+        const { countryCode, countryName, dialCode } = randomCountry();
+        messenger
+            .goToWidgetIFrame()
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
+            .gotoChatOrContactIFrame()
+            .selectCountry(countryCode, countryName)
+            .contactForm.verifyPhoneInputValue(`+${dialCode}`)
+            .verifySelectedFlag(countryCode, countryName)
+    });
+
+    it('[C746] Type phone number', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
+            .gotoChatOrContactIFrame()
+            .contactForm.submitForm({
+                phone: phoneNumber
+            })
+            .verifyPhoneInputValue(phoneNumber)
+            .verifyPhoneErrorMessage(contactPropertyForm.errorInvalidPhone, false)
     });
 });

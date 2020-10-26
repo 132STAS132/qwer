@@ -70,6 +70,22 @@ export class BasePage {
         return `//p[text()="${label}"]//ancestor::div[contains(@class, "has-")]//*[contains(@id,"-error-msg")]`;
     }
 
+    private phoneDropDown(): string {
+        return '.iti-arrow';
+    }
+
+    private phoneDropDownItemByCountryCode(value: string): string {
+        return `[data-country-code="${value}"]`;
+    }
+
+    private selectedFlagByCountryCode(countryCode: string): string {
+        return `.selected-flag .iti-flag.${countryCode}`;
+    }
+
+    private warningMessageText(): string {
+        return '.ant-modal-confirm-content';
+    }
+
     // date picker start
     private get datePickerElement(): string {
         return `.flatpickr-calendar.open`;
@@ -241,7 +257,24 @@ export class BasePage {
         return this;
     }
 
+    selectCountry(countryCode: string, countryName: string) {
+        this.allure.startStep(`Select ${countryName} country from phone dropdown`);
+        this.wd.selectFromDropDown(this.phoneDropDown(), this.phoneDropDownItemByCountryCode(countryCode));
+        this.allure.endStep();
+        return this;
+    }
+
     /** verifications **/
+
+    verifySelectedFlag(dialCode: string, countryName: string) {
+        this.allure.startStep(`Verify is flag for ${countryName} country displayed`);
+        this.expect(
+            this.wd.isElementVisible(this.selectedFlagByCountryCode(dialCode)),
+            `Incorrect country flag for selected ${countryName} country is displayed`
+        ).to.be.true;
+        this.allure.endStep();
+        return this;
+    }
 
     verifyTxtFile(fileName: string, selector = this.txtContainer()) {
         this.wd.waitForPageToLoad();
@@ -261,6 +294,7 @@ export class BasePage {
     verifyErrorMessageUnderField(field: string, expectedError: string, shouldBeDisplayed = true) {
         this.allure.startStep(`Verify [${expectedError}] error message is ${shouldBeDisplayed ? 'displayed' : 'not displayed'} under ${field}`);
         if (!shouldBeDisplayed) {
+            this.wd.pause(500);
             this.expect(
                 this.wd.isElementVisible(this.errorMessageByLabel(field)),
                 `Element with error message should not be displayed`
@@ -271,6 +305,29 @@ export class BasePage {
                 `Incorrect error message is displayed under ${field} field`
             ).to.be.equal(expectedError)
         }
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyWarningMessageText(text: string) {
+        this.allure.startStep(`Verify warning message text is ${text}`);
+        this.expect(
+            this.wd.getText(this.warningMessageText()),
+            'Warning message is incorrect'
+        ).to.be.equal(text);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyIsWarningDisplayed(expected= true) {
+        this.allure.startStep(this.verifyAllureMessage('warning message'));
+        try {
+            this.wd.waitForDisplayed(this.warningMessageText(), !expected,3000);
+        } catch (e) {}
+        this.expect(
+            this.wd.isElementVisible(this.warningMessageText()),
+            this.displayedErrorMessage('warning message', expected)
+        ).to.be.equal(expected);
         this.allure.endStep();
         return this;
     }
