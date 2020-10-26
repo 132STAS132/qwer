@@ -4,7 +4,7 @@ import { signInFormData } from "../../../../testData/signInForm.data";
 import { forgotPasswordData } from "../../../../testData/forgotPassword.data";
 import { messengerData } from "../../../../testData/messenger.data";
 
-const { existingEmail } = messengerData;
+const { existingTestUser } = messengerData;
 const { authMethods, randomCountry } = signInFormData;
 const {
     emailOrPasswordIncorrect,
@@ -34,7 +34,7 @@ describe('Send Message via Sing in', () => {
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
             .sendMessageComponent.clickOnSignInLinkAndSwitchToNewWindow()
-            .submitForm(existingEmail, 'password')
+            .submitForm(existingTestUser.email, 'password')
             .verifyErrorMessage(emailOrPasswordIncorrect);
     });
 

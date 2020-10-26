@@ -4,7 +4,9 @@ import {
     sendMessageFormInterface,
     widgetIconsInterface,
     termsConditionsFormInterface,
-    verifyEmailFormInterface
+    verifyEmailFormInterface,
+    contactPropertyFormFields,
+    userInterface
 } from "../interfaces/widget.interface";
 import * as faker from "faker";
 
@@ -28,6 +30,25 @@ class MessengerData {
             scheduleATour: "Schedule a Tour",
             virtualTour: "Virtual Tour",
             contactProperty: "Contact Property"
+        }
+    }
+
+    get contactPropertyForm(): contactPropertyFormFields {
+        return {
+            firstNameField: "First Name",
+            lastNameField: "Last Name",
+            emailField: "Email",
+            messageField: "Message",
+            phoneField: "Phone",
+            errorMustEnterFirstName: "You must enter your first name.",
+            errorMustEnterLastName: "You must enter your last name.",
+            errorMustEnterEmail: "You must enter your email.",
+            errorMustEnterMessage: "You must enter your message.",
+            errorMessageAtLeast5: "Message must be at least 5 characters long.",
+            errorInvalidEmail: "You must enter a valid email.",
+            errorInvalidPhone: "You must enter a valid phone number",
+            errorMustSelectDate: "You must select a date.",
+            expectedMoveInDate: "Expected Move In Date"
         }
     }
 
@@ -96,9 +117,21 @@ class MessengerData {
         }
     }
 
-    get existingEmail(): string {
-        // could be any existing email
-        return 'e659345dfe-cf3bb0@inbox.mailtrap.io';
+    get existingTestUser(): userInterface {
+        return {
+            email: 'e659345dfe-cf3bb0@inbox.mailtrap.io',
+            password: process.env.DEFAULT_USER_PASSWORD,
+            firstName: 'James',
+            lastName: 'Smt',
+        }
+    }
+
+    get warningMessageCloseForm(): { cancelWarning: string, yesButton: string, noButton: string } {
+        return {
+            cancelWarning: "Are you sure you'd like to cancel?",
+            yesButton: "Yes",
+            noButton: "No"
+        }
     }
 }
 

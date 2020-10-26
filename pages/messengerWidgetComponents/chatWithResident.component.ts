@@ -39,26 +39,6 @@ export class ChatWithResidentComponent extends BasePage {
         return `${this.widgetMessengerId} [id*="expectedMoveInDate"] input:last-child`;
     }
 
-    // date picker start
-    private get datePickerElement(): string {
-        return `.flatpickr-calendar.open`;
-    }
-
-    private yearInput(): string {
-        return `${this.datePickerElement} .numInput.cur-year`;
-    }
-
-    private monthSelect(): string {
-        return `${this.datePickerElement} .flatpickr-monthDropdown-months`;
-    }
-
-    private day(month: string, day: string, year: string): string {
-        // e.g. October 9, 2020
-        return `${this.datePickerElement} [aria-label="${month} ${day}, ${year}"]`;
-    }
-
-    // date picker end
-
     private contactFormButton(): string {
         return '#contact-property-button';
     }
@@ -108,12 +88,7 @@ export class ChatWithResidentComponent extends BasePage {
 
             this.wd.click(this.expectedMoveInDateInputs(), this.wd.isSafari());
 
-            if (this.wd.isSafari()) {
-                this.wd.click(this.yearInput(), true);
-            }
-            this.wd.setValue(this.yearInput(), date.year, !this.wd.isSafari());
-            this.wd.setDropDownValueByText(this.monthSelect(), date.month);
-            this.wd.click(this.day(date.month, date.day, date.year), this.wd.isSafari());
+            this.selectDataInDatePicker(date);
         }
         this.allure.endStep();
         return this;

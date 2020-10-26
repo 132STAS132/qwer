@@ -8,7 +8,7 @@ const {
     sendMessageForm,
     randomMailTrapEmail,
     verifyEmailForm,
-    existingEmail
+    existingTestUser
 } = messengerData;
 
 describe('Send Message', () => {
@@ -152,7 +152,7 @@ describe('Send Message', () => {
             .sendMessageComponent
                 .fillLastNameInput(faker.random.words())
                 .fillFirstNameInput(faker.random.words())
-                .fillEmailInput(existingEmail)
+                .fillEmailInput(existingTestUser.email)
                 .clickOnContinueButton()
                 .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorEmailExists)
                 .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorMustEnterLastName, false)

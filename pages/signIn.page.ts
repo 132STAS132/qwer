@@ -31,20 +31,8 @@ export class SignInPage extends BasePage {
         return `//*[@class="switch-authentication-method"]/a[text()="${method}"]`;
     }
 
-    private phoneDropDown(): string {
-        return '.iti-arrow';
-    }
-
-    private phoneDropDownItemByCountryCode(value: string): string {
-        return `[data-country-code="${value}"]`;
-    }
-
     private selectedDialCode(): string {
         return '.selected-dial-code';
-    }
-
-    private selectedFlagByCountryCode(countryCode: string): string {
-        return `.selected-flag .iti-flag.${countryCode}`;
     }
 
     private forgotPasswordLink(): string {
@@ -99,13 +87,6 @@ export class SignInPage extends BasePage {
     switchAuthMethodTo(method: string) {
         this.allure.startStep(`Switch auth method to ${method}`);
         this.wd.click(this.switchAuthMethodLink(method));
-        this.allure.endStep();
-        return this;
-    }
-
-    selectCountry(countryCode: string, countryName: string) {
-        this.allure.startStep(`Select ${countryName} country from phone dropdown`);
-        this.wd.selectFromDropDown(this.phoneDropDown(), this.phoneDropDownItemByCountryCode(countryCode));
         this.allure.endStep();
         return this;
     }
@@ -178,16 +159,6 @@ export class SignInPage extends BasePage {
             this.wd.getText(this.selectedDialCode()),
             `Selected dial code should be ${dialCode}`
         ).to.be.equal(dialCode);
-        this.allure.endStep();
-        return this;
-    }
-
-    verifySelectedFlag(dialCode: string, countryName: string) {
-        this.allure.startStep(`Verify is flag for ${countryName} country displayed`);
-        this.expect(
-            this.wd.isElementVisible(this.selectedFlagByCountryCode(dialCode)),
-            `Incorrect country flag for selected ${countryName} country is displayed`
-        ).to.be.true;
         this.allure.endStep();
         return this;
     }

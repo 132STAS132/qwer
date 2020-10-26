@@ -327,9 +327,14 @@ export class WDIO {
             $(selector).addValue(value);
           });
         }
-      } else {
+      } else if (this.isSafari()) {
         $(selector).click();
         $(selector).clearValue();
+        $(selector).setValue(value);
+      } else {
+        $(selector).click();
+        this.selectText(selector);
+        this.pressBackspace();
         $(selector).setValue(value);
       }
     } catch (e) {
