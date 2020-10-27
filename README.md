@@ -43,6 +43,8 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``contactPropertyPart2``
 
+- ``successScreen``
+
 - ``mainPage``
 
 - ``sendMessage``
