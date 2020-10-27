@@ -51,7 +51,7 @@ describe('Contact Property part 1', () => {
             .contactForm.submitForm({
                 lastName: faker.random.word(),
                 email: faker.internet.email(),
-                message: faker.random.words(),
+                message: faker.random.uuid(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -75,7 +75,7 @@ describe('Contact Property part 1', () => {
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 email: faker.internet.email(),
-                message: faker.random.words(),
+                message: faker.random.uuid(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -99,7 +99,7 @@ describe('Contact Property part 1', () => {
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 lastName: faker.random.word(),
-                message: faker.random.words(),
+                message: faker.random.uuid(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -123,7 +123,7 @@ describe('Contact Property part 1', () => {
             .contactForm.submitForm({
                 firstName: faker.random.word(),
                 lastName: faker.random.word(),
-                message: faker.random.words(),
+                message: faker.random.uuid(),
                 expectedMoveInDate: {
                     day: date.day,
                     month: date.monthFullName,
@@ -147,7 +147,7 @@ describe('Contact Property part 1', () => {
                 firstName: faker.random.word(),
                 email: faker.internet.email(),
                 lastName: faker.random.word(),
-                message: faker.random.words(),
+                message: faker.random.uuid(),
             })
             .verifyErrorMessageUnderField(contactPropertyForm.expectedMoveInDate, contactPropertyForm.errorMustSelectDate)
             .submitForm({
@@ -179,7 +179,7 @@ describe('Contact Property part 1', () => {
             })
             .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMustEnterMessage)
             .submitForm({
-                message: faker.random.words(),
+                message: faker.random.uuid(),
                 firstName: ' ',
             })
             .verifyErrorMessageUnderField(contactPropertyForm.firstNameField, contactPropertyForm.errorMustEnterFirstName)

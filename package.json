@@ -9,6 +9,7 @@
     "mainPage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite mainPage",
     "contactPropertyPart1": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite contactPropertyPart1",
     "contactPropertyPart2": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite contactPropertyPart2",
+    "successScreen": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite successScreen",
     "sendMessage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessage",
     "sendMessageViaSingIn": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingIn",
     "verifyEmailForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite verifyEmailForm",

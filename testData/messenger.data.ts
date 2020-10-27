@@ -133,6 +133,25 @@ class MessengerData {
             noButton: "No"
         }
     }
+
+    get successContactForm(): { firstName: string, lastName: string, email: string, expectedMoveIn: string, message: string, successFormText(property?: string): string, descriptionFormText: string } {
+        return {
+            firstName: "First Name:",
+            lastName: "Last Name:",
+            email: "Email:",
+            expectedMoveIn: "Expected Move In:",
+            message: "Message:",
+            successFormText: (property = 'Grata Signature Apartments') => `Success! You've contacted ${property}`,
+            descriptionFormText: "Here's a copy of the information you sent:"
+        }
+    }
+
+    get url(): { rentgrata: string, appStore: string } {
+        return {
+            rentgrata: 'https://www.rentgrata.com/',
+            appStore: 'https://apps.apple.com/us/app/rentgrata-chicago-apartments/id1241475303?ls=1'
+        }
+    }
 }
 
 export const messengerData = new MessengerData();

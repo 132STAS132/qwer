@@ -123,6 +123,16 @@ export class BasePage {
         return this;
     }
 
+    verifyUrl(url: string) {
+        this.allure.startStep(`Verify current url is ${url}`);
+        this.expect(
+            this.wd.getUrl(),
+            'Incorrect url'
+        ).to.be.equal(url);
+        this.allure.endStep();
+        return this;
+    }
+
     switchToNewWindowAndCloseCurrent() {
         this.allure.startStep('Switch to new windows and close');
         const url = this.wd.getUrl()

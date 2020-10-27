@@ -22,8 +22,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
-            phone: `+${dialCode}`
-        })
+                phone: `+${dialCode}`
+            })
             .verifySelectedFlag(countryCode, countryName)
     });
 
@@ -44,7 +44,7 @@ describe('Contact Property part 2', () => {
                 firstName: faker.random.word(),
                 lastName: faker.random.word(),
                 email: faker.internet.email(),
-                message: faker.random.words()
+                message: faker.random.uuid()
             })
             .successForm.verifySuccessFormIsDisplayed();
     });
@@ -55,8 +55,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
-            phone: "asdw",
-        })
+                phone: "asdw",
+            })
             .verifyPhoneErrorMessage(contactPropertyForm.errorInvalidPhone)
             .submitForm({
                 phone: phoneNumber,
@@ -70,8 +70,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.fillFormFields({
-            firstName: faker.random.word()
-        })
+                firstName: faker.random.word()
+            })
             .clickOnCloseIcon()
             .verifyWarningMessageText(warningMessageCloseForm.cancelWarning);
     });
@@ -82,8 +82,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.fillFormFields({
-            firstName: faker.random.word()
-        })
+                firstName: faker.random.word()
+            })
             .clickOnCloseIcon()
             .clickOnButtonByText(warningMessageCloseForm.yesButton)
             .verifyContactPropertyFormIsDisplayed(false)
@@ -95,8 +95,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.fillFormFields({
-            firstName: faker.random.word()
-        })
+                firstName: faker.random.word()
+            })
             .clickOnCloseIcon()
             .verifyIsWarningDisplayed()
             .clickOnButtonByText(warningMessageCloseForm.noButton)
@@ -121,16 +121,16 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
-            firstName: faker.random.word(),
-            lastName: faker.random.word(),
-            email: faker.internet.email(),
-            expectedMoveInDate: {
-                day: date.day,
-                month: date.monthFullName,
-                year: date.year
-            },
-            message: faker.random.words(),
-        })
+                firstName: faker.random.word(),
+                lastName: faker.random.word(),
+                email: faker.internet.email(),
+                expectedMoveInDate: {
+                    day: date.day,
+                    month: date.monthFullName,
+                    year: date.year
+                },
+                message: faker.random.uuid(),
+            })
             .successForm.verifySuccessFormIsDisplayed();
     });
 
@@ -140,8 +140,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
-            message: '1234',
-        })
+                message: '1234',
+            })
             .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMessageAtLeast5)
             .submitForm({
                 message: '12345',
@@ -155,8 +155,8 @@ describe('Contact Property part 2', () => {
             .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
             .gotoChatOrContactIFrame()
             .contactForm.submitForm({
-            message: faker.random.words(),
-        })
+                message: faker.random.uuid(),
+            })
             .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMessageAtLeast5, false)
             .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMustEnterMessage, false)
     });
