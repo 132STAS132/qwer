@@ -14,6 +14,7 @@
     "sendMessageViaSingIn": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingIn",
     "verifyEmailForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite verifyEmailForm",
     "termsConditionsForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite termsConditionsForm",
+    "selectPasswordForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite selectPasswordForm",
     "openReport": "allure generate --clean ./artifacts/allure-results -o ./artifacts/allure-report && allure open ./artifacts/allure-report",
     "findMissingIds": "node helpers/scenariosHelper.js findMissingIds",
     "getCountOfScenarios": "node helpers/scenariosHelper.js getCountOfScenarios"

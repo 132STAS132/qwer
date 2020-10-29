@@ -43,14 +43,14 @@ class TermsConditionsFormComponent extends BasePage {
 
     /** actions **/
 
-    proceedToTermsConditionsForm(email: string, message = faker.random.words(), firstName = faker.random.words(), lastName = faker.random.words()) {
+    proceedToTermsConditionsForm(email: string, message = faker.random.words(), firstName = faker.random.word(), lastName = faker.random.word()) {
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(message)
             .sendMessageComponent
-            .fillLastNameInput(firstName)
-            .fillFirstNameInput(lastName)
+            .fillLastNameInput(lastName)
+            .fillFirstNameInput(firstName)
             .fillEmailInput(email)
             .clickOnContinueButton()
             .waitForLoadSpinnerToDisappear()
@@ -102,9 +102,10 @@ class TermsConditionsFormComponent extends BasePage {
         return this;
     }
 
-    clickOnAgreeAndContinueButton() {
+    clickOnAgreeAndContinueButton(waitForWindowCount = 2) {
         this.allure.startStep('Click on [Agree and continue] button');
         this.wd.click(this.agreeAndContinueButton());
+        this.waitForWindowsCount(waitForWindowCount);
         this.allure.endStep();
         return this;
     }

@@ -1,5 +1,6 @@
 import { BasePage } from "../base.page";
 import { SignInPage } from "../signIn.page";
+import { messengerData } from "../../testData/messenger.data";
 
 export class SendMessageComponent extends BasePage {
     /** locators **/
@@ -68,6 +69,24 @@ export class SendMessageComponent extends BasePage {
         return '.verification-code-resend span';
     }
 
+    // === success sent data ====
+    private phoneFieldError(): string {
+        return '#phone-number-error-msg';
+    }
+
+    private phoneInput(): string {
+        return '.intl-tel-input input'
+    }
+
+    private optOutButton(button: string): string {
+        return `//*[@class="message-resident-success-wrapper__contact-property"]//a[text()="${button}"]`;
+    }
+
+    private optOutWrapper(): string {
+        return '.message-resident-success-wrapper__guest-card-opt-out';
+    }
+
+    // === /success sent data ====
     /** methods **/
 
     clickOnContinueButton(button = 'Continue') {
@@ -140,6 +159,30 @@ export class SendMessageComponent extends BasePage {
     clickOnIDidNotReceive() {
         this.allure.startStep('Click on "I did not receive a code." link');
         this.wd.click(this.didNotReceiveLink());
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnChatViaSms(buttonName = 'Chat via SMS Text') {
+        this.clickOnButtonByText(buttonName);
+        return this;
+    }
+
+    fillPhoneFieldSuccessForm(value: string) {
+        this.allure.startStep(`Fill phone field with ${value}`);
+        this.wd.clearAndFill(this.phoneInput(), value);
+        this.allure.endStep();
+        return this;
+    }
+
+    optOutAction(action: string) {
+        this.allure.startStep(`Click on ${action}`);
+        this.wd.click(this.optOutButton(action));
+        if (action === messengerData.successSendMessageForm.optOutButton) {
+            this.wd.waitForDisplayed(this.optOutButton(messengerData.successSendMessageForm.cancelButton));
+        } else {
+            this.wd.waitForDisplayed(this.optOutButton(messengerData.successSendMessageForm.optOutButton));
+        }
         this.allure.endStep();
         return this;
     }
@@ -228,6 +271,26 @@ export class SendMessageComponent extends BasePage {
             this.wd.getText(this.resentInformationText()),
             'Incorrect resent text is displayed'
         ).to.be.equal(expectedText);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyPhoneFieldError(expectedText: string) {
+        this.allure.startStep(`Verify phone error is ${expectedText}`);
+        this.expect(
+            this.wd.getText(this.phoneFieldError()),
+            'Incorrect error text under phone field is displayed'
+        ).to.be.equal(expectedText);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyIsOptOutFormExpanded(expected = true) {
+        this.allure.startStep(this.verifyAllureMessage('opt out form'));
+        this.expect(
+            this.wd.isElementVisible(this.optOutWrapper()),
+            this.displayedErrorMessage('opt out form', expected)
+        ).to.be.equal(expected);
         this.allure.endStep();
         return this;
     }

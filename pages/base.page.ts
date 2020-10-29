@@ -274,6 +274,10 @@ export class BasePage {
         return this;
     }
 
+    capitalizeFirstCharacter(text: string): string {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
+
     /** verifications **/
 
     verifySelectedFlag(dialCode: string, countryName: string) {

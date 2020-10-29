@@ -1,6 +1,7 @@
 import { termsConditionsForm } from "../../../../pages/messengerWidgetComponents/termsConditionsForm.component";
 import { messengerData } from "../../../../testData/messenger.data";
 import { messenger } from "../../../../pages/messengerWidgetComponents/messenger.component";
+import { signUpPage } from "../../../../pages/signUp.page";
 
 const {
     randomMailTrapEmail,
@@ -49,5 +50,14 @@ describe('Terms & Conditions form ', () => {
             .waitForLoadSpinnerToDisappear()
             .verifyTitleOfSendMessageForm(verifyEmailForm.title)
             .verifyMessageSentToAndSubInfo(verifyEmailForm.sentCodeTo(email));
+    });
+
+    it('[C484] Click on "Agree and Continue" button', () => {
+        const email = randomMailTrapEmail();
+        termsConditionsForm
+            .proceedToTermsConditionsForm(email)
+            .clickOnAgreeAndContinueButton()
+            .closeWindowAndSwitchToOpened();
+        signUpPage.verifyIsSignUpPageOpened()
     });
 });

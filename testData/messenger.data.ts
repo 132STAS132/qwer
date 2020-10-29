@@ -152,6 +152,16 @@ class MessengerData {
             appStore: 'https://apps.apple.com/us/app/rentgrata-chicago-apartments/id1241475303?ls=1'
         }
     }
+
+    get successSendMessageForm(): { successMessage: string, description: string, errorInvalidPhoneNumber: string, optOutButton: string, cancelButton: string } {
+        return {
+            successMessage: "Success! Your message has been sent.",
+            description: "To continue your conversation, you can login to www.rentgrata.com or the Rentgrata iOS app with the password you just created or you can enter your phone number below and we will send this conversation to your phone so you can continue via SMS chat. Personal phone numbers are not shared with other users.",
+            errorInvalidPhoneNumber: "You must enter a valid phone number",
+            optOutButton: "Opt out",
+            cancelButton: "Cancel"
+        }
+    }
 }
 
 export const messengerData = new MessengerData();
