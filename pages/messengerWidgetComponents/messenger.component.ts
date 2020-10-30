@@ -4,8 +4,8 @@ import { BasePage } from "../base.page";
 import {
     widgetButtonsExpandedInterface,
     widgetButtonsCollapsedInterface
-} from "../../interfaces/widget.interface";
-import { messengerData } from "../../testData/messenger.data";
+} from "../../interfaces/homePageWidget.interface";
+import { homePageMessengerData } from "../../testData/homePageMessenger.data";
 
 export class MessengerComponent extends BasePage {
     readonly chatWithResident: ChatWithResidentComponent;
@@ -50,9 +50,9 @@ export class MessengerComponent extends BasePage {
     /** actions **/
     private getIconLocator(icon: string) {
         const icons = new Map([
-            [messengerData.iconsUnderResidents.virtualTour, this.icon360()],
-            [messengerData.iconsUnderResidents.contactProperty, this.envelopeIcon()],
-            [messengerData.iconsUnderResidents.scheduleATour, this.calendarIcon()],
+            [homePageMessengerData.iconsUnderResidents.virtualTour, this.icon360()],
+            [homePageMessengerData.iconsUnderResidents.contactProperty, this.envelopeIcon()],
+            [homePageMessengerData.iconsUnderResidents.scheduleATour, this.calendarIcon()],
         ]);
         const locator = icons.get(icon);
         if (!locator) throw new Error(`${icon} icon is not supported. Please provide one of [${Array.from(icons.keys()).join(', ')}]`);
@@ -97,8 +97,8 @@ export class MessengerComponent extends BasePage {
     }
 
     clickOnShowMoreButton() {
-        this.clickOnButtonByText(messengerData.widgetButtonsCollapsed.showMoreButton);
-        this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsExpanded.showLessButton));
+        this.clickOnButtonByText(homePageMessengerData.widgetButtonsCollapsed.showMoreButton);
+        this.wd.waitForDisplayed(this.buttonByText(homePageMessengerData.widgetButtonsExpanded.showLessButton));
         this.wd.waitForDisplayed(this.dots3Icon(), true);
         // wait for animation
         this.wd.wait(2);
@@ -106,8 +106,8 @@ export class MessengerComponent extends BasePage {
     }
 
     clickOnShowLessButton() {
-        this.clickOnButtonByText(messengerData.widgetButtonsExpanded.showLessButton);
-        this.wd.waitForDisplayed(this.buttonByText(messengerData.widgetButtonsCollapsed.showMoreButton));
+        this.clickOnButtonByText(homePageMessengerData.widgetButtonsExpanded.showLessButton);
+        this.wd.waitForDisplayed(this.buttonByText(homePageMessengerData.widgetButtonsCollapsed.showMoreButton));
         this.wd.waitForDisplayed(this.dots3Icon());
         // wait for animation
         this.wd.wait(2);

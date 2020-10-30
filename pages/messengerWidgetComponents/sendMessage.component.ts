@@ -1,6 +1,6 @@
 import { BasePage } from "../base.page";
 import { SignInPage } from "../signIn.page";
-import { messengerData } from "../../testData/messenger.data";
+import { messengerFormsData } from "../../testData/messengerForms.data";
 
 export class SendMessageComponent extends BasePage {
     /** locators **/
@@ -84,6 +84,22 @@ export class SendMessageComponent extends BasePage {
 
     private optOutWrapper(): string {
         return '.message-resident-success-wrapper__guest-card-opt-out';
+    }
+
+    private successSentMessageTitleText(): string {
+        return '.message-resident-success-wrapper__success-info__header';
+    }
+
+    private successSentMessageInfoText(): string {
+        return '.message-resident-success-wrapper__success-info__text';
+    }
+
+    private backToResidentsButton(): string {
+        return '.message-resident-success-wrapper__nav-links a';
+    }
+
+    private rentgrataLinkInText(): string {
+        return '.message-resident-success-wrapper__success-info__text a';
     }
 
     // === /success sent data ====
@@ -178,11 +194,30 @@ export class SendMessageComponent extends BasePage {
     optOutAction(action: string) {
         this.allure.startStep(`Click on ${action}`);
         this.wd.click(this.optOutButton(action));
-        if (action === messengerData.successSendMessageForm.optOutButton) {
-            this.wd.waitForDisplayed(this.optOutButton(messengerData.successSendMessageForm.cancelButton));
+        if (action === messengerFormsData.successSendMessageForm.optOutButton) {
+            this.wd.waitForDisplayed(this.optOutButton(messengerFormsData.successSendMessageForm.cancelButton));
         } else {
-            this.wd.waitForDisplayed(this.optOutButton(messengerData.successSendMessageForm.optOutButton));
+            this.wd.waitForDisplayed(this.optOutButton(messengerFormsData.successSendMessageForm.optOutButton));
         }
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnBackToResidentButton() {
+        this.allure.startStep('Click on [Back to residents] button');
+        this.wd.click(this.backToResidentsButton());
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnDoneButton(buttonName = "Done") {
+        this.clickOnButtonByText(buttonName);
+        return this;
+    }
+
+    clickOnRentgrataLinkInText() {
+        this.allure.startStep('Click on rentgrata link in text');
+        this.wd.click(this.rentgrataLinkInText());
         this.allure.endStep();
         return this;
     }
@@ -291,6 +326,32 @@ export class SendMessageComponent extends BasePage {
             this.wd.isElementVisible(this.optOutWrapper()),
             this.displayedErrorMessage('opt out form', expected)
         ).to.be.equal(expected);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifySuccessSentMessageTitleText(text: string) {
+        this.allure.startStep(`Verify success text is ${text}`);
+        this.expect(
+            this.wd.getText(this.successSentMessageTitleText()),
+            'Incorrect text is displayed'
+        ).to.be.equal(text);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifySuccessSentMessageInfoText(expectedText: string) {
+        this.allure.startStep(`Verify success info text is ${expectedText}`);
+        // should be 2 element;
+        const currentText =
+            this.wd.elements(this.successSentMessageInfoText())
+            .map(el => el.getText())
+            .join(' ');
+
+        this.expect(
+            currentText,
+            'Incorrect text is displayed'
+        ).to.be.equal(expectedText);
         this.allure.endStep();
         return this;
     }

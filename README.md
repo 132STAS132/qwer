@@ -51,7 +51,13 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``sendMessageViaSingIn``
 
+- ``successForm``
+
 - ``termsConditionsForm``
+
+- ``selectPasswordForm``
+
+- ``afterSendingFormMessageSent``
 
 - ``verifyEmailForm``
 

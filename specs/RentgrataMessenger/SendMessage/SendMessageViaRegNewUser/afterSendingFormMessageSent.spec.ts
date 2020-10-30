@@ -1,15 +1,17 @@
 import { signUpPage } from "../../../../pages/signUp.page";
-import { messengerData } from "../../../../testData/messenger.data";
 import { messenger } from "../../../../pages/messengerWidgetComponents/messenger.component";
 import { signInFormData } from "../../../../testData/signInForm.data";
+import { commonData } from "../../../../testData/common.data";
+import { messengerFormsData } from "../../../../testData/messengerForms.data";
 import * as faker from "faker";
 
-const { randomMailTrapEmail, successSendMessageForm } = messengerData;
+const { randomMailTrapEmail } = commonData;
+const { successSendMessageForm } = messengerFormsData;
 const { randomCountry } = signInFormData;
 
 describe('After sending form (Message sent.)', () => {
-    // todo need to update after fixing https://rentgrata.atlassian.net/browse/RS-232 . Add command for running
-    it('[C489] Select country (Phone Number)', () => {
+    // todo need to update after fixing https://rentgrata.atlassian.net/browse/RS-232
+    xit('[C489] Select country (Phone Number)', () => {
         const { countryCode, countryName, dialCode } = randomCountry();
         const email = randomMailTrapEmail();
         signUpPage
@@ -21,7 +23,7 @@ describe('After sending form (Message sent.)', () => {
             .verifySelectedFlag(countryCode, countryName);
     });
 
-    it('[C491] Type invalid phone number', () => {
+    xit('[C491] Type invalid phone number', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -34,7 +36,7 @@ describe('After sending form (Message sent.)', () => {
             .verifyPhoneFieldError(successSendMessageForm.errorInvalidPhoneNumber);
     });
 
-    it('[C493] Leave field empty', () => {
+    xit('[C493] Leave field empty', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -45,7 +47,7 @@ describe('After sending form (Message sent.)', () => {
             .verifyPhoneFieldError(successSendMessageForm.errorInvalidPhoneNumber);
     });
 
-    it('[C790] Click on "Opt out"', () => {
+    xit('[C790] Click on "Opt out"', () => {
         // todo add check for opt out text after fixing issue with + sign
         const email = randomMailTrapEmail();
         signUpPage
@@ -58,7 +60,7 @@ describe('After sending form (Message sent.)', () => {
             .verifyIsOptOutFormExpanded()
     });
 
-    it('[C791] Click on "Cancel"', () => {
+    xit('[C791] Click on "Cancel"', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)

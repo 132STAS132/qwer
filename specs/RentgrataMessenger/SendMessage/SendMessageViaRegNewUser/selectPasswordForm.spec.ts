@@ -1,10 +1,10 @@
 import { signUpPage } from "../../../../pages/signUp.page";
-import { messengerData } from "../../../../testData/messenger.data";
 import { signUpFormData } from "../../../../testData/signUpForm.data";
 import * as faker from "faker";
-import {messenger} from "../../../../pages/messengerWidgetComponents/messenger.component";
+import { messenger } from "../../../../pages/messengerWidgetComponents/messenger.component";
+import { commonData } from "../../../../testData/common.data";
 
-const { randomMailTrapEmail } = messengerData;
+const { randomMailTrapEmail } = commonData;
 const { validationErrors } = signUpFormData;
 const messageData = {
     message: faker.random.words(),
@@ -13,7 +13,8 @@ const messageData = {
 }
 
 describe('Select Password form', () => {
-    it('[C486] Type invalid data', () => {
+    // todo need to update after fixing https://rentgrata.atlassian.net/browse/RS-232 .
+    xit('[C486] Type invalid data', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -31,7 +32,7 @@ describe('Select Password form', () => {
             .verifyErrorMessage(validationErrors.atLeast4);
     });
 
-    it('[C487] Leave fields empty', () => {
+    xit('[C487] Leave fields empty', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -39,7 +40,7 @@ describe('Select Password form', () => {
             .verifyErrorMessage(validationErrors.atLeast4)
     });
 
-    it('[C488] Different password', () => {
+    xit('[C488] Different password', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -49,14 +50,14 @@ describe('Select Password form', () => {
             .verifyErrorMessage(validationErrors.confirmationMatch)
     });
 
-    it('[C789] Check your message', () => {
+    xit('[C789] Check your message', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email, messageData.message)
             .verifyMessageText(messageData.message)
     });
 
-    it('[C787] Check your name',() => {
+    xit('[C787] Check your name',() => {
         const email = randomMailTrapEmail();
         const firstName = signUpPage.capitalizeFirstCharacter(messageData.firstName);
         signUpPage
@@ -64,7 +65,7 @@ describe('Select Password form', () => {
             .verifyWelcomeText(`Welcome, ${firstName}!`);
     });
 
-    it('[C788] Сheck who to send the message to',() => {
+    xit('[C788] Сheck who to send the message to',() => {
         const email = randomMailTrapEmail();
         messenger
             .goToWidgetIFrame()

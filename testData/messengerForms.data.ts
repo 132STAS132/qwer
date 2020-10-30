@@ -1,38 +1,14 @@
 import {
-    widgetButtonsCollapsedInterface,
-    widgetButtonsExpandedInterface,
-    sendMessageFormInterface,
-    widgetIconsInterface,
-    termsConditionsFormInterface,
-    verifyEmailFormInterface,
     contactPropertyFormFields,
-    userInterface
-} from "../interfaces/widget.interface";
-import * as faker from "faker";
+    sendMessageFormInterface, termsConditionsFormInterface,
+    verifyEmailFormInterface,
+    warningMessageCloseFormInterface,
+    successContactFormInterface,
+    successSendMessageFormInterface,
+    chatWithResidentFormInterface
+} from "../interfaces/widjetForms.interface";
 
-class MessengerData {
-    get widgetButtonsExpanded(): widgetButtonsExpandedInterface  {
-        return {
-            chatButton: "Chat with a Resident",
-            contactButton: "Contact Property",
-            showLessButton: "Show Less"
-        }
-    }
-
-    get widgetButtonsCollapsed(): widgetButtonsCollapsedInterface  {
-        let obj = { ...this.widgetButtonsExpanded, showMoreButton: "Show More" };
-        delete obj.showLessButton;
-        return obj;
-    }
-
-    get iconsUnderResidents(): widgetIconsInterface {
-        return {
-            scheduleATour: "Schedule a Tour",
-            virtualTour: "Virtual Tour",
-            contactProperty: "Contact Property"
-        }
-    }
-
+class MessengerFormsData {
     get contactPropertyForm(): contactPropertyFormFields {
         return {
             firstNameField: "First Name",
@@ -105,28 +81,7 @@ class MessengerData {
         }
     }
 
-    randomMailTrapEmail(): string {
-        return `e659345dfe-cf3bb0+${faker.random.uuid()}@inbox.mailtrap.io`;
-    }
-
-    get toolTipText(): widgetIconsInterface {
-        return {
-            scheduleATour: "Schedule a Tour",
-            virtualTour: "Virtual Tour",
-            contactProperty: "Contact Property"
-        }
-    }
-
-    get existingTestUser(): userInterface {
-        return {
-            email: 'e659345dfe-cf3bb0@inbox.mailtrap.io',
-            password: process.env.DEFAULT_USER_PASSWORD,
-            firstName: 'James',
-            lastName: 'Smt',
-        }
-    }
-
-    get warningMessageCloseForm(): { cancelWarning: string, yesButton: string, noButton: string } {
+    get warningMessageCloseForm(): warningMessageCloseFormInterface {
         return {
             cancelWarning: "Are you sure you'd like to cancel?",
             yesButton: "Yes",
@@ -134,7 +89,7 @@ class MessengerData {
         }
     }
 
-    get successContactForm(): { firstName: string, lastName: string, email: string, expectedMoveIn: string, message: string, successFormText(property?: string): string, descriptionFormText: string } {
+    get successContactForm(): successContactFormInterface {
         return {
             firstName: "First Name:",
             lastName: "Last Name:",
@@ -146,22 +101,23 @@ class MessengerData {
         }
     }
 
-    get url(): { rentgrata: string, appStore: string } {
-        return {
-            rentgrata: 'https://www.rentgrata.com/',
-            appStore: 'https://apps.apple.com/us/app/rentgrata-chicago-apartments/id1241475303?ls=1'
-        }
-    }
-
-    get successSendMessageForm(): { successMessage: string, description: string, errorInvalidPhoneNumber: string, optOutButton: string, cancelButton: string } {
+    get successSendMessageForm(): successSendMessageFormInterface {
         return {
             successMessage: "Success! Your message has been sent.",
-            description: "To continue your conversation, you can login to www.rentgrata.com or the Rentgrata iOS app with the password you just created or you can enter your phone number below and we will send this conversation to your phone so you can continue via SMS chat. Personal phone numbers are not shared with other users.",
+            descriptionPasswordJustCreated: "To continue your conversation, you can login to www.rentgrata.com or the Rentgrata iOS app with the password you just created or you can enter your phone number below and we will send this conversation to your phone so you can continue via SMS chat. Personal phone numbers are not shared with other users.",
+            descriptionExistingUser: "To continue your conversation, you can login to www.rentgrata.com or the Rentgrata iOS app or you can enter your phone number below and we will send this conversation to your phone so you can continue via SMS chat. Personal phone numbers are not shared with other users.",
             errorInvalidPhoneNumber: "You must enter a valid phone number",
+            thankYouForUsingRentgrata: "Thank you for using Rentgrata!",
             optOutButton: "Opt out",
             cancelButton: "Cancel"
         }
     }
+
+    get chatWithResidentForm(): chatWithResidentFormInterface {
+        return {
+            weLiveHere: "We live here! Ask us questions!"
+        }
+    }
 }
 
-export const messengerData = new MessengerData();
+export const messengerFormsData = new MessengerFormsData();

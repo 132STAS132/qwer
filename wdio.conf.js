@@ -259,7 +259,9 @@ exports.config = {
         verifyEmailForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/verifyEmailForm.spec.ts'],
         termsConditionsForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/termsConditionsForm.spec.ts'],
         selectPasswordForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/selectPasswordForm.spec.ts'],
+        afterSendingFormMessageSent: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/afterSendingFormMessageSent.spec.ts'],
         sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
+        successForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/successForm.spec.ts'],
     },
     // Patterns to exclude.
     exclude: [
@@ -374,6 +376,7 @@ exports.config = {
     // See the full list at http://mochajs.org/
     mochaOpts: {
         ui: 'bdd',
+        // ~ 2.7h
         timeout: 9999999,
         retries: 1,
     },

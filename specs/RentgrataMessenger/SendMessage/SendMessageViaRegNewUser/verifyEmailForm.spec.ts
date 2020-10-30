@@ -1,13 +1,15 @@
 import { messenger } from "../../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
-import { messengerData } from "../../../../testData/messenger.data";
 import { termsConditionsForm } from "../../../../pages/messengerWidgetComponents/termsConditionsForm.component";
+import { commonData } from "../../../../testData/common.data";
+import { messengerFormsData } from "../../../../testData/messengerForms.data";
 
 const {
-    randomMailTrapEmail,
     verifyEmailForm,
     termsConditionsFormData
-} = messengerData;
+} = messengerFormsData;
+
+const { randomMailTrapEmail } = commonData;
 
 describe('Verify Email form', () => {
     it('[C466] Open the Verify Email form', () => {
