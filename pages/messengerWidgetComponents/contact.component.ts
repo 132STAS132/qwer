@@ -1,6 +1,8 @@
 import { BasePage } from "../base.page";
-import { contactPropertyFormInterface } from "../../interfaces/widget.interface";
+import { contactPropertyFormInterface } from "../../interfaces/widjetForms.interface";
 import { ContactPropertySuccessComponent } from "./contactPropertySuccess.component";
+import * as faker from "faker";
+import {messenger} from "./messenger.component";
 
 export class ContactComponent extends BasePage {
 
@@ -103,6 +105,21 @@ export class ContactComponent extends BasePage {
         this.fillFormFields(info);
         this.clickOnContactProperty();
         return this;
+    }
+
+    getRandomDataForContactPropertyForm(): contactPropertyFormInterface {
+        const date = messenger.getDateFromToday(2);
+        return {
+            firstName: faker.random.word(),
+            lastName: faker.random.word(),
+            email: faker.internet.email(),
+            message: faker.random.uuid(),
+            expectedMoveInDate: {
+                day: date.day,
+                month: date.monthFullName,
+                year: date.year
+            }
+        }
     }
 
     /** verifications **/

@@ -62,7 +62,7 @@ export class WDIO {
     browser.waitUntil(() => $(selector).getCSSProperty(cssProperty).value === expectedValue, { timeout });
   }
 
-  getCssProperty(selector: string, cssProperty: string, timeout = this.defaultWaitTime,) {
+  getCssProperty(selector: string, cssProperty: string, timeout = this.defaultWaitTime) {
     this.waitForElement(selector, timeout);
     return $(selector).getCSSProperty(cssProperty).value;
   }
@@ -74,25 +74,27 @@ export class WDIO {
   }
 
   waitForDisplayed(selector: string, reverse = false, timeout = this.defaultWaitTime) {
-    browser.waitUntil(
-      function () {
-        const elementValue = $(selector).isDisplayed();
-        if (typeof elementValue === 'object') {
-          if (!Object.values(elementValue)[0]) {
-            throw new Error(
-              `type of ${selector} is ${typeof elementValue}. element value should be boolean but got - ${elementValue}. Failed on waitForDisplayed method. IE specific error`,
-            );
-          }
-        // @ts-ignore
-          return browser.isElementDisplayed(Object.values(elementValue)[0]);
-        }
-        return elementValue === !reverse;
-      },
-      {
-        timeout,
-        timeoutMsg: `${selector} - still${!reverse ? ' not' : ''} displayed after ${timeout}ms`,
-      },
-    );
+    try {
+      browser.waitUntil(
+          function () {
+            const elementValue = $(selector).isDisplayed();
+            if (typeof elementValue === 'object') {
+              if (!Object.values(elementValue)[0]) {
+                throw new Error(
+                    `type of ${selector} is ${typeof elementValue}. element value should be boolean but got - ${elementValue}. Failed on waitForDisplayed method. IE specific error`,
+                );
+              }
+              // @ts-ignore
+              return browser.isElementDisplayed(Object.values(elementValue)[0]);
+            }
+            return elementValue === !reverse;
+          },
+          {
+            timeout,
+            timeoutMsg: `${selector} - still${!reverse ? ' not' : ''} displayed after ${timeout}ms`,
+          },
+      );
+    } catch (e) {}
   }
 
   selectFromDropDown(dropdownSelector: string, itemSelector: string) {

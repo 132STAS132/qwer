@@ -78,8 +78,12 @@ export class SignInPage extends BasePage {
     }
 
     submitForm(email, password) {
+        // for simulate user behavior - otherwise tests not stable
+        this.wd.wait(1);
         this.fillEmailField(email);
+        this.wd.wait(1);
         this.fillPasswordField(password);
+        this.wd.wait(1);
         this.clickOnSubmitButton();
         return this;
     }

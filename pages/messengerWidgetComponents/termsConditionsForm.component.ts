@@ -1,7 +1,7 @@
 import { BasePage } from "../base.page";
 import { messenger } from "./messenger.component";
 import * as faker from "faker";
-import { messengerData } from "../../testData/messenger.data";
+import { messengerFormsData } from "../../testData/messengerForms.data";
 
 class TermsConditionsFormComponent extends BasePage {
     /** locators **/
@@ -43,14 +43,14 @@ class TermsConditionsFormComponent extends BasePage {
 
     /** actions **/
 
-    proceedToTermsConditionsForm(email: string, message = faker.random.words(), firstName = faker.random.words(), lastName = faker.random.words()) {
+    proceedToTermsConditionsForm(email: string, message = faker.random.words(), firstName = faker.random.word(), lastName = faker.random.word()) {
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(message)
             .sendMessageComponent
-            .fillLastNameInput(firstName)
-            .fillFirstNameInput(lastName)
+            .fillLastNameInput(lastName)
+            .fillFirstNameInput(firstName)
             .fillEmailInput(email)
             .clickOnContinueButton()
             .waitForLoadSpinnerToDisappear()
@@ -59,9 +59,9 @@ class TermsConditionsFormComponent extends BasePage {
             .chatWithResident.sendMessageComponent
             .submitVerificationCodeInput(code)
             .clickOnVerifyEmailButton();
-        browser.waitUntil(() => this.wd.getText(this.formTitle()) === messengerData.termsConditionsFormData.title, {
+        browser.waitUntil(() => this.wd.getText(this.formTitle()) === messengerFormsData.termsConditionsFormData.title, {
             timeout: 4000,
-            timeoutMsg: `${messengerData.termsConditionsFormData.title} form still not displayed after 4s`
+            timeoutMsg: `${messengerFormsData.termsConditionsFormData.title} form still not displayed after 4s`
         });
         return this;
     }
@@ -102,9 +102,10 @@ class TermsConditionsFormComponent extends BasePage {
         return this;
     }
 
-    clickOnAgreeAndContinueButton() {
+    clickOnAgreeAndContinueButton(waitForWindowCount = 2) {
         this.allure.startStep('Click on [Agree and continue] button');
         this.wd.click(this.agreeAndContinueButton());
+        this.waitForWindowsCount(waitForWindowCount);
         this.allure.endStep();
         return this;
     }
@@ -132,13 +133,13 @@ class TermsConditionsFormComponent extends BasePage {
         this.allure.startStep(`Verify header info text`);
         // for stabilizing
         try {
-            browser.waitUntil(() => this.wd.getText(this.headerInfo()) === messengerData.termsConditionsFormData.title, {
+            browser.waitUntil(() => this.wd.getText(this.headerInfo()) === messengerFormsData.termsConditionsFormData.title, {
                 timeout: 4000
             });
         } catch (e) {}
         this.expect(
             this.wd.getText(this.headerInfo()),
-            `Incorrect header info text of ${messengerData.termsConditionsFormData.title} title is displayed`
+            `Incorrect header info text of ${messengerFormsData.termsConditionsFormData.title} title is displayed`
         ).to.be.equal(text);
         this.allure.endStep();
         return this;

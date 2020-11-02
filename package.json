@@ -12,8 +12,11 @@
     "successScreen": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite successScreen",
     "sendMessage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessage",
     "sendMessageViaSingIn": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingIn",
+    "successForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite successForm",
     "verifyEmailForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite verifyEmailForm",
     "termsConditionsForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite termsConditionsForm",
+    "selectPasswordForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite selectPasswordForm",
+    "afterSendingFormMessageSent": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite afterSendingFormMessageSent",
     "openReport": "allure generate --clean ./artifacts/allure-results -o ./artifacts/allure-report && allure open ./artifacts/allure-report",
     "findMissingIds": "node helpers/scenariosHelper.js findMissingIds",
     "getCountOfScenarios": "node helpers/scenariosHelper.js getCountOfScenarios"
@@ -22,7 +25,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@wdio/allure-reporter": "^6.5.2",
+    "@wdio/allure-reporter": "6.5.2",
     "@wdio/cli": "^6.5.2",
     "@wdio/devtools-service": "^6.5.2",
     "@wdio/local-runner": "^6.6.0",

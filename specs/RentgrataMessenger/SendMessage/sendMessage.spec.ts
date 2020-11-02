@@ -1,15 +1,19 @@
 import { messenger } from "../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
-import { messengerData } from "../../../testData/messenger.data";
 import { allureHelper } from "../../../helpers/allure";
 import { bugs } from "../../../existingBugs/bugs";
+import { commonData } from "../../../testData/common.data";
+import { messengerFormsData } from "../../../testData/messengerForms.data";
+
+const {
+    randomMailTrapEmail,
+    existingTestUser
+} = commonData;
 
 const {
     sendMessageForm,
-    randomMailTrapEmail,
     verifyEmailForm,
-    existingTestUser
-} = messengerData;
+} = messengerFormsData;
 
 describe('Send Message', () => {
     it('[C445] Click on Back button', () => {

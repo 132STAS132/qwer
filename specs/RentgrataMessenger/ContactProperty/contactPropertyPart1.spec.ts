@@ -1,15 +1,15 @@
 import { messenger } from "../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
-import { messengerData } from "../../../testData/messenger.data";
+import { commonData } from "../../../testData/common.data";
+import { messengerFormsData } from "../../../testData/messengerForms.data";
+import { homePageMessengerData } from "../../../testData/homePageMessenger.data";
 import { bugs } from "../../../existingBugs/bugs";
 import { allureHelper } from "../../../helpers/allure";
 import { signInFormData } from "../../../testData/signInForm.data";
 
-const {
-    existingTestUser,
-    widgetButtonsCollapsed,
-    contactPropertyForm
-} = messengerData;
+const { existingTestUser } = commonData;
+const { widgetButtonsCollapsed } = homePageMessengerData;
+const { contactPropertyForm } = messengerFormsData;
 
 const date = messenger.getDateFromToday(2);
 const { randomCountry } = signInFormData;

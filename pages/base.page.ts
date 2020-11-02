@@ -86,6 +86,14 @@ export class BasePage {
         return '.ant-modal-confirm-content';
     }
 
+    private rentgrataLogo(): string {
+        return '[class="anticon"] [alt="Rentgrata logo"]';
+    }
+
+    private downloadOnAppStore(): string {
+        return '[alt="Rentgrata iOS app download button"]'
+    }
+
     // date picker start
     private get datePickerElement(): string {
         return `.flatpickr-calendar.open`;
@@ -123,12 +131,18 @@ export class BasePage {
         return this;
     }
 
-    verifyUrl(url: string) {
-        this.allure.startStep(`Verify current url is ${url}`);
-        this.expect(
-            this.wd.getUrl(),
-            'Incorrect url'
-        ).to.be.equal(url);
+    clickOnRentgrataLogo(count = 2) {
+        this.allure.startStep(`Click on [Rentgrata Logo]`);
+        this.wd.click(this.rentgrataLogo());
+        this.waitForWindowsCount(count);
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnDownloadOnTheAppStore(count = 2) {
+        this.allure.startStep(`Click on [Download on the APP Store]`);
+        this.wd.click(this.downloadOnAppStore());
+        this.waitForWindowsCount(count);
         this.allure.endStep();
         return this;
     }
@@ -169,6 +183,11 @@ export class BasePage {
         this.wd.switchToFrame(this.widgetIFrame());
         this.allure.endStep();
         return this;
+    }
+
+    reload() {
+        browser.reloadSession();
+        browser.url('');
     }
 
     goToLoadingIframe() {
@@ -274,7 +293,20 @@ export class BasePage {
         return this;
     }
 
+    capitalizeFirstCharacter(text: string): string {
+        return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
+
     /** verifications **/
+    verifyUrl(url: string) {
+        this.allure.startStep(`Verify current url is ${url}`);
+        this.expect(
+            this.wd.getUrl(),
+            'Incorrect url'
+        ).to.be.equal(url);
+        this.allure.endStep();
+        return this;
+    }
 
     verifySelectedFlag(dialCode: string, countryName: string) {
         this.allure.startStep(`Verify is flag for ${countryName} country displayed`);

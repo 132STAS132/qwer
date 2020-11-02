@@ -2,9 +2,9 @@ import { messenger } from "../../../../pages/messengerWidgetComponents/messenger
 import * as faker from "faker";
 import { signInFormData } from "../../../../testData/signInForm.data";
 import { forgotPasswordData } from "../../../../testData/forgotPassword.data";
-import { messengerData } from "../../../../testData/messenger.data";
+import { commonData } from "../../../../testData/common.data";
 
-const { existingTestUser } = messengerData;
+const { existingTestUser } = commonData;
 const { authMethods, randomCountry } = signInFormData;
 const {
     emailOrPasswordIncorrect,

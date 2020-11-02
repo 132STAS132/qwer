@@ -1,11 +1,11 @@
 import { BasePage } from "../base.page";
 import { messenger } from "./messenger.component";
-import { messengerData } from "../../testData/messenger.data";
-import { contactPropertyFormInterface } from "../../interfaces/widget.interface";
+import { homePageMessengerData } from "../../testData/homePageMessenger.data";
+import { contactPropertyFormInterface } from "../../interfaces/widjetForms.interface";
 
 const {
     widgetButtonsCollapsed
-} = messengerData;
+} = homePageMessengerData;
 
 export class ContactPropertySuccessComponent extends BasePage {
     /** selectors **/
@@ -19,14 +19,6 @@ export class ContactPropertySuccessComponent extends BasePage {
 
     private backToResidentListButton(): string {
         return '//a[text()="Go back to resident list"]';
-    }
-
-    private rentgrataLogo(): string {
-        return '[class="anticon"] [alt="Rentgrata logo"]';
-    }
-
-    private downloadOnAppStore(): string {
-        return '[alt="Rentgrata iOS app download button"]'
     }
 
     private successFormTitleText(): string {
@@ -63,22 +55,6 @@ export class ContactPropertySuccessComponent extends BasePage {
                 }
             })
             .successForm.verifySuccessFormIsDisplayed();
-        return this;
-    }
-
-    clickOnRentgrataLogo(count = 2) {
-        this.allure.startStep(`Click on [Rentgrata Logo]`);
-        this.wd.click(this.rentgrataLogo());
-        this.waitForWindowsCount(count);
-        this.allure.endStep();
-        return this;
-    }
-
-    clickOnDownloadOnTheAppStore(count = 2) {
-        this.allure.startStep(`Click on [Download on the APP Store]`);
-        this.wd.click(this.downloadOnAppStore());
-        this.waitForWindowsCount(count);
-        this.allure.endStep();
         return this;
     }
 

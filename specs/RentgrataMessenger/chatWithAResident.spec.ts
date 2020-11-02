@@ -1,11 +1,10 @@
 import { messenger } from "../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from 'faker';
-import { messengerData } from "../../testData/messenger.data";
+import { homePageMessengerData } from "../../testData/homePageMessenger.data";
+import { messengerFormsData } from "../../testData/messengerForms.data";
 
-const {
-    widgetButtonsCollapsed,
-    sendMessageForm,
-} = messengerData;
+const { widgetButtonsCollapsed } = homePageMessengerData;
+const { sendMessageForm } = messengerFormsData;
 
 describe("Chat with a Resident", () => {
     it('[C440] Send a message', () => {
@@ -31,10 +30,10 @@ describe("Chat with a Resident", () => {
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.selectExpectedMoveInDate({
-            day: date.day,
-            month: date.monthFullName,
-            year: date.year
-        })
+                day: date.day,
+                month: date.monthFullName,
+                year: date.year
+            })
             .verifyExpectedMoveInDate(date.monthDigits, date.dayLeadingZero, date.year);
     });
 

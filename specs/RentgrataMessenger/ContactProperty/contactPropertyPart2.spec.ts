@@ -1,13 +1,15 @@
 import { messenger } from "../../../pages/messengerWidgetComponents/messenger.component";
 import * as faker from "faker";
-import { messengerData } from "../../../testData/messenger.data";
 import { signInFormData } from "../../../testData/signInForm.data";
+import {homePageMessengerData} from "../../../testData/homePageMessenger.data";
+import {messengerFormsData} from "../../../testData/messengerForms.data";
 
+
+const { widgetButtonsCollapsed } = homePageMessengerData;
 const {
-    widgetButtonsCollapsed,
     contactPropertyForm,
     warningMessageCloseForm
-} = messengerData;
+} = messengerFormsData;
 
 const date = messenger.getDateFromToday(2);
 const { randomCountry } = signInFormData;

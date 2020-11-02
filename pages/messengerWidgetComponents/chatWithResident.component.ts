@@ -36,7 +36,7 @@ export class ChatWithResidentComponent extends BasePage {
     }
 
     private expectedMoveInDateInputs(): string {
-        return `${this.widgetMessengerId} [id*="expectedMoveInDate"] input:last-child`;
+        return `${this.widgetMessengerId} [id*="expectedMoveInDate"]`;
     }
 
     private contactFormButton(): string {
@@ -45,6 +45,10 @@ export class ChatWithResidentComponent extends BasePage {
 
     private profileNames(): string {
         return '.profile-detail h3';
+    }
+
+    private formTitle(): string {
+        return '#header-title .title';
     }
 
     /** actions **/
@@ -132,7 +136,7 @@ export class ChatWithResidentComponent extends BasePage {
     }
 
     verifyExpectedMoveInDate(month: string, day: string, year: string) {
-        const expectedDate = `${month}/${day}/${year}`;
+        const expectedDate = `${year}-${month}-${day}`;
         // verification for the first opened field
         this.allure.startStep(`Verify expected move in date is ${expectedDate}`);
         this.expect(
@@ -143,4 +147,13 @@ export class ChatWithResidentComponent extends BasePage {
         return this;
     }
 
+    verifyFormTitleText(title: string) {
+        this.allure.startStep(`Verify title of chat with residents form`);
+        this.expect(
+            this.wd.getText(this.formTitle()),
+            'Incorrect title of chat with residents form is displayed'
+        ).to.be.equal(title);
+        this.allure.endStep();
+        return this;
+    }
 }

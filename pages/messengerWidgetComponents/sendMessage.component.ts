@@ -1,5 +1,6 @@
 import { BasePage } from "../base.page";
 import { SignInPage } from "../signIn.page";
+import { messengerFormsData } from "../../testData/messengerForms.data";
 
 export class SendMessageComponent extends BasePage {
     /** locators **/
@@ -68,6 +69,40 @@ export class SendMessageComponent extends BasePage {
         return '.verification-code-resend span';
     }
 
+    // === success sent data ====
+    private phoneFieldError(): string {
+        return '#phone-number-error-msg';
+    }
+
+    private phoneInput(): string {
+        return '.intl-tel-input input'
+    }
+
+    private optOutButton(button: string): string {
+        return `//*[@class="message-resident-success-wrapper__contact-property"]//a[text()="${button}"]`;
+    }
+
+    private optOutWrapper(): string {
+        return '.message-resident-success-wrapper__guest-card-opt-out';
+    }
+
+    private successSentMessageTitleText(): string {
+        return '.message-resident-success-wrapper__success-info__header';
+    }
+
+    private successSentMessageInfoText(): string {
+        return '.message-resident-success-wrapper__success-info__text';
+    }
+
+    private backToResidentsButton(): string {
+        return '.message-resident-success-wrapper__nav-links a';
+    }
+
+    private rentgrataLinkInText(): string {
+        return '.message-resident-success-wrapper__success-info__text a';
+    }
+
+    // === /success sent data ====
     /** methods **/
 
     clickOnContinueButton(button = 'Continue') {
@@ -140,6 +175,49 @@ export class SendMessageComponent extends BasePage {
     clickOnIDidNotReceive() {
         this.allure.startStep('Click on "I did not receive a code." link');
         this.wd.click(this.didNotReceiveLink());
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnChatViaSms(buttonName = 'Chat via SMS Text') {
+        this.clickOnButtonByText(buttonName);
+        return this;
+    }
+
+    fillPhoneFieldSuccessForm(value: string) {
+        this.allure.startStep(`Fill phone field with ${value}`);
+        this.wd.clearAndFill(this.phoneInput(), value);
+        this.allure.endStep();
+        return this;
+    }
+
+    optOutAction(action: string) {
+        this.allure.startStep(`Click on ${action}`);
+        this.wd.click(this.optOutButton(action));
+        if (action === messengerFormsData.successSendMessageForm.optOutButton) {
+            this.wd.waitForDisplayed(this.optOutButton(messengerFormsData.successSendMessageForm.cancelButton));
+        } else {
+            this.wd.waitForDisplayed(this.optOutButton(messengerFormsData.successSendMessageForm.optOutButton));
+        }
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnBackToResidentButton() {
+        this.allure.startStep('Click on [Back to residents] button');
+        this.wd.click(this.backToResidentsButton());
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnDoneButton(buttonName = "Done") {
+        this.clickOnButtonByText(buttonName);
+        return this;
+    }
+
+    clickOnRentgrataLinkInText() {
+        this.allure.startStep('Click on rentgrata link in text');
+        this.wd.click(this.rentgrataLinkInText());
         this.allure.endStep();
         return this;
     }
@@ -227,6 +305,52 @@ export class SendMessageComponent extends BasePage {
         this.expect(
             this.wd.getText(this.resentInformationText()),
             'Incorrect resent text is displayed'
+        ).to.be.equal(expectedText);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyPhoneFieldError(expectedText: string) {
+        this.allure.startStep(`Verify phone error is ${expectedText}`);
+        this.expect(
+            this.wd.getText(this.phoneFieldError()),
+            'Incorrect error text under phone field is displayed'
+        ).to.be.equal(expectedText);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyIsOptOutFormExpanded(expected = true) {
+        this.allure.startStep(this.verifyAllureMessage('opt out form'));
+        this.expect(
+            this.wd.isElementVisible(this.optOutWrapper()),
+            this.displayedErrorMessage('opt out form', expected)
+        ).to.be.equal(expected);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifySuccessSentMessageTitleText(text: string) {
+        this.allure.startStep(`Verify success text is ${text}`);
+        this.expect(
+            this.wd.getText(this.successSentMessageTitleText()),
+            'Incorrect text is displayed'
+        ).to.be.equal(text);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifySuccessSentMessageInfoText(expectedText: string) {
+        this.allure.startStep(`Verify success info text is ${expectedText}`);
+        // should be 2 element;
+        const currentText =
+            this.wd.elements(this.successSentMessageInfoText())
+            .map(el => el.getText())
+            .join(' ');
+
+        this.expect(
+            currentText,
+            'Incorrect text is displayed'
         ).to.be.equal(expectedText);
         this.allure.endStep();
         return this;

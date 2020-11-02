@@ -1,12 +1,12 @@
 import { messenger } from "../../pages/messengerWidgetComponents/messenger.component";
-import { messengerData } from '../../testData/messenger.data';
+import { homePageMessengerData } from "../../testData/homePageMessenger.data";
 
 const {
     widgetButtonsCollapsed,
     widgetButtonsExpanded,
     iconsUnderResidents,
     toolTipText
-} = messengerData;
+} = homePageMessengerData;
 
 
 describe("Main page", () => {
