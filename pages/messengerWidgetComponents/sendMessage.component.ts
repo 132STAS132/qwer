@@ -110,6 +110,11 @@ export class SendMessageComponent extends BasePage {
         return this;
     }
 
+    clickOnFirstNameInput() {
+        this.wd.nativeClick(this.firstNameInput());
+        return this;
+    }
+
     fillFirstNameInput(value: string) {
         this.allure.startStep(`Fill first name input with "${value}" value`);
         this.wd.clearAndFill(this.firstNameInput(), value);

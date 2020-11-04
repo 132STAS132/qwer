@@ -47,7 +47,11 @@ Execute ``npm run openReport`` command to generate and open a report.
 
 - ``mainPage``
 
+- ``mainPage:mobile``
+
 - ``sendMessage``
+
+- ``sendMessage:mobile``
 
 - ``sendMessageViaSingIn``
 
