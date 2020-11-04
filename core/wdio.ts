@@ -308,7 +308,11 @@ export class WDIO {
     //           value,
     //         );
     //       }
-
+    if (browser.isMobile) {
+      $(selector).click();
+      browser.sendKeys([value]);
+      return;
+    }
     try {
       this.waitForEnabled(selector, timeout);
       if (this.isIE()) {
@@ -514,6 +518,14 @@ export class WDIO {
         return $(selector).click();
       }
     }
+  }
+
+  nativeClick(selector: string, waitForElement = true, timeout = this.defaultWaitTime) {
+    if (waitForElement) {
+      this.waitForVisible(selector, timeout);
+      this.waitForEnabled(selector, timeout);
+    }
+    $(selector).click();
   }
 
   pause(pauseTime: number) {

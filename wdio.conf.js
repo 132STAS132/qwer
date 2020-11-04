@@ -24,13 +24,15 @@ const pathExists = require('path-exists');
 process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
 process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
+process.env.DEVICE_NAME = (process.env.DEVICE_NAME || 'iPhone X');
 process.env.PATH_TO_TXT_TEST_DATA = path.resolve(__dirname, 'testData', 'txt');
 const isLambdaTest = JSON.parse(process.env.LAMBDA_TEST_RUN || 0);
 const isSlackEnabled = JSON.parse(process.env.ENABLE_SLACK || 0);
 const isTestRailRun = JSON.parse(process.env.TESTRAIL_RUN || 0);
 const headlessMode = JSON.parse(process.env.HEADLESS || 0);
+const isMobileBrowsersRun = JSON.parse(process.env.MOBILE_BROWSERS || 0);
 const maxInstances = process.env.INSTANCES ? +process.env.INSTANCES : 1;
-const testRunName = `MessengerEndToEnd - ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`;
+const testRunName = `MessengerEndToEnd - ${isMobileBrowsersRun ? 'Mobile' : 'Web'} ${process.env.BROWSER_NAME} - ${dateFormat(now, "dddd, mmmm dS, yyyy, h:MM:ss TT")}`;
 let testRailRunUrl = null, capabilities = [], services = [];
 
 // =========
@@ -138,6 +140,19 @@ const commonCapsLambda = {
     console: true,
 }
 
+// MOBILE BROWSERS - LambdaTest
+if (isMobileBrowsersRun) {
+    delete commonCapsLambda.resolution;
+}
+
+let safariIPhoneXLambda = {
+    ...commonCapsLambda,
+    "platform" : "iOS",
+    "deviceName" : process.env.DEVICE_NAME,
+    "platformVersion" : "13.6"
+}
+
+// WEB BROWSERS - LambdaTest
 let chromeCapsLambda =  {
     ...commonCapsLambda,
     platform: "Windows 10",
@@ -169,14 +184,20 @@ let ieCapsLambda = {
 
 switch (process.env.BROWSER_NAME.toLowerCase()) {
     case 'chrome':
+        // todo need to add android device caps after getting proper lambdaTest plan
         capabilities.push(isLambdaTest ? chromeCapsLambda : chromeCaps);
         services.push('selenium-standalone');
         break;
     case 'safari':
-        capabilities.push(isLambdaTest ? safariCapsLambda : safari);
-        services.push('safaridriver', 'selenium-standalone');
+        if (isMobileBrowsersRun) {
+            capabilities.push(safariIPhoneXLambda);
+        } else {
+            capabilities.push(isLambdaTest ? safariCapsLambda : safari);
+            services.push('safaridriver', 'selenium-standalone');
+        }
         break;
     case 'ie':
+        if (isMobileBrowsersRun) throw new Error('IE browser is not supported for mobile test run');
         capabilities.push(isLambdaTest ? ieCapsLambda : internetExplorerCaps);
         services.push(['selenium-standalone', {
             installArgs: {
@@ -228,6 +249,40 @@ if (isSlackEnabled) {
     if (!process.env.SLACK_WEBHOOK) throw new Error(`SLACK_WEBHOOK is not provided. Please disable Slack integration or provide SLACK_WEBHOOK`);
 }
 
+// configuration for a local test run
+if (isMobileBrowsersRun && !isLambdaTest) {
+
+    services = [
+        ['appium', {
+            command : 'appium',
+            args: {
+                allowInsecure: 'execute_driver_script',
+            }
+
+        }]
+    ]
+
+    capabilities = [
+        {
+            // The defaults you need to have in your config
+            browserName: 'safari',
+            platformName: 'iOS',
+            maxInstances: 1,
+            deviceName: 'iPhone X',
+            platformVersion: '11.0',
+            'automationName': 'XCUITest',
+            'newCommandTimeout': 240,
+            waitforTimeout: 30000,
+            "safariInitialUrl": process.env.BASE_URL,
+            // "safariAllowPopups": true,
+            // autoWebview: true,
+            unicodeKeyboard: true,
+            nativeWebTap: true,
+            // "appium:allow-insecure": 'execute_driver_script'
+        },
+    ]
+}
+
 exports.config = {
     //
     // ====================
@@ -252,10 +307,12 @@ exports.config = {
     suites: {
         chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
+        mainPageMobile: ['./specs/Mobile/mobMainPage.spec.ts'],
         contactPropertyPart1: ['./specs/RentgrataMessenger/ContactProperty/contactPropertyPart1.spec.ts'],
         contactPropertyPart2: ['./specs/RentgrataMessenger/ContactProperty/contactPropertyPart2.spec.ts'],
         successScreen: ['./specs/RentgrataMessenger/ContactProperty/successScreen.spec.ts'],
         sendMessage: ['./specs/RentgrataMessenger/SendMessage/sendMessage.spec.ts'],
+        sendMessageMobile: ['./specs/Mobile/SendMessage/mobSendMessage.spec.ts'],
         verifyEmailForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/verifyEmailForm.spec.ts'],
         termsConditionsForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/termsConditionsForm.spec.ts'],
         selectPasswordForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/selectPasswordForm.spec.ts'],
@@ -496,16 +553,22 @@ exports.config = {
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
     beforeTest: function (test, context) {
-        if (!isLambdaTest) {
-            const size = { width: 1024, height: 768 };
-            let { height, width } = browser.getWindowSize();
-            if (height !== size.height || width !== size.width) {
-                browser.setWindowSize(size.width, size.height);
+        if (!isMobileBrowsersRun) {
+            if (!isLambdaTest) {
+                const size = { width: 1024, height: 768 };
+                let { height, width } = browser.getWindowSize();
+                if (height !== size.height || width !== size.width) {
+                    browser.setWindowSize(size.width, size.height);
+                }
             }
+            browser.url('');
+            addEnvironment('Browser', browser.capabilities.browserName);
+            addEnvironment('ENV', browser.config.baseUrl);
+        } else {
+            // todo update according to mobile caps
+            // addEnvironment('Browser', browser.capabilities.browserName);
+            // addEnvironment('ENV', browser.config.baseUrl);
         }
-        addEnvironment('Browser', browser.capabilities.browserName);
-        addEnvironment('ENV', browser.config.baseUrl);
-        browser.url('');
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling

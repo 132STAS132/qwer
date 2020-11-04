@@ -54,7 +54,7 @@ export class ChatWithResidentComponent extends BasePage {
     /** actions **/
     fillFirstMessageInput(value: string) {
         this.allure.startStep(`Fill first message input with ${value}`);
-        this.wd.setValue(this.messageTextAreaFields(), value);
+        this.wd.clearAndFill(this.messageTextAreaFields(), value);
         this.allure.endStep();
         return this;
     }
