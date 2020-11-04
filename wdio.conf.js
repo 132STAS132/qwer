@@ -435,7 +435,7 @@ exports.config = {
         ui: 'bdd',
         // ~ 2.7h
         timeout: 9999999,
-        // retries: 1,
+        retries: 1,
     },
     //
     // =====
