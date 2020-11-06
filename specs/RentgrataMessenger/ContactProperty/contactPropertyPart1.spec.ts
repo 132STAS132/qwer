@@ -9,8 +9,10 @@ import { signInFormData } from "../../../testData/signInForm.data";
 
 const { existingTestUser } = commonData;
 const { widgetButtonsCollapsed } = homePageMessengerData;
-const { contactPropertyForm } = messengerFormsData;
-
+const {
+    contactPropertyForm,
+    successContactForm
+} = messengerFormsData;
 const date = messenger.getDateFromToday(2);
 const { randomCountry } = signInFormData;
 const phoneNumber = '+380501234567';
@@ -177,13 +179,8 @@ describe('Contact Property part 1', () => {
                     year: date.year
                 }
             })
-            .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMustEnterMessage)
-            .submitForm({
-                message: faker.random.uuid(),
-                firstName: ' ',
-            })
-            .verifyErrorMessageUnderField(contactPropertyForm.firstNameField, contactPropertyForm.errorMustEnterFirstName)
-            .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMustEnterMessage, false)
+            .successForm.verifySuccessFormIsDisplayed()
+            .verifyFormElement(successContactForm.message, successContactForm.placeholder);
     });
 
     it('[C744] Select Expected Move In Date', () => {

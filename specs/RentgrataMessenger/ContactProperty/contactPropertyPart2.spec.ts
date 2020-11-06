@@ -136,21 +136,6 @@ describe('Contact Property part 2', () => {
             .successForm.verifySuccessFormIsDisplayed();
     });
 
-    it('[C777] Message must be at least 5 characters long', () => {
-        messenger
-            .goToWidgetIFrame()
-            .clickOnButtonByText(widgetButtonsCollapsed.contactButton)
-            .gotoChatOrContactIFrame()
-            .contactForm.submitForm({
-                message: '1234',
-            })
-            .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMessageAtLeast5)
-            .submitForm({
-                message: '12345',
-            })
-            .verifyErrorMessageUnderField(contactPropertyForm.messageField, contactPropertyForm.errorMessageAtLeast5, false)
-    });
-
     it('[C756] Type valid message', () => {
         messenger
             .goToWidgetIFrame()

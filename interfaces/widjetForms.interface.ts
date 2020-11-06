@@ -91,6 +91,7 @@ export interface successContactFormInterface {
     email: string,
     expectedMoveIn: string,
     message: string,
+    placeholder: string
     successFormText(property?: string): string,
     descriptionFormText: string,
 }

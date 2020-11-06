@@ -124,4 +124,70 @@ describe('Send Message', () => {
                 .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorMustEnterLastName, false)
                 .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName, false);
     });
+
+    it('[C817] Click on continue button w/o data', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent
+            .clickOnFirstNameInput()
+            .clickOnContinueButton()
+            .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorMustEnterEmail)
+            .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorMustEnterLastName)
+            .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName)
+            .fillFirstNameInput(faker.random.words())
+            .clickOnContinueButton()
+            .waitForLoadSpinnerToDisappear()
+            .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorMustEnterEmail)
+            .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorMustEnterLastName)
+            .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName, false)
+    });
+
+    it('[C815] Continue with already existing Email', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent
+                .clickOnFirstNameInput()
+                .fillEmailInput(existingTestUser.email)
+                .hideKeyboard()
+                .fillLastNameInput(faker.random.words())
+                .hideKeyboard()
+                .fillFirstNameInput(faker.random.words())
+                .hideKeyboard()
+                .clickOnContinueButton()
+                .verifyErrorMessageUnderField(sendMessageForm.emailField, sendMessageForm.errorEmailExists)
+                .verifyErrorMessageUnderField(sendMessageForm.lastNameField, sendMessageForm.errorMustEnterLastName, false)
+                .verifyErrorMessageUnderField(sendMessageForm.firstNameField, sendMessageForm.errorMustEnterFirstName, false);
+    });
+
+    it('[C810] Continue with valid data', () => {
+        const email = randomMailTrapEmail();
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent
+                .clickOnFirstNameInput()
+                .fillLastNameInput(faker.random.words())
+                .fillFirstNameInput(faker.random.words())
+                .fillEmailInput(email)
+                .clickOnContinueButton()
+                .waitForLoadSpinnerToDisappear()
+                .verifyTitleOfSendMessageForm(verifyEmailForm.title)
+                .verifyMessageSentToAndSubInfo(verifyEmailForm.sentCodeTo(email));
+    });
+
+    it('[C816] Click on Sign In here', () => {
+        messenger
+            .goToWidgetIFrame()
+            .clickOnResidentPicture()
+            .chatWithResident.sendMessage(faker.random.words())
+            .sendMessageComponent
+                .clickOnFirstNameInput()
+                .clickOnSignInLinkAndSwitchToNewWindow()
+                .verifySignInPageTitleDisplayed();
+    });
 })

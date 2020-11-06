@@ -206,6 +206,10 @@ export class BasePage {
         return this;
     }
 
+    isMobile(): boolean {
+        return this.wd.isMobile();
+    }
+
     getDateFromToday(plus: number): { day: string, dayLeadingZero: string, year: string, monthDigits: string, monthFullName: string } {
         const now = new Date();
         const tomorrow = now.setDate(now.getDate() + plus);
@@ -295,6 +299,12 @@ export class BasePage {
 
     capitalizeFirstCharacter(text: string): string {
         return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+    }
+
+    // mobile
+    hideKeyboard() {
+        this.wd.hideKeyboard();
+        return this;
     }
 
     /** verifications **/

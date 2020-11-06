@@ -17,6 +17,7 @@ const {
 
 describe('Send Message', () => {
     it('[C445] Click on Back button', () => {
+        allureHelper.addIssueToAllure(bugs.sendMessageForm.backButton);
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
@@ -149,6 +150,7 @@ describe('Send Message', () => {
     });
 
     it('[C453] Continue with already existing Email', () => {
+        // todo register new user with the correct credentials (used for other scenarios). See fixtures
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
@@ -180,12 +182,13 @@ describe('Send Message', () => {
     });
 
     it('[C454] Click on Sign In here', () => {
+        allureHelper.addIssueToAllure(bugs.sendMessageForm.signInHere)
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
             .chatWithResident.sendMessage(faker.random.words())
             .sendMessageComponent
-                .clickOnSignInLinkAndSwitchToNewWindow()
+                .clickOnSignInLinkAndSwitchToNewWindow(false)
                 .verifySignInPageTitleDisplayed();
     });
 })

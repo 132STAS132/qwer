@@ -36,7 +36,7 @@ export class MessengerComponent extends BasePage {
     }
 
     private residentProfilePictureByIndex(index: number): string {
-        return `.faceslayout span:nth-of-type(${index})`;
+        return `.faceslayout span[class*="resident-avatar"]:nth-of-type(${index})`;
     }
 
     private dots3Icon(): string {
@@ -63,7 +63,7 @@ export class MessengerComponent extends BasePage {
         this.allure.startStep('Click on resident picture and switch to chat form iFrame');
         // due to animation
         this.wd.wait(2);
-        this.wd.click(this.residentProfilePictureByIndex(number), this.wd.isSafari());
+        this.wd.nativeClick(this.residentProfilePictureByIndex(number), false);
         this.gotoChatOrContactIFrame();
         this.allure.endStep();
         return this;
