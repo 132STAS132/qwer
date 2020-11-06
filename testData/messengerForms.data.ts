@@ -96,8 +96,9 @@ class MessengerFormsData {
             email: "Email:",
             expectedMoveIn: "Expected Move In:",
             message: "Message:",
-            successFormText: (property = 'Grata Signature Apartments') => `Success! You've contacted ${property}`,
-            descriptionFormText: "Here's a copy of the information you sent:"
+            successFormText: (property = 'AXL Apartments') => `Success! You've contacted ${property}`,
+            descriptionFormText: "Here's a copy of the information you sent:",
+            placeholder: "Hello! I\'d love to learn more about this community."
         }
     }
 

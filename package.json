@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "tests": "cross-env SUITE_TYPE=all wdio wdio.conf.js",
+    "tests": "cross-env SUITE_TYPE=all wdio wdio.conf.js --suite webTests",
     "chatWithAResident": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite chatWithAResident",
     "mainPage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite mainPage",
     "mainPage:mobile": "cross-env SUITE_TYPE=file MOBILE_BROWSERS=true wdio wdio.conf.js --suite mainPageMobile",

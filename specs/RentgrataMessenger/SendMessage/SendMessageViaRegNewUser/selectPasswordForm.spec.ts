@@ -14,7 +14,7 @@ const messageData = {
 
 describe('Select Password form', () => {
     // todo need to update after fixing https://rentgrata.atlassian.net/browse/RS-232 .
-    xit('[C486] Type invalid data', () => {
+    it('[C486] Type invalid data', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -32,7 +32,7 @@ describe('Select Password form', () => {
             .verifyErrorMessage(validationErrors.atLeast4);
     });
 
-    xit('[C487] Leave fields empty', () => {
+    it('[C487] Leave fields empty', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -40,7 +40,7 @@ describe('Select Password form', () => {
             .verifyErrorMessage(validationErrors.atLeast4)
     });
 
-    xit('[C488] Different password', () => {
+    it('[C488] Different password', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email)
@@ -50,14 +50,14 @@ describe('Select Password form', () => {
             .verifyErrorMessage(validationErrors.confirmationMatch)
     });
 
-    xit('[C789] Check your message', () => {
+    it('[C789] Check your message', () => {
         const email = randomMailTrapEmail();
         signUpPage
             .proceedToSignUpPage(email, messageData.message)
             .verifyMessageText(messageData.message)
     });
 
-    xit('[C787] Check your name',() => {
+    it('[C787] Check your name',() => {
         const email = randomMailTrapEmail();
         const firstName = signUpPage.capitalizeFirstCharacter(messageData.firstName);
         signUpPage
@@ -65,7 +65,7 @@ describe('Select Password form', () => {
             .verifyWelcomeText(`Welcome, ${firstName}!`);
     });
 
-    xit('[C788] Сheck who to send the message to',() => {
+    it('[C788] Сheck who to send the message to',() => {
         const email = randomMailTrapEmail();
         messenger
             .goToWidgetIFrame()

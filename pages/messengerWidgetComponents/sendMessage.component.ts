@@ -149,17 +149,19 @@ export class SendMessageComponent extends BasePage {
         return this;
     }
 
-    clickOnSignInLink() {
+    clickOnSignInLink(customClick = true) {
+        // customClick is workaround . sign in button is overlapped by another element. todo delete after fixing
         this.allure.startStep('Click on SignIn link');
-        this.wd.click(this.signInLink());
+        this.wd.click(this.signInLink(), customClick);
         this.wd.wait(1);
         this.allure.endStep();
         return this;
     }
 
-    clickOnSignInLinkAndSwitchToNewWindow(): SignInPage {
+    clickOnSignInLinkAndSwitchToNewWindow(customClick = true): SignInPage {
+        // customClick is workaround . sign in button is overlapped by another element. todo delete after fixing . false is used in [C454] scenario
         this.allure.startStep('Click on SignIn link and switch to new window');
-        this.clickOnSignInLink();
+        this.clickOnSignInLink(customClick);
         this.wd.switchToSecondWindow();
         this.allure.endStep();
         return new SignInPage();

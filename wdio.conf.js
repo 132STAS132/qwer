@@ -23,7 +23,7 @@ const pathExists = require('path-exists');
 // by default Google Chrome browser is used
 process.env.BROWSER_NAME = (process.env.BROWSER_NAME || 'chrome');
 process.env.DEFAULT_DOWNLOAD_DIR = path.join(__dirname, 'downloads');
-process.env.BASE_URL = (process.env.BASE_URL || 'https://messenger-redesign-v1-lxn0jbs6.herokuapp.com/demo');
+process.env.BASE_URL = (process.env.BASE_URL || 'https://rentgrata-messenger-dev.herokuapp.com/demo');
 process.env.DEVICE_NAME = (process.env.DEVICE_NAME || 'iPhone X');
 process.env.PATH_TO_TXT_TEST_DATA = path.resolve(__dirname, 'testData', 'txt');
 const isLambdaTest = JSON.parse(process.env.LAMBDA_TEST_RUN || 0);
@@ -182,6 +182,8 @@ let ieCapsLambda = {
 
 // ======= LAMBDA TEST CAPS END =======
 
+// iPhone 7, iPhone8, iPhone X, iPhone 11, and Samsung Galaxy S9
+//
 switch (process.env.BROWSER_NAME.toLowerCase()) {
     case 'chrome':
         // todo need to add android device caps after getting proper lambdaTest plan
@@ -257,6 +259,7 @@ if (isMobileBrowsersRun && !isLambdaTest) {
             command : 'appium',
             args: {
                 allowInsecure: 'execute_driver_script',
+                relaxedSecurity: true
             }
 
         }]
@@ -274,11 +277,20 @@ if (isMobileBrowsersRun && !isLambdaTest) {
             'newCommandTimeout': 240,
             waitforTimeout: 30000,
             "safariInitialUrl": process.env.BASE_URL,
-            // "safariAllowPopups": true,
-            // autoWebview: true,
+            "safariAllowPopups": true,
+            autoWebview: true,
             unicodeKeyboard: true,
             nativeWebTap: true,
-            // "appium:allow-insecure": 'execute_driver_script'
+            autoAcceptAlerts: true,
+            safariIgnoreFraudWarning: true,
+            "appium:autoAcceptAlerts": true,
+            "appium:safariIgnoreFraudWarning": true,
+            // "appium:allow-insecure": 'execute_driver_script',
+            // "safariAllowPopups": true,
+            "safariOpenLinksInBackground": true,
+            // "autoAcceptAlerts": true,
+            "unexpectedAlertBehaviour": "Allow",
+            "enablePopups": true,
         },
     ]
 }
@@ -305,6 +317,7 @@ exports.config = {
         './specs/**/*.ts'
     ],
     suites: {
+        webTests: ['./specs/RentgrataMessenger/**/*.ts'],
         chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
         mainPageMobile: ['./specs/Mobile/mobMainPage.spec.ts'],

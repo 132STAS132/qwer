@@ -102,6 +102,14 @@ export class WDIO {
     this.click(itemSelector);
   }
 
+  hideKeyboard() {
+    browser.hideKeyboard();
+  }
+
+  isMobile(): boolean {
+    return browser.isMobile;
+  }
+
   elements(selector: string, timeout = this.defaultWaitTime): WebdriverIO.ElementArray {
     try {
       this.waitForElement(selector, timeout);
@@ -309,6 +317,7 @@ export class WDIO {
     //         );
     //       }
     if (browser.isMobile) {
+      // need to update for clearing field
       $(selector).click();
       browser.sendKeys([value]);
       return;

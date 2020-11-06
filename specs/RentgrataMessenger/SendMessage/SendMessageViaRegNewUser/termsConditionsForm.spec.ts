@@ -54,7 +54,7 @@ describe('Terms & Conditions form ', () => {
             .verifyMessageSentToAndSubInfo(verifyEmailForm.sentCodeTo(email));
     });
 
-    xit('[C484] Click on "Agree and Continue" button', () => {
+    it('[C484] Click on "Agree and Continue" button', () => {
         // todo xit -> it after fixing the issue https://rentgrata.atlassian.net/browse/RS-232
         const email = randomMailTrapEmail();
         termsConditionsForm

@@ -4,7 +4,7 @@ import { ForgotPasswordPage } from "./forgotPassword.page";
 export class SignInPage extends BasePage {
     /** locators **/
     private signInPageTitle(): string {
-        return '//div[@class="complete_signup"]//h4[text()="Sign in"]';
+        return this.isMobile() ? '//div[contains(.,"Sign in")]' :'//div[@class="complete_signup"]//h4[text()="Sign in"]';
     }
 
     private emailField(): string {
