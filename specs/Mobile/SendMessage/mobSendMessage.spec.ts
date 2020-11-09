@@ -17,6 +17,7 @@ const {
 
 describe('Send Message', () => {
     it('[C807] Click on Back button', () => {
+        allureHelper.addIssueToAllure(bugs.sendMessageForm.backButton);
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()
@@ -181,6 +182,7 @@ describe('Send Message', () => {
     });
 
     it('[C816] Click on Sign In here', () => {
+        allureHelper.addIssueToAllure(bugs.sendMessageForm.signInHere)
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()

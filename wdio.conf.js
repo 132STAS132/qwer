@@ -254,6 +254,21 @@ if (isSlackEnabled) {
 // configuration for a local test run
 if (isMobileBrowsersRun && !isLambdaTest) {
 
+    let devices = new Map([
+        ['Samsung Galaxy S9', 'Android'],
+        ['iPhone 7', 'iOS'],
+        ['iPhone 8', 'iOS'],
+        ['iPhone X', 'iOS'],
+        ['iPhone 11', 'iOS'],
+    ])
+
+    const OS = devices.get(process.env.DEVICE_NAME)
+    if (OS == undefined) {
+        throw new Error(
+            `[${process.env.DEVICE_NAME}] device is not supported`,
+        );
+    }
+
     services = [
         ['appium', {
             command : 'appium',
@@ -265,34 +280,52 @@ if (isMobileBrowsersRun && !isLambdaTest) {
         }]
     ]
 
-    capabilities = [
-        {
-            // The defaults you need to have in your config
-            browserName: 'safari',
-            platformName: 'iOS',
-            maxInstances: 1,
-            deviceName: 'iPhone X',
-            platformVersion: '11.0',
-            'automationName': 'XCUITest',
-            'newCommandTimeout': 240,
-            waitforTimeout: 30000,
-            "safariInitialUrl": process.env.BASE_URL,
-            "safariAllowPopups": true,
-            autoWebview: true,
-            unicodeKeyboard: true,
-            nativeWebTap: true,
-            autoAcceptAlerts: true,
-            safariIgnoreFraudWarning: true,
-            "appium:autoAcceptAlerts": true,
-            "appium:safariIgnoreFraudWarning": true,
-            // "appium:allow-insecure": 'execute_driver_script',
-            // "safariAllowPopups": true,
-            "safariOpenLinksInBackground": true,
-            // "autoAcceptAlerts": true,
-            "unexpectedAlertBehaviour": "Allow",
-            "enablePopups": true,
-        },
-    ]
+if(OS !== "Android") {
+        capabilities = [
+            {
+                // The defaults you need to have in your config
+                browserName: 'safari',
+                platformName: 'iOS',
+                maxInstances: 1,
+                deviceName: 'iPhone X',
+                platformVersion: '11.0',
+                'automationName': 'XCUITest',
+                'newCommandTimeout': 240,
+                waitforTimeout: 30000,
+                "safariInitialUrl": process.env.BASE_URL,
+                "safariAllowPopups": true,
+                autoWebview: true,
+                unicodeKeyboard: true,
+                nativeWebTap: true,
+                autoAcceptAlerts: true,
+                safariIgnoreFraudWarning: true,
+                "appium:autoAcceptAlerts": true,
+                "appium:safariIgnoreFraudWarning": true,
+                // "appium:allow-insecure": 'execute_driver_script',
+                // "safariAllowPopups": true,
+                "safariOpenLinksInBackground": true,
+                // "autoAcceptAlerts": true,
+                "unexpectedAlertBehaviour": "Allow",
+                "enablePopups": true,
+            },
+        ]
+    } else {
+        capabilities = [
+            {
+                // The defaults you need to have in your config
+                browserName: 'Chrome',
+                platformName: 'Android',
+                maxInstances: 1,
+                deviceName: 'Pixel_2_API_R',
+                platformVersion: '8.0',
+                automationName: 'UiAutomator2',
+               // autoWebview: true,
+                //unicodeKeyboard: true,
+                newCommandTimeout: 240,
+                waitforTimeout: 30000,
+            },
+        ]
+    }
 }
 
 exports.config = {
@@ -318,6 +351,7 @@ exports.config = {
     ],
     suites: {
         webTests: ['./specs/RentgrataMessenger/**/*.ts'],
+        mobileTests: ['./specs/Mobile/**/*.ts'],
         chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
         mainPageMobile: ['./specs/Mobile/mobMainPage.spec.ts'],
@@ -371,7 +405,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'error',
+    logLevel: 'warn',
     //
     // Set specific log levels per logger
     // loggers:
@@ -397,6 +431,7 @@ exports.config = {
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: process.env.BASE_URL,
+    // path:process.env.BASE_URL,
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 25000,
@@ -578,6 +613,7 @@ exports.config = {
             addEnvironment('Browser', browser.capabilities.browserName);
             addEnvironment('ENV', browser.config.baseUrl);
         } else {
+            browser.url('');
             // todo update according to mobile caps
             // addEnvironment('Browser', browser.capabilities.browserName);
             // addEnvironment('ENV', browser.config.baseUrl);
