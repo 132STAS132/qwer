@@ -279,7 +279,7 @@ if (isMobileBrowsersRun && !isLambdaTest) {
             "safariInitialUrl": process.env.BASE_URL,
             "safariAllowPopups": true,
             autoWebview: true,
-            unicodeKeyboard: true,
+            unicodeKeyboard: false,
             nativeWebTap: true,
             autoAcceptAlerts: true,
             safariIgnoreFraudWarning: true,
@@ -574,7 +574,6 @@ exports.config = {
                     browser.setWindowSize(size.width, size.height);
                 }
             }
-            browser.url('');
             addEnvironment('Browser', browser.capabilities.browserName);
             addEnvironment('ENV', browser.config.baseUrl);
         } else {
@@ -582,6 +581,7 @@ exports.config = {
             // addEnvironment('Browser', browser.capabilities.browserName);
             // addEnvironment('ENV', browser.config.baseUrl);
         }
+        browser.url('');
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling

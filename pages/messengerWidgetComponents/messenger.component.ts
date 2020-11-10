@@ -62,8 +62,17 @@ export class MessengerComponent extends BasePage {
     clickOnResidentPicture(number = 1) {
         this.allure.startStep('Click on resident picture and switch to chat form iFrame');
         // due to animation
-        this.wd.wait(2);
-        this.wd.nativeClick(this.residentProfilePictureByIndex(number), false);
+        this.wd.wait(4);
+        if (browser.isMobile) {
+            try {
+                this.wd.click(this.residentProfilePictureByIndex(number));
+            } catch (e) {
+                this.goToWidgetIFrame();
+                this.wd.click(this.residentProfilePictureByIndex(number))
+            }
+        } else {
+            this.wd.nativeClick(this.residentProfilePictureByIndex(number), false);
+        }
         this.gotoChatOrContactIFrame();
         this.allure.endStep();
         return this;

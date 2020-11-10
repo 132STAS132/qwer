@@ -179,6 +179,10 @@ export class BasePage {
 
     goToWidgetIFrame() {
         this.allure.startStep('Switch to widget iFrame');
+        this.wd.waitForPageToLoad();
+        if (browser.isMobile) {
+            this.wd.wait(2);
+        }
         this.wd.closeFrame();
         this.wd.switchToFrame(this.widgetIFrame());
         this.allure.endStep();
@@ -303,7 +307,17 @@ export class BasePage {
 
     // mobile
     hideKeyboard() {
-        this.wd.hideKeyboard();
+        if (browser.isMobile) {
+            this.wd.hideKeyboard();
+            this.wd.wait(1);
+            if (browser.isKeyboardShown()) {
+                this.wd.nativeClick("header");
+            }
+            try {
+                browser.waitUntil(() => !browser.isKeyboardShown())
+            } catch (e) {}
+            this.wd.wait(1);
+        }
         return this;
     }
 
