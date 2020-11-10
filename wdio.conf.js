@@ -295,7 +295,7 @@ if(OS !== "Android") {
                 "safariInitialUrl": process.env.BASE_URL,
                 "safariAllowPopups": true,
                 autoWebview: true,
-                unicodeKeyboard: true,
+                unicodeKeyboard: false,
                 nativeWebTap: true,
                 autoAcceptAlerts: true,
                 safariIgnoreFraudWarning: true,
@@ -405,7 +405,7 @@ exports.config = {
     // Define all options that are relevant for the WebdriverIO instance here
     //
     // Level of logging verbosity: trace | debug | info | warn | error | silent
-    logLevel: 'warn',
+    logLevel: 'error',
     //
     // Set specific log levels per logger
     // loggers:
@@ -431,7 +431,6 @@ exports.config = {
     // If your `url` parameter starts without a scheme or `/` (like `some/path`), the base url
     // gets prepended directly.
     baseUrl: process.env.BASE_URL,
-    // path:process.env.BASE_URL,
     //
     // Default timeout for all waitFor* commands.
     waitforTimeout: 25000,
@@ -609,15 +608,14 @@ exports.config = {
                     browser.setWindowSize(size.width, size.height);
                 }
             }
-            browser.url('');
             addEnvironment('Browser', browser.capabilities.browserName);
             addEnvironment('ENV', browser.config.baseUrl);
         } else {
-            browser.url('');
             // todo update according to mobile caps
             // addEnvironment('Browser', browser.capabilities.browserName);
             // addEnvironment('ENV', browser.config.baseUrl);
         }
+        browser.url('');
     },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling

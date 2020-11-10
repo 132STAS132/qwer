@@ -152,7 +152,13 @@ export class SendMessageComponent extends BasePage {
     clickOnSignInLink(customClick = true) {
         // customClick is workaround . sign in button is overlapped by another element. todo delete after fixing
         this.allure.startStep('Click on SignIn link');
-        this.wd.click(this.signInLink(), customClick);
+        if (browser.isIOS) {
+            this.hideKeyboard();
+            this.wd.scrollIntoView(this.signInLink());
+            this.wd.nativeClick(this.signInLink(), true);
+        } else {
+            this.wd.click(this.signInLink(), customClick);
+        }
         this.wd.wait(1);
         this.allure.endStep();
         return this;
