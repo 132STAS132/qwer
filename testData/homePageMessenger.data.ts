@@ -1,7 +1,8 @@
 import {
     widgetButtonsCollapsedInterface,
     widgetButtonsExpandedInterface,
-    widgetIconsInterface
+    widgetIconsInterface,
+    widgetPopupsInterface
 } from "../interfaces/homePageWidget.interface";
 
 class HomePageMessengerData {
@@ -32,6 +33,14 @@ class HomePageMessengerData {
             scheduleATour: "Schedule a Tour",
             virtualTour: "Virtual Tour",
             contactProperty: "Contact Property"
+        }
+    }
+
+    get popupMessagesText(): widgetPopupsInterface {
+        return {
+            heyMessage: "Hey, I live here!",
+            learnMoreMessage: "Want to learn more from my point of view?",
+            askMeMessage: "Ask me a question and we'll split a reward if you move in. You'll make $100."
         }
     }
 }
