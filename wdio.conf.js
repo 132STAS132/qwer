@@ -255,14 +255,14 @@ if (isSlackEnabled) {
 if (isMobileBrowsersRun && !isLambdaTest) {
 
     let devices = new Map([
-        ['Samsung Galaxy S9', 'Android'],
+        ['Samsung Galaxy S9'.toLowerCase(), 'Android'],
         ['iPhone 7', 'iOS'],
         ['iPhone 8', 'iOS'],
         ['iPhone X', 'iOS'],
         ['iPhone 11', 'iOS'],
     ])
 
-    const OS = devices.get(process.env.DEVICE_NAME)
+    const OS = devices.get(process.env.DEVICE_NAME.toLowerCase())
     if (OS == undefined) {
         throw new Error(
             `[${process.env.DEVICE_NAME}] device is not supported`,
