@@ -176,6 +176,7 @@ describe('Send Message', () => {
     });
 
     it('[C816] Click on Sign In here', () => {
+        allureHelper.addIssueToAllure(bugs.sendMessageForm.signInHere)
         messenger
             .goToWidgetIFrame()
             .clickOnResidentPicture()

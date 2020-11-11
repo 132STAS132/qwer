@@ -25,15 +25,20 @@ End to end tests for Rentgrata Messenger application. (RentgrataWidget)
 - LAMBDA_TEST_RUN (boolean), e.g. ``LAMBDA_TEST_RUN=true`` -  for running tests using lambdaTest service. ``false`` by default.
 - ENABLE_SLACK (boolean), e.g. ``ENABLE_SLACK=true`` -  for sending information to proper Slack channel. Required TESTRAIL_RUN=true and LAMBDA_TEST_RUN=true. ``false`` by default.
 
-6.Execute the following command ``npm run tests`` for run all test scenarios.
+6.Execute the following command ``npm run tests`` for run all test scenarios for web.
 
-7.For run specific test suite execute ``npm run {suite name}`` command, e.g:
+7.Execute the following command ``npm run tests:mobile`` for run all test scenarios for mobile.
+
+8.For run specific test suite execute ``npm run {suite name}`` command, e.g:
 
 ``npm run mainPage``
 
-8.Test results will be displayed in html format in ``artifacts/allure-report`` folder.
+9.Test results will be displayed in html format in ``artifacts/allure-report`` folder.
 
 Execute ``npm run openReport`` command to generate and open a report.
+
+For run on Android devices, you need to update chromedriver in accordance with the version of the chrome browser version on your device, command : ``npm install appium --chromedriver_version="version"``
+``https://raw.githubusercontent.com/appium/appium-chromedriver/master/config/mapping.json`` - list of the versions chromedriver in accordance of the chrome browser version
    
 ### Existing suites
 

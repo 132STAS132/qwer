@@ -17,3 +17,9 @@ export interface widgetIconsInterface {
     virtualTour: string,
     contactProperty: string
 }
+
+export interface widgetPopupsInterface {
+    heyMessage: string,
+    learnMoreMessage: string,
+    askMeMessage: string
+}

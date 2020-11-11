@@ -1,11 +1,11 @@
-import { ChatWithResidentComponent } from "./chatWithResident.component";
-import { ContactComponent } from "./contact.component";
-import { BasePage } from "../base.page";
+import {ChatWithResidentComponent} from "./chatWithResident.component";
+import {ContactComponent} from "./contact.component";
+import {BasePage} from "../base.page";
 import {
     widgetButtonsExpandedInterface,
     widgetButtonsCollapsedInterface
 } from "../../interfaces/homePageWidget.interface";
-import { homePageMessengerData } from "../../testData/homePageMessenger.data";
+import {homePageMessengerData} from "../../testData/homePageMessenger.data";
 
 export class MessengerComponent extends BasePage {
     readonly chatWithResident: ChatWithResidentComponent;
@@ -46,6 +46,23 @@ export class MessengerComponent extends BasePage {
     private tooltip(): string {
         return '#rg-widget-feature-icon-title';
     }
+
+    private popup(): string {
+        return `[id*=balloonbubble]`;
+    }
+
+    private popupMessage(index: number): string {
+        return `.bubbles.left div[class*="light-theme"]:nth-of-type(${index}) span:nth-of-type(1)`;
+    }
+
+    private closePopupButton(): string {
+        return `[id*=balloonbubble] .anticon-close`;
+    }
+
+    private sideCrawl(): string {
+        return `.layout.__mobile`;
+    }
+
 
     /** actions **/
     private getIconLocator(icon: string) {
@@ -99,7 +116,7 @@ export class MessengerComponent extends BasePage {
             this.wd.pause(500);
             this.goToWidgetIFrame();
             return tooltipIsExisting;
-        }, { timeoutMsg: 'Tooltip element still not existing' });
+        }, {timeoutMsg: 'Tooltip element still not existing'});
         if (closeIframe) this.wd.closeFrame();
         this.allure.endStep();
         return this;
@@ -239,6 +256,49 @@ export class MessengerComponent extends BasePage {
             `Tooltip with [${text}] text should be displayed`
         ).to.be.equal(text);
         this.allure.endStep();
+    }
+
+    verifyPopupMessageText(text: string, index = 1) {
+        this.allure.startStep(`Verify popup messages text is [${text}]`);
+        this.expect(
+            this.wd.getText(this.popupMessage(index)),
+            `Popup with [${text}] text should be displayed`
+        ).to.be.equal(text);
+        this.allure.endStep();
+    }
+
+    clickOnClosePopupIcon() {
+        this.allure.startStep('Close popup form');
+        this.wd.click(this.closePopupButton());
+        try {
+            this.wd.waitForDisplayed(this.closePopupButton(), false, 3000);
+        } catch (e) {}
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyPopupMessagesState(expected = true) {
+        const element = 'Popup massages';
+        this.allure.startStep(this.verifyAllureMessage(element));
+        try {
+            this.wd.waitForDisplayed(this.popup(), !expected, 20000);
+        } catch (e) {}
+        this.expect(
+            this.wd.isElementVisible(this.popup()),
+            this.displayedErrorMessage(element, expected)
+        ).to.be.equal(expected);
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnTheSideCrawl() {
+        this.allure.startStep('Click on the side crawl');
+        this.wd.click(this.sideCrawl());
+        try {
+            this.wd.waitForDisplayed(this.sideCrawl(), false, 3000);
+        } catch (e) {}
+        this.allure.endStep();
+        return this;
     }
 }
 

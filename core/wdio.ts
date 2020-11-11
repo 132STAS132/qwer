@@ -318,6 +318,7 @@ export class WDIO {
     //       }
     if (browser.isMobile) {
       // need to update for clearing field
+      this.waitForClickable(selector)
       $(selector).click();
       browser.sendKeys([value]);
       return;
