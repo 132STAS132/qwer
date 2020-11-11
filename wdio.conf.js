@@ -255,11 +255,11 @@ if (isSlackEnabled) {
 if (isMobileBrowsersRun && !isLambdaTest) {
 
     let devices = new Map([
-        ['Samsung Galaxy S9'.toLowerCase(), 'Android'],
-        ['iPhone 7', 'iOS'],
-        ['iPhone 8', 'iOS'],
-        ['iPhone X', 'iOS'],
-        ['iPhone 11', 'iOS'],
+        ['samsung galaxy s9', 'Android'],
+        ['iphone 7', 'iOS'],
+        ['iphone 8', 'iOS'],
+        ['iphone x', 'iOS'],
+        ['iphone 11', 'iOS'],
     ])
 
     const OS = devices.get(process.env.DEVICE_NAME.toLowerCase())
