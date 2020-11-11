@@ -1,18 +1,18 @@
-require('ts-node').register({ files: true });
+require('ts-node').register({files: true});
 require('dotenv').config();
 const exec = require('child_process').exec;
 const path = require('path');
 const fs = require('fs');
-const { TestRailHelper } = require('./helpers/testRail');
-const { addEnvironment, addAttachment } = require('@wdio/allure-reporter').default;
-const { bugs } = require("./existingBugs/bugs");
-const { JiraAPI } = require("./helpers/jira");
+const {TestRailHelper} = require('./helpers/testRail');
+const {addEnvironment, addAttachment} = require('@wdio/allure-reporter').default;
+const {bugs} = require("./existingBugs/bugs");
+const {JiraAPI} = require("./helpers/jira");
 const jiraAPI = new JiraAPI();
-const { TestRailStatus } = require('./testData/testRailStatus.data');
+const {TestRailStatus} = require('./testData/testRailStatus.data');
 const os = require('os');
 const dateFormat = require('dateformat');
 const now = new Date();
-const { IncomingWebhook } = require('@slack/webhook');
+const {IncomingWebhook} = require('@slack/webhook');
 let webhook;
 if (process.env.SLACK_WEBHOOK) {
     webhook = new IncomingWebhook(process.env.SLACK_WEBHOOK);
@@ -135,7 +135,7 @@ let internetExplorerCaps = {
 // ======= LAMBDA TEST CAPS =======
 
 const commonCapsLambda = {
-    resolution : "1024x768",
+    resolution: "1024x768",
     build: testRunName,
     console: true,
 }
@@ -147,13 +147,13 @@ if (isMobileBrowsersRun) {
 
 let safariIPhoneXLambda = {
     ...commonCapsLambda,
-    "platform" : "iOS",
-    "deviceName" : process.env.DEVICE_NAME,
-    "platformVersion" : "13.6"
+    "platform": "iOS",
+    "deviceName": process.env.DEVICE_NAME,
+    "platformVersion": "13.6"
 }
 
 // WEB BROWSERS - LambdaTest
-let chromeCapsLambda =  {
+let chromeCapsLambda = {
     ...commonCapsLambda,
     platform: "Windows 10",
     browserName: "Chrome",
@@ -165,8 +165,8 @@ let safariCapsLambda = {
     platformName: "MacOS Catalina",
     browserName: "Safari",
     browserVersion: "13.0",
-    "safari.popups" : true,
-    "safari.cookies" : true
+    "safari.popups": true,
+    "safari.cookies": true
 };
 
 let ieCapsLambda = {
@@ -265,13 +265,14 @@ if (isMobileBrowsersRun && !isLambdaTest) {
     const OS = devices.get(process.env.DEVICE_NAME.toLowerCase())
     if (OS == undefined) {
         throw new Error(
-            `[${process.env.DEVICE_NAME}] device is not supported`,
+            `[${process.env.DEVICE_NAME}] device is not supported. Please change your device on one of supported.
+             Devices list: [${Array.from(devices.keys())}]`
         );
     }
 
     services = [
         ['appium', {
-            command : 'appium',
+            command: 'appium',
             args: {
                 allowInsecure: 'execute_driver_script',
                 relaxedSecurity: true
@@ -280,7 +281,7 @@ if (isMobileBrowsersRun && !isLambdaTest) {
         }]
     ]
 
-if(OS !== "Android") {
+    if (OS !== "Android") {
         capabilities = [
             {
                 // The defaults you need to have in your config
@@ -319,7 +320,7 @@ if(OS !== "Android") {
                 deviceName: 'Pixel_2_API_R',
                 platformVersion: '8.0',
                 automationName: 'UiAutomator2',
-               // autoWebview: true,
+                // autoWebview: true,
                 //unicodeKeyboard: true,
                 newCommandTimeout: 240,
                 waitforTimeout: 30000,
@@ -502,7 +503,8 @@ exports.config = {
         if (isWin) {
             try {
                 await exec('rmdir artifacts /s /q');
-            } catch (e) {}
+            } catch (e) {
+            }
             // if need to download
             // try {
             //     await exec('rmdir downloads');
@@ -602,8 +604,8 @@ exports.config = {
     beforeTest: function (test, context) {
         if (!isMobileBrowsersRun) {
             if (!isLambdaTest) {
-                const size = { width: 1024, height: 768 };
-                let { height, width } = browser.getWindowSize();
+                const size = {width: 1024, height: 768};
+                let {height, width} = browser.getWindowSize();
                 if (height !== size.height || width !== size.width) {
                     browser.setWindowSize(size.width, size.height);
                 }
@@ -632,7 +634,7 @@ exports.config = {
     /**
      * Function to be executed after a test (in Mocha/Jasmine).
      */
-    afterTest: function(test, context, { error, result, duration, passed, retries }) {
+    afterTest: function (test, context, {error, result, duration, passed, retries}) {
         let image = null;
         let caseId = test.title.match(/C\d+/);
         if (caseId) caseId = +caseId[0].slice(1);
@@ -659,7 +661,8 @@ exports.config = {
             browser.switchToWindow(windows[0]);
             browser.execute('window.sessionStorage.clear(); window.localStorage.clear();');
             browser.deleteAllCookies();
-        } catch (e) {}
+        } catch (e) {
+        }
 
         if (process.env.TEST_RAIL_RUN_ID && caseId) {
             let config = {
@@ -695,7 +698,10 @@ exports.config = {
                             config.changeStatusTo = TestRailStatus.dueToABug;
                         }
 
-                        browser.call(async () => await testRailClient.addCommentToTestCase({ runId: config.runId, caseId: config.caseId }, markup));
+                        browser.call(async () => await testRailClient.addCommentToTestCase({
+                            runId: config.runId,
+                            caseId: config.caseId
+                        }, markup));
                     }
                 }
             }
@@ -739,7 +745,7 @@ exports.config = {
     after: function (result, capabilities, specs) {
         if (isLambdaTest) {
             // example from documentation
-            driver.execute("lambda-status=".concat(result==0?"passed":"failed"),undefined);
+            driver.execute("lambda-status=".concat(result == 0 ? "passed" : "failed"), undefined);
         }
     },
     /**
@@ -758,7 +764,7 @@ exports.config = {
      * @param {Array.<Object>} capabilities list of capabilities details
      * @param {<Object>} results object containing test results
      */
-    onComplete: async function(exitCode, config, capabilities, results) {
+    onComplete: async function (exitCode, config, capabilities, results) {
         if (isSlackEnabled && isTestRailRun && isLambdaTest) {
             await webhook.send({
                 attachments: [
@@ -773,10 +779,11 @@ exports.config = {
         exec('allure generate --clean ./artifacts/allure-results -o ./artifacts/allure-report');
         if (process.env.CIRCLECI) {
             try {
-                await pWaitFor(() => pathExists(path.join(__dirname, 'artifacts' ,'allure-report', 'data', 'attachments')), {
+                await pWaitFor(() => pathExists(path.join(__dirname, 'artifacts', 'allure-report', 'data', 'attachments')), {
                     timeout: 150000
                 });
-            } catch (e) {}
+            } catch (e) {
+            }
         }
 
 
@@ -786,10 +793,10 @@ exports.config = {
         }
     },
     /**
-    * Gets executed when a refresh happens.
-    * @param {String} oldSessionId session ID of the old session
-    * @param {String} newSessionId session ID of the new session
-    */
+     * Gets executed when a refresh happens.
+     * @param {String} oldSessionId session ID of the old session
+     * @param {String} newSessionId session ID of the new session
+     */
     //onReload: function(oldSessionId, newSessionId) {
     //}
 }

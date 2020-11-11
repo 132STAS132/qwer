@@ -1,11 +1,11 @@
-import { ChatWithResidentComponent } from "./chatWithResident.component";
-import { ContactComponent } from "./contact.component";
-import { BasePage } from "../base.page";
+import {ChatWithResidentComponent} from "./chatWithResident.component";
+import {ContactComponent} from "./contact.component";
+import {BasePage} from "../base.page";
 import {
     widgetButtonsExpandedInterface,
     widgetButtonsCollapsedInterface
 } from "../../interfaces/homePageWidget.interface";
-import { homePageMessengerData } from "../../testData/homePageMessenger.data";
+import {homePageMessengerData} from "../../testData/homePageMessenger.data";
 
 export class MessengerComponent extends BasePage {
     readonly chatWithResident: ChatWithResidentComponent;
@@ -116,7 +116,7 @@ export class MessengerComponent extends BasePage {
             this.wd.pause(500);
             this.goToWidgetIFrame();
             return tooltipIsExisting;
-        }, { timeoutMsg: 'Tooltip element still not existing' });
+        }, {timeoutMsg: 'Tooltip element still not existing'});
         if (closeIframe) this.wd.closeFrame();
         this.allure.endStep();
         return this;
@@ -271,10 +271,10 @@ export class MessengerComponent extends BasePage {
         this.allure.startStep('Close popup form');
         this.wd.click(this.closePopupButton());
         try {
-        this.wd.waitForDisplayed(this.closePopupButton(), false,3000);
-    } catch (e) {}
-    this.allure.endStep();
-    return this;
+            this.wd.waitForDisplayed(this.closePopupButton(), false, 3000);
+        } catch (e) {}
+        this.allure.endStep();
+        return this;
     }
 
     verifyPopupMessagesState(expected = true) {
@@ -295,7 +295,7 @@ export class MessengerComponent extends BasePage {
         this.allure.startStep('Click on the side crawl');
         this.wd.click(this.sideCrawl());
         try {
-            this.wd.waitForDisplayed(this.sideCrawl(), false,3000);
+            this.wd.waitForDisplayed(this.sideCrawl(), false, 3000);
         } catch (e) {}
         this.allure.endStep();
         return this;
