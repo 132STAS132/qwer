@@ -37,7 +37,7 @@ End to end tests for Rentgrata Messenger application. (RentgrataWidget)
 
 Execute ``npm run openReport`` command to generate and open a report.
 
-For run on Android devices, you need to update chromedriver in accordance with the version of the chrome browser version on your device, command : ``npm install appium --chromedriver_version="version"``
+If you have problems running tests on android devices, try to update chromedriver in accordance with the version of the chrome browser version on your device, command : ``npm install appium --chromedriver_version="version"``
 ``https://raw.githubusercontent.com/appium/appium-chromedriver/master/config/mapping.json`` - list of the versions chromedriver in accordance of the chrome browser version
    
 ### Existing suites
@@ -59,6 +59,8 @@ For run on Android devices, you need to update chromedriver in accordance with t
 - ``sendMessage:mobile``
 
 - ``sendMessageViaSingIn``
+
+- ``sendMessageViaSingIn:mobile``
 
 - ``successForm``
 

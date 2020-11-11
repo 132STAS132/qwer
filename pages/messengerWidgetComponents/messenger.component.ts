@@ -60,7 +60,7 @@ export class MessengerComponent extends BasePage {
     }
 
     private sideCrawl(): string {
-        return `.layout.__mobile`;
+        return `#rg-widget-marquee`;
     }
 
 
@@ -260,6 +260,13 @@ export class MessengerComponent extends BasePage {
 
     verifyPopupMessageText(text: string, index = 1) {
         this.allure.startStep(`Verify popup messages text is [${text}]`);
+        try {
+            browser.waitUntil(
+                () =>
+                    this.wd.getText(this.popupMessage(index)) ===
+                    text,
+            );
+        } catch (e) {}
         this.expect(
             this.wd.getText(this.popupMessage(index)),
             `Popup with [${text}] text should be displayed`
