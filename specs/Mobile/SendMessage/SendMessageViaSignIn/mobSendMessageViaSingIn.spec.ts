@@ -8,9 +8,11 @@ import {signInFormData} from "../../../../testData/signInForm.data";
 import {forgotPasswordData} from "../../../../testData/forgotPassword.data";
 
 const {existingTestUser} = commonData;
-const {successSendMessageForm} = messengerFormsData;
+const {
+    successSendMessageForm,
+    sendMessageForm
+} = messengerFormsData;
 const {form} = forgotPasswordData;
-const { sendMessageForm } = messengerFormsData;
 const {
     emailOrPasswordIncorrect,
     passwordYouEnteredIncorrect

@@ -44,6 +44,8 @@ If you have problems running tests on android devices, try to update chromedrive
 
 - ``chatWithAResident``
 
+- ``chatWithAResident:mobile``
+
 - ``contactPropertyPart1``
 
 - ``contactPropertyPart2``

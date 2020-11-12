@@ -1,5 +1,5 @@
-import { BasePage } from "../base.page";
-import { SendMessageComponent } from "./sendMessage.component";
+import {BasePage} from "../base.page";
+import {SendMessageComponent} from "./sendMessage.component";
 
 export class ChatWithResidentComponent extends BasePage {
 
@@ -49,6 +49,34 @@ export class ChatWithResidentComponent extends BasePage {
 
     private formTitle(): string {
         return '#header-title .title';
+    }
+
+    private filters(filerName: string): string {
+        return `${this.chatWithResidentFiltersSection()} [aria-label="${filerName}"]`;
+    }
+
+    private filterOptionsSections(): string {
+        return `#residents-filter-drawer`;
+    }
+
+    private filterOptions(optionName: string) {
+        return `//div[contains(@class,"residents-filter-drawer")]/p[text()='${optionName}']`
+    }
+
+    private applyButton(): string {
+        return `${this.widgetMessengerId} #activatedBtn`;
+    }
+
+    private cancelButton(): string {
+        return `${this.widgetMessengerId} #drawerCancel`
+    }
+
+    private userProfile(): string {
+        return `${this.widgetMessengerId} .profile-list-col`;
+    }
+
+    private profileSubheader(index: number): string {
+        return `${this.userProfile()}:nth-of-type(${index}) .profile-subheader`
     }
 
     /** actions **/
@@ -115,10 +143,26 @@ export class ChatWithResidentComponent extends BasePage {
         this.allure.startStep(this.verifyAllureMessage(element));
         // waiting for animation
         try {
-            this.wd.waitForDisplayed(this.chatWithResidentFiltersSection(), !expected,2000);
+            this.wd.waitForDisplayed(this.chatWithResidentFiltersSection(), !expected, 2000);
         } catch (e) {}
         this.expect(
             this.wd.isElementVisible(this.chatWithResidentFiltersSection()),
+            this.displayedErrorMessage(element, expected)
+        ).to.be.equal(expected);
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyFilterOptionsSectionIsDisplayed(expected = true) {
+        const element = 'Filter options section';
+        this.allure.startStep(this.verifyAllureMessage(element));
+        // waiting for animation
+        try {
+            this.wd.waitForDisplayed(this.filterOptionsSections(), !expected, 5000);
+        } catch (e) {
+        }
+        this.expect(
+            this.wd.isElementVisible(this.filterOptionsSections()),
             this.displayedErrorMessage(element, expected)
         ).to.be.equal(expected);
         this.allure.endStep();
@@ -153,6 +197,48 @@ export class ChatWithResidentComponent extends BasePage {
             this.wd.getText(this.formTitle()),
             'Incorrect title of chat with residents form is displayed'
         ).to.be.equal(title);
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnFilter(filterName: string) {
+        this.allure.startStep(`Select ${filterName} filter`);
+        this.wd.click(this.filters(filterName));
+        this.allure.endStep();
+        return this;
+    }
+
+    selectFilterOption(filterOption: string) {
+        this.allure.startStep(`Select ${filterOption} filter option`);
+        this.wd.click(this.filterOptions(filterOption));
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnTheApplyButton() {
+        this.allure.startStep(`Click on the [Apply] filter button`);
+        this.wd.click(this.applyButton());
+        this.allure.endStep();
+        return this;
+    }
+
+    clickOnTheCancelButton() {
+        this.allure.startStep(`Click on the [Cancel] filter button`);
+        this.wd.click(this.cancelButton());
+        this.allure.endStep();
+        return this;
+    }
+
+    verifyFilteredResults(filteredValue: string) {
+        this.allure.startStep(`Verify of filtered results`);
+        this.wd.pause(1000) // wait animation
+        const profileCount = this.wd.elements(this.userProfile())
+        for (let i = 1; i < profileCount.length; i++) {
+            this.expect(
+                this.wd.getText(this.profileSubheader(i)),
+                'Incorrect title of chat with residents form is displayed'
+            ).to.be.contain(filteredValue);
+        }
         this.allure.endStep();
         return this;
     }

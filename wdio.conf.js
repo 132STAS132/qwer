@@ -354,6 +354,7 @@ exports.config = {
         webTests: ['./specs/RentgrataMessenger/**/*.ts'],
         mobileTests: ['./specs/Mobile/**/*.ts'],
         chatWithAResident: ['./specs/RentgrataMessenger/chatWithAResident.spec.ts'],
+        chatWithAResidentMobile: ['./specs/Mobile/mobChatWithResident.spec.ts'],
         mainPage: ['./specs/RentgrataMessenger/mainPage.spec.ts'],
         mainPageMobile: ['./specs/Mobile/mobMainPage.spec.ts'],
         contactPropertyPart1: ['./specs/RentgrataMessenger/ContactProperty/contactPropertyPart1.spec.ts'],
@@ -366,7 +367,7 @@ exports.config = {
         selectPasswordForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/selectPasswordForm.spec.ts'],
         afterSendingFormMessageSent: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/afterSendingFormMessageSent.spec.ts'],
         sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
-        sendMessageViaSingInMobile: ['./specs/Mobile/SendMessage/SendMessageViaSignIn/sendMessageViaSingIn.spec.ts'],
+        sendMessageViaSingInMobile: ['./specs/Mobile/SendMessage/SendMessageViaSignIn/mobSendMessageViaSingIn.spec.ts'],
         successForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/successForm.spec.ts'],
     },
     // Patterns to exclude.

@@ -5,7 +5,8 @@ import {
     warningMessageCloseFormInterface,
     successContactFormInterface,
     successSendMessageFormInterface,
-    chatWithResidentFormInterface
+    chatWithResidentFormInterface,
+    chatWithResidentFiltersInterface
 } from "../interfaces/widjetForms.interface";
 
 class MessengerFormsData {
@@ -117,6 +118,30 @@ class MessengerFormsData {
     get chatWithResidentForm(): chatWithResidentFormInterface {
         return {
             weLiveHere: "We live here! Ask us questions!"
+        }
+    }
+
+    get chatWithResidentFilters(): chatWithResidentFiltersInterface {
+        return {
+            floorplans: {
+                name: "Floorplans",
+                studio: "Studio",
+                oneBedroom: "1 Bedroom",
+                twoBedrooms: "2 Bedrooms",
+                threeBedrooms: "3 Bedrooms",
+            },
+            pets: {
+                name: "Pets",
+                cat: "Cat",
+                dog: "Dog",
+                other: "Other",
+            },
+            more: {
+                name: "More",
+                commuter: "Commuter",
+                parent: "Parent",
+                remoteWorker: "Remote Worker",
+            },
         }
     }
 }

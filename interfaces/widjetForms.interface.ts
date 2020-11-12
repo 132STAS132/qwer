@@ -109,3 +109,25 @@ export interface successSendMessageFormInterface {
 export interface chatWithResidentFormInterface {
     weLiveHere: string,
 }
+
+export interface chatWithResidentFiltersInterface {
+    floorplans: {
+        name: string,
+        studio: string,
+        oneBedroom: string,
+        twoBedrooms: string,
+        threeBedrooms: string,
+    },
+    pets: {
+        name: string,
+        cat: string,
+        dog: string,
+        other: string,
+    },
+    more: {
+        name: string,
+        commuter: string,
+        parent: string,
+        remoteWorker: string,
+    },
+}
