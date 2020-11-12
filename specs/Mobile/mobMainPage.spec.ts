@@ -4,7 +4,8 @@ import {messengerFormsData} from "../../testData/messengerForms.data";
 
 const {
     popupMessagesText,
-    iconsUnderResidents
+    widgetButtonsExpanded,
+    widgetButtonsCollapsed
 } = homePageMessengerData;
 
 const {
@@ -19,7 +20,6 @@ describe('Main page', () => {
             .verifyCountOfResidentProfilePictures();
     });
 
-    // need update
     it('[C768] Check popup', () => {
         messenger
             .goToWidgetIFrame()
@@ -49,5 +49,12 @@ describe('Main page', () => {
             .clickOnResidentPicture()
             .clickOnCloseIcon()
             .chatWithResident.verifyChatWithResidentFormIsDisplayed(false);
+    });
+
+    it('[C537] Check expand/collapse', () => {
+        messenger
+            .goToWidgetIFrame()
+            .verifyWidgetButtons(widgetButtonsExpanded, false)
+            .verifyWidgetButtons(widgetButtonsCollapsed, false)
     });
 });

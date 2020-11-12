@@ -366,6 +366,7 @@ exports.config = {
         selectPasswordForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/selectPasswordForm.spec.ts'],
         afterSendingFormMessageSent: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaRegNewUser/afterSendingFormMessageSent.spec.ts'],
         sendMessageViaSingIn: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/sendMessageViaSingIn.spec.ts'],
+        sendMessageViaSingInMobile: ['./specs/Mobile/SendMessage/SendMessageViaSignIn/sendMessageViaSingIn.spec.ts'],
         successForm: ['./specs/RentgrataMessenger/SendMessage/SendMessageViaSingIn/successForm.spec.ts'],
     },
     // Patterns to exclude.

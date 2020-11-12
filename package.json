@@ -15,6 +15,7 @@
     "sendMessage": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessage",
     "sendMessage:mobile": "cross-env SUITE_TYPE=file MOBILE_BROWSERS=true wdio wdio.conf.js --suite sendMessageMobile",
     "sendMessageViaSingIn": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingIn",
+    "sendMessageViaSingIn:mobile": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite sendMessageViaSingInMobile",
     "successForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite successForm",
     "verifyEmailForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite verifyEmailForm",
     "termsConditionsForm": "cross-env SUITE_TYPE=file wdio wdio.conf.js --suite termsConditionsForm",
