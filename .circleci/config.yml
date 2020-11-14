@@ -1,14 +1,6 @@
 version: 2.1
 workflows:
   version: 2
-  run-chrome-tests:
-    jobs:
-      - run-chrome-tests:
-
-  run-only-chrome:
-     jobs:
-       - run-chrome-tests:
-
 jobs:
   run-chrome-tests:
     docker:
