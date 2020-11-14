@@ -3,7 +3,6 @@ version: 2.1
 parameters:
   browser:
     type: string
-    default: none # prevent running after pushing or merging. For running need to use api request with necessary parameters
 
 workflows:
   version: 2
