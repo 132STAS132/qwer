@@ -122,6 +122,10 @@ export class WDIO {
     return $(selector).isDisplayed();
   }
 
+  isElementDisplayed(selector: string): boolean {
+    return browser.isElementDisplayed(selector);
+  }
+
   isElementExisting(selector: string, timeout = this.defaultWaitTime): boolean {
     try {
       this.waitForElement(selector, timeout);

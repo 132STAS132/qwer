@@ -1,48 +1,24 @@
 import axios, { AxiosInstance } from "axios";
 
-class MailTrapApi {
+class RentgrataApi {
     private _mailTrapToken: string;
     private _baseUrl: string;
-    private _mailTrapInboxId: string;
 
     constructor() {
-        this._mailTrapToken = process.env.MAILTRAP_TOKEN;
-        this._mailTrapInboxId = process.env.MAILTRAP_INBOX_ID;
-        this._baseUrl = "https://mailtrap.io/";
+        this._baseUrl = "https://rentgrataserver-staging.herokuapp.com/api/";
     }
 
-    private apiClient(contentType = 'application/json'): AxiosInstance {
-
-        const errorCode = '\x1b[31m%s\x1b[0m';
-        const message = (property: string) => ` MAILTRAP API - ${property} is not defined. Please check .env`;
-
-        if (!this._mailTrapToken) {
-            throw new Error(errorCode + message('MAILTRAP_TOKEN'));
-        }
-
-        if (!this._mailTrapInboxId) {
-            throw new Error(errorCode + message('MAILTRAP_INBOX_ID'));
-        }
-
+    private apiClient(): AxiosInstance {
         return axios.create({
             baseURL: this._baseUrl,
-            headers: {
-                'Content-Type': contentType,
-                'Api-Token':this. _mailTrapToken,
-            },
+            headers: {},
         });
     }
 
-    async getInboxMessageByTo(to: string) {
-        const url = `api/v1/inboxes/${this._mailTrapInboxId}/messages`;
-        const { data } = await this.apiClient().get(url);
-        return data.find(msg => msg.to_email === to);
-    }
-
-    async getEmailBodyById(messageId: string) {
-        const url = `api/v1/inboxes/${this._mailTrapInboxId}/messages/${messageId}/body.html`;
-        return await this.apiClient().get(url);
+    async getResidentsInfo() {
+        const response = await this.apiClient().get('widget/listings/4115dda5-05ed-4ff0-be4f-0aa572204b29/residents');
+        return response.data;
     }
 }
 
-export const mailTrapApi = new MailTrapApi();
+export const rentgrataApi = new RentgrataApi();

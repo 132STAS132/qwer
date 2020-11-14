@@ -14,10 +14,6 @@ workflows:
     jobs:
       - run-chrome-tests:
           context: messenger-end-to-end
-      - run-safari-tests:
-          context: messenger-end-to-end
-      - run-ie-tests:
-          context: messenger-end-to-end
 
   run-only-chrome:
     when:
@@ -25,22 +21,6 @@ workflows:
         - equal: [ chrome, << pipeline.parameters.browser >> ]
     jobs:
       - run-chrome-tests:
-          context: messenger-end-to-end
-
-  run-only-safari:
-    when:
-      and:
-        - equal: [ safari, << pipeline.parameters.browser >> ]
-    jobs:
-      - run-safari-tests:
-          context: messenger-end-to-end
-
-  run-only-ie:
-    when:
-      and:
-        - equal: [ ie, << pipeline.parameters.browser >> ]
-    jobs:
-      - run-ie-tests:
           context: messenger-end-to-end
 
 jobs:
@@ -58,39 +38,5 @@ jobs:
           environment:
             BROWSER_NAME: Chrome
           name: "Run chrome tests"
-      - store_artifacts:
-          path: ~/project/artifacts
-
-  run-safari-tests:
-    docker:
-      - image: atlassianlabs/docker-node-jdk-chrome-firefox
-    steps:
-      - checkout
-      - run:
-          command: |
-            npm install
-            npm i cross-env -g
-            npm install -g allure-commandline
-            npm run tests
-          environment:
-            BROWSER_NAME: Safari
-          name: "Run Safari tests"
-      - store_artifacts:
-          path: ~/project/artifacts
-
-  run-ie-tests:
-    docker:
-      - image: atlassianlabs/docker-node-jdk-chrome-firefox
-    steps:
-      - checkout
-      - run:
-          command: |
-            npm install
-            npm i cross-env -g
-            npm install -g allure-commandline
-            npm run tests
-          environment:
-            BROWSER_NAME: IE
-          name: "Run IE tests"
       - store_artifacts:
           path: ~/project/artifacts
