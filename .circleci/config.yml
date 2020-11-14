@@ -1,9 +1,4 @@
 version: 2.1
-
-parameters:
-  browser:
-    type: string
-
 workflows:
   version: 2
   run-all-tests:
