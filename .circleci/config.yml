@@ -1,6 +1,6 @@
 version: 2
 jobs:
-  run-chrome-tests:
+  build:
     docker:
       - image: atlassianlabs/docker-node-jdk-chrome-firefox
     steps:
