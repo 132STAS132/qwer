@@ -1,0 +1,47 @@
+<?xml version='1.0'?>
+<ns2:test-suite xmlns:ns2='urn:model.allure.qatools.yandex.ru' start='1605357946093' stop='1605357969876'>
+    <name>Main page</name>
+    <title>Main page</title>
+    <test-cases>
+        <test-case start='1605357946094' status='passed' stop='1605357969875'>
+            <name>[C532] Check list of residents</name>
+            <title>[C532] Check list of residents</title>
+            <labels>
+                <label name='language' value='javascript'/>
+                <label name='framework' value='wdio'/>
+                <label name='thread' value='0-0'/>
+            </labels>
+            <parameters>
+                <parameter kind='argument' name='device' value='Pixel_2_API_R 8.0-8.0.0'/>
+            </parameters>
+            <steps>
+                <step start='1605357952385' status='passed' stop='1605357959029'>
+                    <name>Switch to widget iFrame</name>
+                    <title>Switch to widget iFrame</title>
+                    <attachments/>
+                    <steps/>
+                </step>
+                <step start='1605357959029' status='passed' stop='1605357965842'>
+                    <name>Click on resident picture and switch to chat form iFrame</name>
+                    <title>Click on resident picture and switch to chat form iFrame</title>
+                    <attachments/>
+                    <steps>
+                        <step start='1605357964164' status='passed' stop='1605357965842'>
+                            <name>Switch to chat with resident iFrame</name>
+                            <title>Switch to chat with resident iFrame</title>
+                            <attachments/>
+                            <steps/>
+                        </step>
+                    </steps>
+                </step>
+                <step start='1605357965842' status='passed' stop='1605357969813'>
+                    <name>Verify of filtered results via scroll</name>
+                    <title>Verify of filtered results via scroll</title>
+                    <attachments/>
+                    <steps/>
+                </step>
+            </steps>
+            <attachments/>
+        </test-case>
+    </test-cases>
+</ns2:test-suite>

@@ -1,0 +1,22 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "children" : [ {
+    "name" : "Main page",
+    "children" : [ {
+      "name" : "[C532] Check list of residents",
+      "uid" : "a12cfb1ea815c908",
+      "parentUid" : "46030073e7377facf6f5f9b9b561cd8f",
+      "status" : "passed",
+      "time" : {
+        "start" : 1605357946094,
+        "stop" : 1605357969875,
+        "duration" : 23781
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ "Pixel_2_API_R 8.0-8.0.0" ]
+    } ],
+    "uid" : "46030073e7377facf6f5f9b9b561cd8f"
+  } ],
+  "name" : "packages"
+}

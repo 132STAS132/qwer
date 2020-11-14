@@ -1,0 +1,11 @@
+[ {
+  "uid" : "a12cfb1ea815c908",
+  "name" : "[C532] Check list of residents",
+  "time" : {
+    "start" : 1605357946094,
+    "stop" : 1605357969875,
+    "duration" : 23781
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]
