@@ -4,12 +4,10 @@ workflows:
   run-chrome-tests:
     jobs:
       - run-chrome-tests:
-          context: messenger-end-to-end
 
   run-only-chrome:
      jobs:
        - run-chrome-tests:
-          context: messenger-end-to-end
 
 jobs:
   run-chrome-tests:
