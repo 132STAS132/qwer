@@ -7,11 +7,14 @@ jobs:
       - checkout
       - run:
           name: Setup emulator
-          command: sdkmanager "system-images;android-23;google_apis;x86" | avdmanager create avd -n test -k "system-images;android-23;google_apis;x86" -b x86 -c 100M -d 7 -f
+          command: echo "no" | avdmanager --verbose create avd --force --name "Pixel_3a_API_29" --package "system-images;android-29;google_apis;x86_64"
       - run:
           name: Launch emulator
-          command: export LD_LIBRARY_PATH=${ANDROID_HOME}/emulator/lib64:${ANDROID_HOME}/emulator/lib64/qt/lib && emulator64-arm -avd test -noaudio -no-boot-anim -no-window -accel on
+          command: emulator @Pixel_3a_API_29 -no-window -no-audio
           background: true
+      - run:
+          name: Launch emulator
+          command: adb wait-for-device shell 'while [[ -z $(getprop dev.bootcomplete) ]]; do sleep 1; done;'
       - run:
           command: |
             npm install
