@@ -13,8 +13,8 @@ jobs:
           command: avdmanager create avd --name $name --package "system-images;android-23;google_apis;x86"
           background: true
       - run:
+      - checkout
           command: |
-            - checkout
             npm install
             npm i cross-env -g
             npm install -g allure-commandline
