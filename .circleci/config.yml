@@ -13,9 +13,6 @@ jobs:
           command: avdmanager create avd --name $name --package "system-images;android-23;google_apis;x86"
           background: true
       - run:
-          name: Launch emulator
-          command: emulator -avd test
-      - run:
           command: |
             npm install
             npm i cross-env -g
